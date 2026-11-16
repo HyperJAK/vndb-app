@@ -1,25 +1,26 @@
 package com.zc.vndb.app.di
 
-import com.zc.vndb.common.di.commonModule
-import com.zc.vndb.feature.browse.di.browseModule
-import com.zc.vndb.feature.character.di.characterModule
-import com.zc.vndb.feature.detail.di.detailModule
-import com.zc.vndb.feature.discover.di.discoverModule
-import com.zc.vndb.feature.login.di.loginModule
-import com.zc.vndb.feature.profile.di.profileModule
-import com.zc.vndb.feature.release.di.releaseModule
-import org.koin.dsl.module
+import com.zc.vndb.common.di.CommonModule
+import com.zc.vndb.feature.browse.di.BrowseModule
+import com.zc.vndb.feature.character.di.CharacterModule
+import com.zc.vndb.feature.detail.di.DetailModule
+import com.zc.vndb.feature.discover.di.DiscoverModule
+import com.zc.vndb.feature.login.di.LoginModule
+import com.zc.vndb.feature.profile.di.ProfileModule
+import com.zc.vndb.feature.release.di.ReleaseModule
+import org.koin.core.annotation.Module
 
 /** Aggregates every Koin module in the app. Feature modules are added here as they land. */
-val appModule = module {
-    includes(
-        commonModule,
-        discoverModule,
-        browseModule,
-        detailModule,
-        characterModule,
-        releaseModule,
-        profileModule,
-        loginModule,
-    )
-}
+@Module(
+    includes = [
+        CommonModule::class,
+        DiscoverModule::class,
+        BrowseModule::class,
+        DetailModule::class,
+        CharacterModule::class,
+        ReleaseModule::class,
+        ProfileModule::class,
+        LoginModule::class,
+    ],
+)
+class AppModule

@@ -55,7 +55,7 @@ Coordinates, catalog accessors and build setup (Detekt, Compose reports) are in 
 | Retrofit, raw OkHttp (`okhttp3.*` imports), Volley, `HttpURLConnection` | Ktor `HttpClient` |
 | Gson, Moshi, Jackson, `org.json` | kotlinx.serialization |
 | `SharedPreferences`, `EncryptedSharedPreferences`, file I/O on the main thread | DataStore |
-| Dagger, Hilt, `javax.inject`, hand-rolled service locators, `KoinComponent` / `by inject()` in classes | Koin modules + constructor injection |
+| Dagger, Hilt, `javax.inject`, hand-rolled service locators, `KoinComponent` / `by inject()` in classes | Koin Annotations + constructor injection |
 | `java.util.Date`, `Calendar`, `SimpleDateFormat`, `java.time` | kotlinx-datetime |
 | `collectAsState()` in Routes, `LaunchedEffect { flow.collect }` for effects | `collectAsStateWithLifecycle()`, `ObserveAsEvents` |
 | Mockito / mocking frameworks for our own classes | Hand-written fakes (`Fake[Name]Repository`) |
@@ -405,45 +405,51 @@ runBlocking { dataStore.data.first() }                                          
 
 ## 7. Dependency injection (Koin)
 
-- Each feature declares one Koin module, `val [feature]Module = module { … }`, in `feature/[name]/di/[Name]Module.kt`. Shared bindings (`HttpClient`, `Json`, `DataStore`, dispatcher) live in one `commonModule` in `common/di/CommonModule.kt`. `app/di/AppModule.kt` aggregates them all with `includes(...)` (see `structure` §5).
-- Feature modules bind, in order: **data** (services, data sources, repository impl bound to its domain interface), **domain** (use cases), **presentation** (presentation mappers with dependencies, ViewModels).
-- Use the constructor DSL: `singleOf`, `factoryOf`, `viewModelOf`, with `bind` for interface binding.
-  - `singleOf` — `HttpClient`, `Json`, `DataStore`, services, data sources, repositories.
-  - `factoryOf` — use cases, presentation mappers.
-  - `viewModelOf` — ViewModels.
-- Classes use **plain constructor injection** with no annotations. **NEVER** `KoinComponent`, `by inject()`, or `get()` inside classes.
+- Koin is wired with **Koin Annotations** through the Koin Compiler Plugin (`io.insert-koin.compiler.plugin`, no KSP). Each feature declares one `@Module @ComponentScan("com.zc.vndb.feature.[name]") class [Feature]Module` in `feature/[name]/di/[Name]Module.kt`. `CommonModule` (`common/di/`) scans `common` and holds provider functions for things that are not our classes (`Json`, `HttpClient`, `Clock`, `DataStore`). `app/di/AppModule.kt` aggregates them with `@Module(includes = [...])`, and `app/di/AppKoin.kt` (`@KoinApplication`) is the entry point for `startKoin<AppKoin>`.
+- Annotate the classes themselves; `@ComponentScan` registers them:
+  - `@Single` — services, data sources, repository implementations.
+  - `@Factory` — use cases, presentation mappers.
+  - `@KoinViewModel` — ViewModels; navigation arguments are `@InjectedParam` constructor parameters (nullable allowed).
+  - **No manual binds**: a class with a single interface is registered under that interface automatically.
+  - Use a provider function in a `@Module` class only for types you do not own. An Android `Context` parameter is resolved from `androidContext(...)`.
+- **NEVER** `KoinComponent`, `by inject()`, or `get()` inside classes.
 - The **only** Koin call outside `di`/`Application` is `koinViewModel()` in a `[Name]Route`.
-- Navigation arguments reach the ViewModel as constructor parameters supplied by `parametersOf(...)`.
-- Add a Koin `verify()` unit test covering all modules.
+- Navigation arguments reach the ViewModel through `parametersOf(...)` from the Route.
+- Add a Koin `verify()` unit test covering all modules (`AppModule().module().verify(...)`).
 
 ```kotlin
 // ✅ feature/novel/di/NovelModule.kt
-val novelModule = module {
-    // data
-    singleOf(::NovelService)
-    singleOf(::NovelRemoteDataSource)
-    singleOf(::VisualNovelRepositoryImpl) { bind<VisualNovelRepository>() }
+@Module
+@ComponentScan("com.zc.vndb.feature.novel")
+class NovelModule
+```
 
-    // domain
-    factoryOf(::GetVisualNovelDetailsUseCase)
-    factoryOf(::ToggleFavoriteUseCase)
+```kotlin
+// ✅ feature/novel/data/repository/VisualNovelRepositoryImpl.kt (bound to VisualNovelRepository automatically)
+@Single
+class VisualNovelRepositoryImpl(private val service: NovelService) : VisualNovelRepository
+```
 
-    // presentation
-    viewModelOf(::NovelDetailViewModel)      // novelId: String comes from parametersOf
-}
+```kotlin
+// ✅ feature/novel/presentation/NovelDetailViewModel.kt
+@KoinViewModel
+class NovelDetailViewModel(
+    @InjectedParam private val novelId: String, // comes from parametersOf
+    private val getDetails: GetVisualNovelDetailsUseCase,
+) : ViewModel()
 ```
 
 ```kotlin
 // ✅ common/di/CommonModule.kt
-val commonModule = module {
-    single { appJson }
-    single { createHttpClient(get()) }
-    single<DispatcherProvider> { DefaultDispatcherProvider() }
-    single<DataStore<Preferences>> {
-        PreferenceDataStoreFactory.create {
-            androidContext().preferencesDataStoreFile("settings")
-        }
-    }
+@Module
+@ComponentScan("com.zc.vndb.common")
+class CommonModule {
+    @Single
+    fun json(): Json = appJson
+
+    @Single
+    fun settingsDataStore(context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create { context.preferencesDataStoreFile("settings") }
 }
 ```
 
@@ -462,7 +468,7 @@ fun NovelDetailRoute(
 class KoinModulesTest {
     @Test
     fun `all modules resolve`() {
-        appModule.verify(extraTypes = listOf(String::class, Context::class))
+        AppModule().module().verify(extraTypes = listOf(String::class, Context::class))
     }
 }
 ```

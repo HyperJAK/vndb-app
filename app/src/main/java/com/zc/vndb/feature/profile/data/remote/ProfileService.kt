@@ -13,8 +13,10 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
+import org.koin.core.annotation.Single
 
 /** Account endpoints. A [token] is sent as `Authorization: Token …`, so private data is included. */
+@Single
 class ProfileService(private val client: HttpClient) {
 
     suspend fun user(userId: String): Map<String, UserDTO?> = client.get("user") {

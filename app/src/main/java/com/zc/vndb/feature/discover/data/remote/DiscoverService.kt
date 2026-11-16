@@ -9,8 +9,10 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import org.koin.core.annotation.Single
 
 /** VNDB Kana endpoints used by Discover. Returns DTOs only; no mapping here. */
+@Single
 class DiscoverService(private val client: HttpClient) {
 
     suspend fun queryNovels(query: QueryDTO): VisualNovelPageDTO = client.post(

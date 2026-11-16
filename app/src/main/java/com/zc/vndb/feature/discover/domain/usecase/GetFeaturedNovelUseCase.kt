@@ -10,11 +10,13 @@ import com.zc.vndb.feature.discover.domain.repository.DiscoverRepository
 import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import org.koin.core.annotation.Factory
 
 /**
  * Picks the "VN of the Week" from the top-rated [pool]. The pick depends only on the current
  * week (Monday-based, UTC), so it is the same for every user and changes once a week.
  */
+@Factory
 class GetFeaturedNovelUseCase(
     private val repository: DiscoverRepository,
     private val clock: Clock,

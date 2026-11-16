@@ -33,12 +33,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.KoinViewModel
 
 /**
  * Follows the stored session: a guest sees the log-in prompt, a signed-in user their labels and
  * the entries of the selected one. Each label's entries load the first time it is selected and are
  * kept; a token VNDB rejects signs the user out (the repository clears it) with a message.
  */
+@KoinViewModel
 class ProfileViewModel(
     observeSession: ObserveSessionUseCase,
     private val getProfile: GetProfileUseCase,

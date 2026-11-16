@@ -12,7 +12,7 @@ class KoinModulesTest {
     @OptIn(KoinExperimentalAPI::class)
     @Test
     fun `all modules resolve`() {
-        appModule.verify(
+        AppModule().module().verify(
             extraTypes = listOf(
                 HttpClient::class,
                 HttpClientEngine::class,

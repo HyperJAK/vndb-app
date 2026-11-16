@@ -13,8 +13,10 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import org.koin.core.annotation.Single
 
 /** One method per section of the page; the queries come from `DetailQueryDomainMapper`. */
+@Single
 class DetailService(private val client: HttpClient) {
 
     suspend fun queryNovel(query: QueryDTO): DetailNovelPageDTO = post("vn", query)

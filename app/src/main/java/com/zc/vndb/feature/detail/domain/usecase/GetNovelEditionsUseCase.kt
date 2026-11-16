@@ -3,11 +3,13 @@ package com.zc.vndb.feature.detail.domain.usecase
 import com.zc.vndb.feature.detail.domain.model.AgeRange
 import com.zc.vndb.feature.detail.domain.model.NovelEditions
 import com.zc.vndb.feature.detail.domain.repository.DetailRepository
+import org.koin.core.annotation.Factory
 
 /**
  * A short edition list: the earliest official, non-patch release on each platform (up to 6),
  * plus the age-rating range across all official releases.
  */
+@Factory
 class GetNovelEditionsUseCase(private val repository: DetailRepository) {
 
     suspend operator fun invoke(novelId: String): Result<NovelEditions> =

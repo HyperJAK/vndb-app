@@ -55,6 +55,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.InjectedParam
+import org.koin.core.annotation.KoinViewModel
 
 /**
  * Only the Overview fields load on open. Every other section loads the first time it is needed
@@ -62,8 +64,9 @@ import kotlinx.coroutines.launch
  * The spoiler level and the screenshot toggles only re-filter data that is already loaded.
  */
 @Suppress("TooManyFunctions") // One small loader per lazily loaded section keeps each request isolated.
+@KoinViewModel
 class DetailViewModel(
-    private val novelId: String,
+    @InjectedParam private val novelId: String,
     private val getNovelDetail: GetNovelDetailUseCase,
     private val getNovelEditions: GetNovelEditionsUseCase,
     private val getNovelCast: GetNovelCastUseCase,

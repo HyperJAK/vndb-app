@@ -17,7 +17,9 @@ import com.zc.vndb.feature.discover.domain.model.DiscoverNovel
 import com.zc.vndb.feature.discover.domain.model.NovelDetails
 import com.zc.vndb.feature.discover.domain.model.Release
 import com.zc.vndb.feature.discover.domain.repository.DiscoverRepository
+import org.koin.core.annotation.Single
 
+@Single
 class DiscoverRepositoryImpl(private val service: DiscoverService) : DiscoverRepository {
 
     override suspend fun getTopRatedNovels(limit: Int): Result<List<DiscoverNovel>> = safeApiCall {

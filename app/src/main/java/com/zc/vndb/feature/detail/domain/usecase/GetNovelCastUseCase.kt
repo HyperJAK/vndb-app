@@ -4,11 +4,13 @@ import com.zc.vndb.feature.detail.domain.model.NovelCast
 import com.zc.vndb.feature.detail.domain.repository.DetailRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import org.koin.core.annotation.Factory
 
 /**
  * Characters (all roles, main first, with voice actors) and staff. Credits load alongside and are
  * optional: if they fail, characters still show, without voice actors or staff.
  */
+@Factory
 class GetNovelCastUseCase(private val repository: DetailRepository) {
 
     suspend operator fun invoke(novelId: String): Result<NovelCast> = coroutineScope {

@@ -6,7 +6,9 @@ import com.zc.vndb.common.domain.model.Session
 import com.zc.vndb.common.domain.repository.SessionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.koin.core.annotation.Single
 
+@Single
 class SessionRepositoryImpl(private val local: SessionLocalDataSource) : SessionRepository {
 
     override val session: Flow<Session?> = local.session.map { it?.toDomain() }

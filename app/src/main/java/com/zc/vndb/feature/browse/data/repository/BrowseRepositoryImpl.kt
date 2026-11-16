@@ -10,7 +10,9 @@ import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowsePage
 import com.zc.vndb.feature.browse.domain.model.TagInfo
 import com.zc.vndb.feature.browse.domain.repository.BrowseRepository
+import org.koin.core.annotation.Single
 
+@Single
 class BrowseRepositoryImpl(private val service: BrowseService) : BrowseRepository {
 
     override suspend fun getTag(id: String): Result<TagInfo> = safeApiCall {

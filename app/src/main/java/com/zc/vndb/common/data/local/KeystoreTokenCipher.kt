@@ -9,11 +9,13 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import kotlin.io.encoding.Base64
+import org.koin.core.annotation.Single
 
 /**
  * AES-256-GCM with a key that lives in the Android Keystore and never leaves it. The stored value
  * is Base64(IV + ciphertext).
  */
+@Single
 class KeystoreTokenCipher : TokenCipher {
 
     override fun encrypt(plain: String): String {

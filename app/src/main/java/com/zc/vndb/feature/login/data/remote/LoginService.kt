@@ -6,7 +6,9 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
+import org.koin.core.annotation.Single
 
+@Single
 class LoginService(private val client: HttpClient) {
 
     /** Validates [token]; a 401 means VNDB rejected it. */

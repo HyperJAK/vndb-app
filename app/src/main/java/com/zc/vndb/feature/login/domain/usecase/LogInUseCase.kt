@@ -3,12 +3,14 @@ package com.zc.vndb.feature.login.domain.usecase
 import com.zc.vndb.common.domain.model.Session
 import com.zc.vndb.feature.login.domain.model.InvalidTokenFormatException
 import com.zc.vndb.feature.login.domain.repository.LoginRepository
+import org.koin.core.annotation.Factory
 
 /**
  * Cleans up a pasted token (spaces, case, dashes) and checks its shape before asking VNDB.
  * Tokens are 32 lowercase z-base-32 characters, usually shown as
  * `xxxx-xxxxx-xxxxx-xxxx-xxxxx-xxxxx-xxxx`.
  */
+@Factory
 class LogInUseCase(private val repository: LoginRepository) {
 
     suspend operator fun invoke(rawToken: String): Result<Session> {
