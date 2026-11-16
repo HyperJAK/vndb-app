@@ -27,11 +27,16 @@ fun NovelDetail.toHeroUIModel(ageRange: AgeRange?): DetailHeroUIModel = DetailHe
         ?.let { UiText.StringValue(it.take(MAX_DEVELOPERS).joinToString(" / ")) },
     releasedLabel = releaseDate.toIsoLabel(),
     lengthLabel = length?.toLabel(),
-    averagePlayLabel = averagePlayMinutes?.let {
-        UiText.StringResource(
-            R.string.detail_average_hours,
-            listOf((it / MINUTES_PER_HOUR).roundToInt().toString()),
-        )
+    averagePlayLabel = averagePlayMinutes?.let { minutes ->
+        val hours = (minutes / MINUTES_PER_HOUR).roundToInt().toString()
+        if (lengthVotes > 0) {
+            UiText.StringResource(
+                R.string.detail_average_hours_votes,
+                listOf(hours, "%,d".format(lengthVotes)),
+            )
+        } else {
+            UiText.StringResource(R.string.detail_average_hours, listOf(hours))
+        }
     },
     ageLabel = ageRange?.toLabel(),
     tags = tags

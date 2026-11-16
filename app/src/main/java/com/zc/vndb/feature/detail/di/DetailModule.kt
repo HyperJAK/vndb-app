@@ -3,9 +3,13 @@ package com.zc.vndb.feature.detail.di
 import com.zc.vndb.feature.detail.data.remote.DetailService
 import com.zc.vndb.feature.detail.data.repository.DetailRepositoryImpl
 import com.zc.vndb.feature.detail.domain.repository.DetailRepository
-import com.zc.vndb.feature.detail.domain.usecase.GetNovelCharactersUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelCastUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelCoversUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelDetailUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelEditionsUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelQuotesUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelReleasesUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelScreenshotsUseCase
 import com.zc.vndb.feature.detail.presentation.DetailViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -20,8 +24,12 @@ val detailModule = module {
 
     // domain
     factoryOf(::GetNovelDetailUseCase)
-    factoryOf(::GetNovelCharactersUseCase)
     factoryOf(::GetNovelEditionsUseCase)
+    factoryOf(::GetNovelCastUseCase)
+    factoryOf(::GetNovelScreenshotsUseCase)
+    factoryOf(::GetNovelCoversUseCase)
+    factoryOf(::GetNovelReleasesUseCase)
+    factoryOf(::GetNovelQuotesUseCase)
 
     // presentation
     viewModelOf(::DetailViewModel) // novelId comes from parametersOf

@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.browse.presentation.component.selectablechip
+package com.zc.vndb.common.ui.component.selectablechip
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

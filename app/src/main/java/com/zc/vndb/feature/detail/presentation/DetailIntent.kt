@@ -1,6 +1,9 @@
 package com.zc.vndb.feature.detail.presentation
 
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.feature.detail.presentation.model.ContentFilter
+import com.zc.vndb.feature.detail.presentation.model.DetailSection
+import com.zc.vndb.feature.detail.presentation.model.DetailTab
 
 sealed interface DetailIntent {
     data object Load : DetailIntent
@@ -15,4 +18,17 @@ sealed interface DetailIntent {
     data class CharacterClicked(val id: String) : DetailIntent
     data class TagClicked(val id: String) : DetailIntent
     data class EditionClicked(val releaseId: String) : DetailIntent
+
+    data class TabSelected(val tab: DetailTab) : DetailIntent
+
+    /** A section's tab was opened or its preview scrolled into view; loads it once. */
+    data class SectionNeeded(val section: DetailSection) : DetailIntent
+    data class SectionRetried(val section: DetailSection) : DetailIntent
+    data class LoadMoreClicked(val section: DetailSection) : DetailIntent
+
+    data class ContentFilterToggled(val filter: ContentFilter) : DetailIntent
+    data class ScreenshotClicked(val index: Int) : DetailIntent
+    data class CoverClicked(val index: Int) : DetailIntent
+    data object ViewerDismissed : DetailIntent
+    data object ReviewsClicked : DetailIntent
 }

@@ -64,7 +64,9 @@ class DetailRepositoryImplTest {
         assertEquals(NovelLength.Long, novel.length)
         assertEquals(RelationType.ParentStory, novel.relations.single().relation)
         assertEquals("v2002", novel.relations.single().id)
-        assertEquals(4, novel.voiceActors.size)
+        assertEquals(listOf("ja", "en"), novel.titles.map { it.languageCode })
+        assertEquals(listOf("SG0"), novel.aliases)
+        assertEquals(412, novel.lengthVotes)
         assertTrue(novel.links.isNotEmpty())
     }
 

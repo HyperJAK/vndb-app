@@ -35,7 +35,8 @@ object DetailSamples {
         links: List<ExternalLink> = emptyList(),
         description: String? = "Hello",
         cover: Cover? = Cover(url = "full", thumbnailUrl = "thumb", sexual = 0.0, violence = 0.0),
-        voiceActors: Map<String, String> = emptyMap(),
+        titles: List<NovelTitle> = emptyList(),
+        aliases: List<String> = emptyList(),
     ) = NovelDetail(
         id = id,
         title = "STEINS;GATE",
@@ -52,7 +53,9 @@ object DetailSamples {
         tags = tags,
         links = links,
         relations = relations,
-        voiceActors = voiceActors,
+        titles = titles,
+        aliases = aliases,
+        lengthVotes = 1021,
     )
 
     fun relation(
@@ -98,5 +101,59 @@ object DetailSamples {
         isOfficial = official,
         isPatch = patch,
         minAge = minAge,
+    )
+
+    fun credits(
+        staff: List<StaffCredit> = emptyList(),
+        editions: List<StaffEdition> = emptyList(),
+        voiceActors: Map<String, String> = emptyMap(),
+    ) = NovelCredits(staff = staff, editions = editions, voiceActors = voiceActors)
+
+    fun staff(id: String, role: StaffCreditRole, editionId: Int? = null, note: String? = null) =
+        StaffCredit(
+            staffId = id,
+            name = "Staff $id",
+            role = role,
+            note = note,
+            editionId = editionId,
+        )
+
+    fun screenshot(
+        url: String,
+        release: String? = "r1",
+        sexual: Double = 0.0,
+        violence: Double = 0.0,
+    ) = Screenshot(
+        image = Cover(url = url, thumbnailUrl = "$url-t", sexual = sexual, violence = violence),
+        releaseId = release,
+        releaseTitle = release?.let { "Release $it" },
+    )
+
+    fun coverArt(url: String, release: String = "r1", packageFront: Boolean = true) = CoverArt(
+        image = Cover(url = url, thumbnailUrl = "$url-t", sexual = 0.0, violence = 0.0),
+        releaseId = release,
+        releaseTitle = "Release $release",
+        isPackageFront = packageFront,
+    )
+
+    fun releaseSummary(id: String, languages: List<String> = listOf("ja")) = ReleaseSummary(
+        id = id,
+        title = "Release $id",
+        releaseDate = date(2010),
+        platforms = listOf("win"),
+        family = PlatformFamily.Pc,
+        languageCodes = languages,
+        isOfficial = true,
+        isPatch = false,
+        isFreeware = false,
+        minAge = 18,
+    )
+
+    fun quote(id: String, score: Int = 10) = Quote(
+        id = id,
+        text = "Quote $id",
+        score = score,
+        characterId = "c1",
+        characterName = "Character c1",
     )
 }

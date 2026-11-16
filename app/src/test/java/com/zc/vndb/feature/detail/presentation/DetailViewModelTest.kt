@@ -9,9 +9,18 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.detail.domain.model.DetailSamples
 import com.zc.vndb.feature.detail.domain.repository.FakeDetailRepository
-import com.zc.vndb.feature.detail.domain.usecase.GetNovelCharactersUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelCastUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelCoversUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelDetailUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelEditionsUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelQuotesUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelReleasesUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelScreenshotsUseCase
+import com.zc.vndb.feature.detail.presentation.model.ContentFilter
+import com.zc.vndb.feature.detail.presentation.model.DetailSection
+import com.zc.vndb.feature.detail.presentation.model.DetailTab
+import com.zc.vndb.feature.detail.presentation.model.SectionState
+import com.zc.vndb.feature.detail.presentation.model.dataOrNull
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -32,55 +41,98 @@ class DetailViewModelTest {
             description = "Intro. [spoiler]Twist[/spoiler]",
             tags = listOf(DetailSamples.tag("Visible"), DetailSamples.tag("Hidden", spoiler = 2)),
             relations = listOf(DetailSamples.relation("v17102")),
-            voiceActors = mapOf("c1" to "Miyano Mamoru"),
         )
+        credits = DetailSamples.credits(voiceActors = mapOf("c1" to "Miyano Mamoru"))
         characters = listOf(
             DetailSamples.character("c1", CharacterRole.Main),
             DetailSamples.character("c2", CharacterRole.Primary, spoiler = 1),
         )
         editions = listOf(DetailSamples.edition("r1", minAge = 18))
+        screenshots = listOf(
+            DetailSamples.screenshot("safe"),
+            DetailSamples.screenshot("explicit", sexual = 2.0),
+        )
+        releases = (1..60).map { DetailSamples.releaseSummary("r$it") }
+        quotes = (1..30).map { DetailSamples.quote("q$it") }
     }
 
     private fun createViewModel() = DetailViewModel(
         novelId = "v2002",
         getNovelDetail = GetNovelDetailUseCase(repository),
-        getNovelCharacters = GetNovelCharactersUseCase(repository),
         getNovelEditions = GetNovelEditionsUseCase(repository),
+        getNovelCast = GetNovelCastUseCase(repository),
+        getNovelScreenshots = GetNovelScreenshotsUseCase(repository),
+        getNovelCovers = GetNovelCoversUseCase(repository),
+        getNovelReleases = GetNovelReleasesUseCase(repository),
+        getNovelQuotes = GetNovelQuotesUseCase(repository),
+    )
+
+    private fun DetailViewModel.need(section: DetailSection) = onIntent(
+        DetailIntent.SectionNeeded(section),
     )
 
     @Test
-    fun `loads every section`() = runTest {
+    fun `opening the page only loads the overview`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         val state = viewModel.state.value
+        assertEquals(listOf("novel"), repository.calls)
         assertFalse(state.isLoading)
         assertNull(state.error)
         assertEquals(UiText.StringValue("STEINS;GATE"), state.hero?.title)
+        assertNull(state.hero?.ageLabel)
+        assertNotNull(state.score)
+        assertEquals("https://vndb.org/v2002", state.links.first().url)
+        assertEquals(listOf("v17102"), state.relations.map { it.id })
+        assertEquals(SectionState.Idle, state.editions)
+        assertEquals(SectionState.Idle, state.cast)
+    }
+
+    @Test
+    fun `a section loads once, when first needed, and editions bring the age chip`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.need(DetailSection.Editions)
+        viewModel.need(DetailSection.Editions)
+        advanceUntilIdle()
+        viewModel.need(DetailSection.Editions)
+        advanceUntilIdle()
+
+        assertEquals(listOf("novel", "editions"), repository.calls)
+        val state = viewModel.state.value
+        assertEquals(listOf("r1-win"), state.editions.dataOrNull?.map { it.key })
         assertEquals(
             UiText.StringResource(R.string.detail_age_min, listOf(18)),
             state.hero?.ageLabel,
         )
-        assertNotNull(state.score)
-        assertEquals("https://vndb.org/v2002", state.links.first().url)
-        assertEquals(listOf("r1-win"), state.editions.map { it.key })
-        assertEquals(listOf("v17102"), state.relations.map { it.id })
-        assertEquals(
-            UiText.StringResource(R.string.detail_cv, listOf("Miyano Mamoru")),
-            state.characters.first().voiceActorLabel,
-        )
     }
 
     @Test
-    fun `spoiler filter hides spoiler content until raised`() = runTest {
+    fun `cast loads with voice actors and follows the spoiler filter`() = runTest {
         val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.need(DetailSection.Cast)
         advanceUntilIdle()
 
         with(viewModel.state.value) {
             assertEquals(UiText.StringValue("Intro."), synopsis)
-            assertEquals(listOf("c1"), characters.map { it.id })
-            assertNotNull(hiddenCharactersLabel)
+            val cast = checkNotNull(this.cast.dataOrNull)
+            assertEquals(listOf("c1"), cast.preview.map { it.id })
+            assertEquals(
+                UiText.StringResource(R.string.detail_cv, listOf("Miyano Mamoru")),
+                cast.preview.first().voiceActorLabel,
+            )
+            assertNotNull(cast.hiddenLabel)
             assertNotNull(hiddenTagsLabel)
+            assertEquals(
+                UiText.StringResource(
+                    R.string.detail_tab_with_count,
+                    listOf(UiText.StringResource(R.string.detail_tab_cast), 2),
+                ),
+                tabs.single { it.tab == DetailTab.Cast }.label,
+            )
         }
 
         viewModel.onIntent(DetailIntent.SpoilerLevelSelected(SpoilerLevel.Major))
@@ -88,24 +140,86 @@ class DetailViewModelTest {
         with(viewModel.state.value) {
             assertEquals(SpoilerLevel.Major, spoilerLevel)
             assertEquals(UiText.StringValue("Intro. Twist"), synopsis)
-            assertEquals(listOf("c1", "c2"), characters.map { it.id })
-            assertNull(hiddenCharactersLabel)
+            assertEquals(listOf("c1", "c2"), cast.dataOrNull?.preview?.map { it.id })
+            assertNull(cast.dataOrNull?.hiddenLabel)
             assertNull(hiddenTagsLabel)
         }
     }
 
     @Test
-    fun `failed characters and editions only hide their sections`() = runTest {
-        repository.charactersError = DomainError.Server
-        repository.editionsError = DomainError.Timeout
+    fun `a failed section keeps the page and retries on its own`() = runTest {
+        repository.screenshotsError = DomainError.Server
         val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.need(DetailSection.Screenshots)
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.error)
+        assertTrue(viewModel.state.value.screenshots is SectionState.Failed)
+
+        repository.screenshotsError = null
+        viewModel.onIntent(DetailIntent.SectionRetried(DetailSection.Screenshots))
+        advanceUntilIdle()
+        assertEquals(1, viewModel.state.value.screenshots.dataOrNull?.visibleCount)
+    }
+
+    @Test
+    fun `content toggles re-filter loaded screenshots and the viewer`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.need(DetailSection.Screenshots)
+        advanceUntilIdle()
+
+        viewModel.onIntent(DetailIntent.ContentFilterToggled(ContentFilter.Explicit))
+        assertEquals(2, viewModel.state.value.screenshots.dataOrNull?.visibleCount)
+        assertEquals(listOf("novel", "screenshots"), repository.calls)
+
+        viewModel.onIntent(DetailIntent.ScreenshotClicked(1))
+        assertEquals("explicit", viewModel.state.value.viewer?.images?.get(1)?.url)
+        viewModel.onIntent(DetailIntent.ViewerDismissed)
+        assertNull(viewModel.state.value.viewer)
+    }
+
+    @Test
+    fun `releases and quotes page on load more`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.need(DetailSection.Releases)
+        viewModel.need(DetailSection.Quotes)
+        advanceUntilIdle()
+
+        assertEquals(true, viewModel.state.value.releases.dataOrNull?.hasMore)
+        assertEquals(25, viewModel.state.value.quotes.dataOrNull?.items?.size)
+
+        viewModel.onIntent(DetailIntent.LoadMoreClicked(DetailSection.Releases))
+        viewModel.onIntent(DetailIntent.LoadMoreClicked(DetailSection.Quotes))
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertNull(state.error)
-        assertNotNull(state.hero)
-        assertTrue(state.characters.isEmpty() && state.editions.isEmpty())
-        assertNull(state.hero?.ageLabel)
+        assertEquals(60, state.releases.dataOrNull?.items?.sumOf { it.releases.size })
+        assertEquals(false, state.releases.dataOrNull?.hasMore)
+        assertEquals(30, state.quotes.dataOrNull?.items?.size)
+        assertEquals(
+            listOf("novel", "releases:1", "quotes:1", "releases:2", "quotes:2"),
+            repository.calls,
+        )
+    }
+
+    @Test
+    fun `a failed next page keeps the loaded quotes`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.need(DetailSection.Quotes)
+        advanceUntilIdle()
+
+        repository.quotesError = DomainError.Timeout
+        viewModel.onIntent(DetailIntent.LoadMoreClicked(DetailSection.Quotes))
+        advanceUntilIdle()
+
+        val quotes = checkNotNull(viewModel.state.value.quotes.dataOrNull)
+        assertEquals(25, quotes.items.size)
+        assertTrue(quotes.loadMoreFailed)
+        assertFalse(quotes.isLoadingMore)
     }
 
     @Test
@@ -156,6 +270,8 @@ class DetailViewModelTest {
             assertEquals(DetailEffect.NavigateToTag("g249"), awaitItem())
             viewModel.onIntent(DetailIntent.EditionClicked("r7668"))
             assertEquals(DetailEffect.NavigateToRelease("r7668"), awaitItem())
+            viewModel.onIntent(DetailIntent.ReviewsClicked)
+            assertEquals(DetailEffect.OpenUrl("https://vndb.org/v2002/reviews"), awaitItem())
         }
     }
 }

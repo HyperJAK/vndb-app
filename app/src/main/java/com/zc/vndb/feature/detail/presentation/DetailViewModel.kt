@@ -3,16 +3,23 @@ package com.zc.vndb.feature.detail.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zc.vndb.R
-import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.common.ui.text.UiText
-import com.zc.vndb.feature.detail.domain.model.NovelCharacter
+import com.zc.vndb.feature.detail.domain.model.CoverArt
+import com.zc.vndb.feature.detail.domain.model.NovelCast
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
 import com.zc.vndb.feature.detail.domain.model.NovelEditions
-import com.zc.vndb.feature.detail.domain.usecase.GetNovelCharactersUseCase
+import com.zc.vndb.feature.detail.domain.model.Quote
+import com.zc.vndb.feature.detail.domain.model.ReleaseSummary
+import com.zc.vndb.feature.detail.domain.model.ResultPage
+import com.zc.vndb.feature.detail.domain.model.Screenshot
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelCastUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelCoversUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelDetailUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelEditionsUseCase
-import com.zc.vndb.feature.detail.presentation.component.charactercard.mapper.toCardUIModel
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelQuotesUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelReleasesUseCase
+import com.zc.vndb.feature.detail.domain.usecase.GetNovelScreenshotsUseCase
 import com.zc.vndb.feature.detail.presentation.component.detailhero.mapper.toHeroUIModel
 import com.zc.vndb.feature.detail.presentation.component.editionrow.mapper.toRowUIModel
 import com.zc.vndb.feature.detail.presentation.component.relationcard.mapper.toCardUIModel
@@ -20,12 +27,26 @@ import com.zc.vndb.feature.detail.presentation.component.scorecard.mapper.toScor
 import com.zc.vndb.feature.detail.presentation.component.taggroups.mapper.toContentNotes
 import com.zc.vndb.feature.detail.presentation.component.taggroups.mapper.toHiddenTagsLabel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.mapper.toTagGroups
+import com.zc.vndb.feature.detail.presentation.mapper.reviewsUrl
+import com.zc.vndb.feature.detail.presentation.mapper.toAlsoKnownAs
+import com.zc.vndb.feature.detail.presentation.mapper.toCastUIModel
+import com.zc.vndb.feature.detail.presentation.mapper.toCoverUIModels
 import com.zc.vndb.feature.detail.presentation.mapper.toLinks
+import com.zc.vndb.feature.detail.presentation.mapper.toMediaUIModel
+import com.zc.vndb.feature.detail.presentation.mapper.toReleaseGroups
 import com.zc.vndb.feature.detail.presentation.mapper.toSynopsis
+import com.zc.vndb.feature.detail.presentation.mapper.toUIModel
+import com.zc.vndb.feature.detail.presentation.mapper.toViewer
 import com.zc.vndb.feature.detail.presentation.mapper.vndbUrl
+import com.zc.vndb.feature.detail.presentation.model.ContentFilter
+import com.zc.vndb.feature.detail.presentation.model.DetailSection
+import com.zc.vndb.feature.detail.presentation.model.DetailTab
+import com.zc.vndb.feature.detail.presentation.model.DetailTabUIModel
+import com.zc.vndb.feature.detail.presentation.model.PagedListUIState
+import com.zc.vndb.feature.detail.presentation.model.SectionState
+import com.zc.vndb.feature.detail.presentation.model.dataOrNull
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,33 +56,56 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * Only the Overview fields load on open. Every other section loads the first time it is needed
+ * (its tab opens, or its Overview preview scrolls into view), is cached here, and has its own Retry.
+ * The spoiler level and the screenshot toggles only re-filter data that is already loaded.
+ */
+@Suppress("TooManyFunctions") // One small loader per lazily loaded section keeps each request isolated.
 class DetailViewModel(
     private val novelId: String,
     private val getNovelDetail: GetNovelDetailUseCase,
-    private val getNovelCharacters: GetNovelCharactersUseCase,
     private val getNovelEditions: GetNovelEditionsUseCase,
+    private val getNovelCast: GetNovelCastUseCase,
+    private val getNovelScreenshots: GetNovelScreenshotsUseCase,
+    private val getNovelCovers: GetNovelCoversUseCase,
+    private val getNovelReleases: GetNovelReleasesUseCase,
+    private val getNovelQuotes: GetNovelQuotesUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(DetailState(novelId = novelId))
+    private val _state = MutableStateFlow(
+        DetailState(novelId = novelId).let { it.copy(tabs = tabsFor(it)) },
+    )
     val state: StateFlow<DetailState> = _state.asStateFlow()
 
     private val _effect = Channel<DetailEffect>(Channel.BUFFERED)
     val effect: Flow<DetailEffect> = _effect.receiveAsFlow()
 
-    // Domain data kept to re-map when the spoiler level changes.
+    // Loaded domain data, kept to re-map when filters change.
     private var novel: NovelDetail? = null
-    private var characters: List<NovelCharacter> = emptyList()
-    private var loadJob: Job? = null
+    private var editions: NovelEditions? = null
+    private var cast: NovelCast? = null
+    private var screenshots: List<Screenshot> = emptyList()
+    private var covers: List<CoverArt> = emptyList()
+    private var releases: List<ReleaseSummary> = emptyList()
+    private var quotes: List<Quote> = emptyList()
+    private var contentFilters: Set<ContentFilter> = ContentFilter.Default
+
+    private var novelJob: Job? = null
+    private val sectionJobs = mutableMapOf<DetailSection, Job>()
+    private val nextPage = mutableMapOf(
+        DetailSection.Releases to FIRST_PAGE,
+        DetailSection.Quotes to FIRST_PAGE,
+    )
 
     init {
         onIntent(DetailIntent.Load)
     }
 
+    @Suppress("CyclomaticComplexMethod") // A flat dispatch over the screen's intents.
     fun onIntent(intent: DetailIntent) {
         when (intent) {
-            DetailIntent.Load,
-            DetailIntent.Retry,
-            -> load()
+            DetailIntent.Load, DetailIntent.Retry -> loadNovel()
 
             DetailIntent.BackClicked -> sendEffect(DetailEffect.NavigateBack)
 
@@ -71,11 +115,13 @@ class DetailViewModel(
 
             DetailIntent.OpenInBrowserClicked -> sendEffect(DetailEffect.OpenUrl(vndbUrl(novelId)))
 
+            DetailIntent.ReviewsClicked -> sendEffect(DetailEffect.OpenUrl(reviewsUrl(novelId)))
+
             is DetailIntent.LinkClicked -> sendEffect(DetailEffect.OpenUrl(intent.url))
 
             is DetailIntent.SpoilerLevelSelected -> {
                 _state.update { it.copy(spoilerLevel = intent.level) }
-                render()
+                renderSpoilerSections()
             }
 
             DetailIntent.SynopsisToggled -> _state.update {
@@ -95,88 +141,324 @@ class DetailViewModel(
             is DetailIntent.EditionClicked -> sendEffect(
                 DetailEffect.NavigateToRelease(intent.releaseId),
             )
-        }
-    }
 
-    /**
-     * The VN and its editions load in parallel; characters follow, since their voice actors come
-     * from the VN. Only the VN is required: failed characters or editions just hide their section.
-     */
-    private fun load() {
-        loadJob?.cancel()
-        _state.update { it.copy(isLoading = true, error = null) }
-        loadJob = viewModelScope.launch {
-            val editions = async { getNovelEditions(novelId).getOrNull() }
-            val loaded = getNovelDetail(novelId).getOrElse { error ->
-                editions.cancel()
-                _state.update { it.copy(isLoading = false, error = error.toErrorUIModel()) }
-                return@launch
+            is DetailIntent.TabSelected -> _state.update { it.copy(selectedTab = intent.tab) }
+
+            is DetailIntent.SectionNeeded -> if (sectionState(
+                    intent.section,
+                ) == SectionState.Idle
+            ) {
+                loadSection(intent.section)
             }
-            novel = loaded
-            characters = getNovelCharacters(novelId, loaded.voiceActors).getOrNull().orEmpty()
-            showStatic(loaded, editions.await())
-            render()
-            _state.update { it.copy(isLoading = false) }
+
+            is DetailIntent.SectionRetried -> loadSection(intent.section)
+
+            is DetailIntent.LoadMoreClicked -> loadNextPage(intent.section)
+
+            is DetailIntent.ContentFilterToggled -> toggleContentFilter(intent.filter)
+
+            is DetailIntent.ScreenshotClicked ->
+                _state.update {
+                    it.copy(
+                        viewer = screenshots.toViewer(contentFilters, intent.index),
+                    )
+                }
+
+            is DetailIntent.CoverClicked -> _state.update {
+                it.copy(
+                    viewer = covers.toViewer(intent.index),
+                )
+            }
+
+            DetailIntent.ViewerDismissed -> _state.update { it.copy(viewer = null) }
         }
     }
 
-    /** Sections that do not depend on the spoiler level. */
-    private fun showStatic(novel: NovelDetail, editions: NovelEditions?) {
-        _state.update {
-            it.copy(
-                hero = novel.toHeroUIModel(editions?.ageRange),
-                score = novel.toScoreUIModel(),
-                links = novel.toLinks(),
-                contentNotes = novel.toContentNotes(),
-                editions = editions?.editions.orEmpty().map { edition ->
-                    edition.toRowUIModel()
-                }.toImmutableList(),
-                relations = novel.relations.map { relation ->
-                    relation.toCardUIModel()
-                }.toImmutableList(),
+    private fun loadNovel() {
+        novelJob?.cancel()
+        _state.update { it.copy(isLoading = true, error = null) }
+        novelJob = viewModelScope.launch {
+            getNovelDetail(novelId)
+                .onSuccess { loaded ->
+                    novel = loaded
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            hero = loaded.toHeroUIModel(editions?.ageRange),
+                            score = loaded.toScoreUIModel(),
+                            links = loaded.toLinks(),
+                            alsoKnownAs = loaded.toAlsoKnownAs(),
+                            contentNotes = loaded.toContentNotes(),
+                            relations = loaded.relations.map { relation ->
+                                relation.toCardUIModel()
+                            }.toImmutableList(),
+                        )
+                    }
+                    renderSpoilerSections()
+                }
+                .onFailure { error ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = error.toErrorUIModel(),
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun loadSection(section: DetailSection) {
+        if (sectionJobs[section]?.isActive == true) return
+        setSection(section, SectionState.Loading)
+        sectionJobs[section] = viewModelScope.launch {
+            when (section) {
+                DetailSection.Editions -> getNovelEditions(
+                    novelId,
+                ).fold(::onEditionsLoaded) { fail(section, it) }
+
+                DetailSection.Cast -> getNovelCast(
+                    novelId,
+                ).fold(::onCastLoaded) { fail(section, it) }
+
+                DetailSection.Screenshots -> getNovelScreenshots(
+                    novelId,
+                ).fold(::onScreenshotsLoaded) { fail(section, it) }
+
+                DetailSection.Covers -> getNovelCovers(
+                    novelId,
+                ).fold(::onCoversLoaded) { fail(section, it) }
+
+                DetailSection.Releases -> {
+                    nextPage[section] = FIRST_PAGE
+                    getNovelReleases(
+                        novelId,
+                        FIRST_PAGE,
+                    ).fold({ onReleasesPage(it, isFirst = true) }) { fail(section, it) }
+                }
+
+                DetailSection.Quotes -> {
+                    nextPage[section] = FIRST_PAGE
+                    getNovelQuotes(
+                        novelId,
+                        FIRST_PAGE,
+                    ).fold({ onQuotesPage(it, isFirst = true) }) { fail(section, it) }
+                }
+            }
+        }
+    }
+
+    private fun onEditionsLoaded(loaded: NovelEditions) {
+        editions = loaded
+        _state.update { state ->
+            state.copy(
+                // The age chip pops in once the releases are known.
+                hero = novel?.toHeroUIModel(loaded.ageRange) ?: state.hero,
+                editions = SectionState.Loaded(
+                    loaded.editions.map { it.toRowUIModel() }.toImmutableList(),
+                ),
             )
         }
     }
 
-    /** Sections filtered by the spoiler level. */
-    private fun render() {
-        val current = novel ?: return
+    private fun onCastLoaded(loaded: NovelCast) {
+        cast = loaded
+        renderSpoilerSections()
+        refreshTabs()
+    }
+
+    private fun onScreenshotsLoaded(loaded: List<Screenshot>) {
+        screenshots = loaded
+        _state.update {
+            it.copy(
+                screenshots = SectionState.Loaded(loaded.toMediaUIModel(contentFilters)),
+            )
+        }
+        refreshTabs()
+    }
+
+    private fun onCoversLoaded(loaded: List<CoverArt>) {
+        covers = loaded
+        _state.update { it.copy(covers = SectionState.Loaded(loaded.toCoverUIModels())) }
+    }
+
+    private fun onReleasesPage(page: ResultPage<ReleaseSummary>, isFirst: Boolean) {
+        releases = if (isFirst) page.items else (releases + page.items).distinctBy { it.id }
+        nextPage[DetailSection.Releases] = nextPage.getValue(DetailSection.Releases) + 1
+        _state.update {
+            it.copy(
+                releases = SectionState.Loaded(
+                    PagedListUIState(releases.toReleaseGroups(), hasMore = page.hasMore),
+                ),
+            )
+        }
+        refreshTabs()
+    }
+
+    private fun onQuotesPage(page: ResultPage<Quote>, isFirst: Boolean) {
+        quotes = if (isFirst) page.items else (quotes + page.items).distinctBy { it.id }
+        nextPage[DetailSection.Quotes] = nextPage.getValue(DetailSection.Quotes) + 1
+        _state.update {
+            it.copy(
+                quotes = SectionState.Loaded(
+                    PagedListUIState(
+                        quotes.map { quote -> quote.toUIModel() }.toImmutableList(),
+                        hasMore = page.hasMore,
+                    ),
+                ),
+            )
+        }
+        refreshTabs()
+    }
+
+    /** Next page of Releases or Quotes; a failure keeps what is shown and offers "Load more" again. */
+    private fun loadNextPage(section: DetailSection) {
+        if (sectionJobs[section]?.isActive == true) return
+        val page = nextPage[section] ?: return
+        setLoadingMore(section, isLoading = true, failed = false)
+        sectionJobs[section] = viewModelScope.launch {
+            val result = when (section) {
+                DetailSection.Releases -> getNovelReleases(
+                    novelId,
+                    page,
+                ).map { onReleasesPage(it, isFirst = false) }
+
+                DetailSection.Quotes -> getNovelQuotes(
+                    novelId,
+                    page,
+                ).map { onQuotesPage(it, isFirst = false) }
+
+                else -> return@launch
+            }
+            result.onFailure { setLoadingMore(section, isLoading = false, failed = true) }
+        }
+    }
+
+    private fun toggleContentFilter(filter: ContentFilter) {
+        contentFilters =
+            if (filter in contentFilters) contentFilters - filter else contentFilters + filter
+        if (_state.value.screenshots is SectionState.Loaded) {
+            _state.update {
+                it.copy(
+                    screenshots = SectionState.Loaded(screenshots.toMediaUIModel(contentFilters)),
+                )
+            }
+        }
+    }
+
+    /** Overview sections and the cast that depend on the spoiler level. */
+    private fun renderSpoilerSections() {
         val level = _state.value.spoilerLevel
-        val visible = characters.filter { it.spoilerLevel <= level.maxLevel }
-        val hiddenCharacters = characters.size - visible.size
-        val mainCount = visible.count {
-            it.role == CharacterRole.Main ||
-                it.role == CharacterRole.Primary
-        }
-        _state.update {
-            it.copy(
-                synopsis = current.toSynopsis(level),
-                tagGroups = current.toTagGroups(level),
-                hiddenTagsLabel = current.toHiddenTagsLabel(level),
-                characters = visible.map { character ->
-                    character.toCardUIModel()
-                }.toImmutableList(),
-                mainCharactersLabel = mainCount.takeIf { count -> count > 0 }
-                    ?.let { count ->
-                        UiText.StringPlural(
-                            R.plurals.detail_main_characters,
-                            count,
-                            listOf(count),
-                        )
-                    },
-                hiddenCharactersLabel = hiddenCharacters.takeIf { count -> count > 0 }
-                    ?.let { count ->
-                        UiText.StringPlural(
-                            R.plurals.detail_hidden_by_spoiler,
-                            count,
-                            listOf(count),
-                        )
-                    },
+        _state.update { state ->
+            val current = novel
+            state.copy(
+                synopsis = current?.toSynopsis(level),
+                tagGroups = current?.toTagGroups(level) ?: state.tagGroups,
+                hiddenTagsLabel = current?.toHiddenTagsLabel(level),
+                cast = cast?.let { SectionState.Loaded(it.toCastUIModel(level)) } ?: state.cast,
             )
+        }
+    }
+
+    private fun refreshTabs() {
+        _state.update { it.copy(tabs = tabsFor(it)) }
+    }
+
+    /** Tab labels, with counts once each tab's data is known. */
+    private fun tabsFor(state: DetailState) = DetailTab.entries.map { tab ->
+        val count = when (tab) {
+            DetailTab.Overview -> null
+
+            DetailTab.Media -> state.screenshots.dataOrNull?.totalCount
+
+            DetailTab.Cast -> state.cast.dataOrNull?.characterCount
+
+            DetailTab.Releases -> state.releases.dataOrNull?.takeIf {
+                !it.hasMore
+            }?.let { releases.size }
+
+            DetailTab.Quotes -> state.quotes.dataOrNull?.takeIf { !it.hasMore }?.items?.size
+        }
+        val name = UiText.StringResource(tab.labelRes())
+        DetailTabUIModel(
+            tab = tab,
+            label = count?.let {
+                UiText.StringResource(
+                    R.string.detail_tab_with_count,
+                    listOf(name, it),
+                )
+            } ?: name,
+        )
+    }.toImmutableList()
+
+    private fun sectionState(section: DetailSection): SectionState<*> = with(_state.value) {
+        when (section) {
+            DetailSection.Editions -> editions
+            DetailSection.Cast -> cast
+            DetailSection.Screenshots -> screenshots
+            DetailSection.Covers -> covers
+            DetailSection.Releases -> releases
+            DetailSection.Quotes -> quotes
+        }
+    }
+
+    private fun setSection(section: DetailSection, value: SectionState<Nothing>) {
+        _state.update {
+            when (section) {
+                DetailSection.Editions -> it.copy(editions = value)
+                DetailSection.Cast -> it.copy(cast = value)
+                DetailSection.Screenshots -> it.copy(screenshots = value)
+                DetailSection.Covers -> it.copy(covers = value)
+                DetailSection.Releases -> it.copy(releases = value)
+                DetailSection.Quotes -> it.copy(quotes = value)
+            }
+        }
+    }
+
+    private fun fail(section: DetailSection, error: Throwable) {
+        setSection(section, SectionState.Failed(error.toErrorUIModel()))
+    }
+
+    private fun setLoadingMore(section: DetailSection, isLoading: Boolean, failed: Boolean) {
+        _state.update { state ->
+            when (section) {
+                DetailSection.Releases -> state.copy(
+                    releases = state.releases.dataOrNull
+                        ?.let {
+                            SectionState.Loaded(
+                                it.copy(isLoadingMore = isLoading, loadMoreFailed = failed),
+                            )
+                        }
+                        ?: state.releases,
+                )
+
+                DetailSection.Quotes -> state.copy(
+                    quotes = state.quotes.dataOrNull
+                        ?.let {
+                            SectionState.Loaded(
+                                it.copy(isLoadingMore = isLoading, loadMoreFailed = failed),
+                            )
+                        }
+                        ?: state.quotes,
+                )
+
+                else -> state
+            }
         }
     }
 
     private fun sendEffect(effect: DetailEffect) {
         viewModelScope.launch { _effect.send(effect) }
+    }
+
+    private fun DetailTab.labelRes(): Int = when (this) {
+        DetailTab.Overview -> R.string.detail_tab_overview
+        DetailTab.Media -> R.string.detail_tab_media
+        DetailTab.Cast -> R.string.detail_tab_cast
+        DetailTab.Releases -> R.string.detail_tab_releases
+        DetailTab.Quotes -> R.string.detail_tab_quotes
+    }
+
+    private companion object {
+        const val FIRST_PAGE = 1
     }
 }

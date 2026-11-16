@@ -28,7 +28,7 @@ class DetailHeroUIModelMapperTest {
         assertEquals(UiText.StringValue("2009-10-15"), hero.releasedLabel)
         assertEquals(UiText.StringResource(R.string.length_long), hero.lengthLabel)
         assertEquals(
-            UiText.StringResource(R.string.detail_average_hours, listOf("44")),
+            UiText.StringResource(R.string.detail_average_hours_votes, listOf("44", "1,021")),
             hero.averagePlayLabel,
         )
         assertEquals(listOf<UiText>(UiText.StringValue("B"), UiText.StringValue("C")), hero.tags)
