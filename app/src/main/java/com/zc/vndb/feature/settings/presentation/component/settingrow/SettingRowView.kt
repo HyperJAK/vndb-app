@@ -33,7 +33,8 @@ private const val DISABLED_ALPHA = 0.5f
 
 /**
  * A settings row card: icon, title, explanation and a trailing control. With [onClick] the whole
- * row is tappable; a [trailing] value or switch sits on the right.
+ * row is tappable; a [trailing] value or switch sits on the right. [isDestructive] colors the icon
+ * and title as an error (e.g. Log out).
  */
 @Composable
 fun SettingRowView(
@@ -42,6 +43,7 @@ fun SettingRowView(
     body: UiText?,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
+    isDestructive: Boolean = false,
     onClick: (() -> Unit)? = null,
     role: Role = Role.Button,
     trailing: (@Composable () -> Unit)? = null,
@@ -74,7 +76,11 @@ fun SettingRowView(
                 .background(VndbTheme.colors.surfaceElevated),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(icon, contentDescription = null, tint = VndbTheme.colors.accent)
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = if (isDestructive) MaterialTheme.colorScheme.error else VndbTheme.colors.accent,
+            )
         }
         Column(
             modifier = Modifier.weight(1f),
@@ -83,7 +89,7 @@ fun SettingRowView(
             Text(
                 text = title.asString(),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = if (isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
             )
             body?.let {
                 Text(

@@ -16,7 +16,6 @@ import com.zc.vndb.feature.profile.domain.model.ProfileSamples
 import com.zc.vndb.feature.profile.domain.repository.FakeProfileRepository
 import com.zc.vndb.feature.profile.domain.usecase.GetListEntriesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.GetProfileUseCase
-import com.zc.vndb.feature.profile.domain.usecase.LogOutUseCase
 import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
 import com.zc.vndb.feature.settings.domain.usecase.UpdateSettingsUseCase
 import kotlin.test.Test
@@ -30,7 +29,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 
@@ -58,7 +56,6 @@ class ProfileViewModelTest {
         observeSession = ObserveSessionUseCase(sessions),
         getProfile = GetProfileUseCase(profile),
         getListEntries = GetListEntriesUseCase(profile),
-        logOut = LogOutUseCase(sessions),
         clock = FixedClock(Instant.parse("2026-11-16T00:00:00Z")),
         observeSettings = ObserveSettingsUseCase(settings),
         updateSettings = UpdateSettingsUseCase(settings),
@@ -167,21 +164,16 @@ class ProfileViewModelTest {
     }
 
     @Test
-    fun `log out asks first, then returns to the guest prompt`() = runTest {
+    fun `a sign-out elsewhere (Settings) turns the profile into the guest prompt`() = runTest {
         sessions.current.value = ProfileSamples.session()
         val viewModel = createViewModel()
         collect(viewModel.state)
         advanceUntilIdle()
 
-        viewModel.onIntent(ProfileIntent.LogOutClicked)
-        runCurrent()
-        assertTrue(viewModel.state.value.isLogOutDialogVisible)
-        viewModel.onIntent(ProfileIntent.LogOutConfirmed)
+        sessions.current.value = null
         advanceUntilIdle()
 
         assertFalse(viewModel.state.value.isSignedIn)
-        assertFalse(viewModel.state.value.isLogOutDialogVisible)
-        assertNull(sessions.current.value)
     }
 
     @Test

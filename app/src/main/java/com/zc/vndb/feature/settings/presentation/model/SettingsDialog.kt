@@ -7,4 +7,5 @@ enum class SettingsDialog {
     TrendingLanguages,
     ConfirmSensitive,
     ClearImageCache,
+    ConfirmLogOut,
 }

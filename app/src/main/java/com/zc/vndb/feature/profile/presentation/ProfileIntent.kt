@@ -18,7 +18,4 @@ sealed interface ProfileIntent {
     data object LoadMoreRetried : ProfileIntent
     data object EntriesRetried : ProfileIntent
     data class EntryClicked(val novelId: String) : ProfileIntent
-    data object LogOutClicked : ProfileIntent
-    data object LogOutConfirmed : ProfileIntent
-    data object LogOutDismissed : ProfileIntent
 }

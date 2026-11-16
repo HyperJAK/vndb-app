@@ -26,7 +26,6 @@ data class ProfileState(
     /** A to Z / oldest / lowest vote first (the direction button shows an up arrow). */
     val isSortAscending: Boolean = true,
     val entries: EntriesUIState = EntriesUIState(),
-    val isLogOutDialogVisible: Boolean = false,
 ) {
     val isSignedIn: Boolean get() = header != null
 

@@ -15,5 +15,6 @@ sealed interface SettingsIntent {
     data object SensitiveConfirmed : SettingsIntent
     data class IncludeAdultChanged(val isOn: Boolean) : SettingsIntent
     data object ClearCacheConfirmed : SettingsIntent
+    data object LogOutConfirmed : SettingsIntent
     data class LinkClicked(val url: String) : SettingsIntent
 }

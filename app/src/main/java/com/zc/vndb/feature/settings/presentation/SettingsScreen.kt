@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Explicit
@@ -266,6 +267,7 @@ private fun LazyListScope.aboutSection(state: SettingsState, actions: SettingsAc
             modifier = Modifier.fillMaxWidth(),
         )
     }
+    logOutRow(state, actions)
     state.versionLabel?.let { version ->
         item(key = "version", contentType = "footer") {
             Text(
@@ -278,6 +280,23 @@ private fun LazyListScope.aboutSection(state: SettingsState, actions: SettingsAc
                     .padding(vertical = VndbTheme.spacing.lg),
             )
         }
+    }
+}
+
+/** Signed-in users only, last before the version: Log out (asks first), with the account under it. */
+private fun LazyListScope.logOutRow(state: SettingsState, actions: SettingsActions) {
+    val account = state.accountLabel ?: return
+    item(key = "log-out", contentType = "row") {
+        SettingRowView(
+            icon = Icons.AutoMirrored.Outlined.Logout,
+            title = UiText.StringResource(StringResource.settings_log_out),
+            body = account,
+            isDestructive = true,
+            onClick = { actions.open(SettingsDialog.ConfirmLogOut) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = VndbTheme.spacing.lg),
+        )
     }
 }
 
@@ -342,6 +361,14 @@ private fun SettingsDialogs(state: SettingsState, onIntent: (SettingsIntent) -> 
             onDismiss = dismiss,
         )
 
+        SettingsDialog.ConfirmLogOut -> ConfirmDialog(
+            title = UiText.StringResource(StringResource.settings_log_out_title),
+            body = UiText.StringResource(StringResource.settings_log_out_body),
+            confirm = UiText.StringResource(StringResource.settings_log_out),
+            onConfirm = { onIntent(SettingsIntent.LogOutConfirmed) },
+            onDismiss = dismiss,
+        )
+
         null -> Unit
     }
 }
@@ -377,6 +404,7 @@ private val previewState = SettingsState(
     titleLanguageLabel = UiText.StringValue("Romanized"),
     spoilerLabel = UiText.StringValue("None"),
     isSignedIn = true,
+    accountLabel = UiText.StringValue("misterbadluck · u188356"),
     languagesLabel = UiText.StringValue("English, Japanese"),
     imageCacheLabel = UiText.StringValue("142 MB"),
     versionLabel = UiText.StringValue("MyVNDB 1.0.0 (1)"),

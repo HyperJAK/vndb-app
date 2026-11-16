@@ -11,6 +11,7 @@ import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
+import com.zc.vndb.feature.profile.domain.usecase.LogOutUseCase
 import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
 import com.zc.vndb.feature.settings.domain.usecase.ClearImageCacheUseCase
 import com.zc.vndb.feature.settings.domain.usecase.GetImageCacheSizeUseCase
@@ -53,6 +54,7 @@ class SettingsViewModelTest {
         updateSettings = UpdateSettingsUseCase(settings),
         getImageCacheSize = GetImageCacheSizeUseCase(cache),
         clearImageCache = ClearImageCacheUseCase(cache),
+        logOut = LogOutUseCase(sessions),
     )
 
     private fun TestScope.collect(state: StateFlow<SettingsState>) {
@@ -170,5 +172,40 @@ class SettingsViewModelTest {
             viewModel.onIntent(SettingsIntent.LinkClicked(SettingsViewModel.VNDB_URL))
             assertEquals(SettingsEffect.OpenUrl("https://vndb.org"), awaitItem())
         }
+    }
+
+    @Test
+    fun `signed-in users see their account and log out after confirming, which leaves Settings`() =
+        runTest {
+            sessions.current.value = Session("u2", "Yorhel", canReadPrivateList = true)
+            val viewModel = createViewModel()
+            collect(viewModel.state)
+            advanceUntilIdle()
+            assertEquals(
+                UiText.StringResource(StringResource.settings_signed_in_as, listOf("Yorhel", "u2")),
+                viewModel.state.value.accountLabel,
+            )
+
+            viewModel.onIntent(SettingsIntent.DialogOpened(SettingsDialog.ConfirmLogOut))
+            advanceUntilIdle()
+            assertEquals(SettingsDialog.ConfirmLogOut, viewModel.state.value.dialog)
+
+            viewModel.effect.test {
+                viewModel.onIntent(SettingsIntent.LogOutConfirmed)
+                assertEquals(SettingsEffect.NavigateBack, awaitItem())
+            }
+            advanceUntilIdle()
+            assertNull(sessions.current.value)
+            assertNull(viewModel.state.value.accountLabel)
+            assertNull(viewModel.state.value.dialog)
+        }
+
+    @Test
+    fun `guests have no account section`() = runTest {
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.accountLabel)
     }
 }

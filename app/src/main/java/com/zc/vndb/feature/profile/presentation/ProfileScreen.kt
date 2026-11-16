@@ -14,9 +14,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -80,16 +78,6 @@ fun ProfileScreen(
                             ).asString(),
                         )
                     }
-                    if (state.isSignedIn) {
-                        IconButton(onClick = { onIntent(ProfileIntent.LogOutClicked) }) {
-                            Icon(
-                                Icons.AutoMirrored.Outlined.Logout,
-                                contentDescription = UiText.StringResource(
-                                    StringResource.cd_log_out,
-                                ).asString(),
-                            )
-                        }
-                    }
                 },
             )
         },
@@ -117,7 +105,6 @@ fun ProfileScreen(
             }
         }
     }
-    if (state.isLogOutDialogVisible) LogOutDialog(onIntent)
 }
 
 @Composable
@@ -261,29 +248,6 @@ private fun LoadMoreTrigger(listState: LazyListState, onLoadMore: () -> Unit) {
     LaunchedEffect(nearEnd) {
         if (nearEnd) currentOnLoadMore()
     }
-}
-
-@Composable
-private fun LogOutDialog(onIntent: (ProfileIntent) -> Unit) {
-    AlertDialog(
-        onDismissRequest = { onIntent(ProfileIntent.LogOutDismissed) },
-        title = { Text(UiText.StringResource(StringResource.profile_log_out_title).asString()) },
-        text = { Text(UiText.StringResource(StringResource.profile_log_out_body).asString()) },
-        confirmButton = {
-            TextButton(onClick = { onIntent(ProfileIntent.LogOutConfirmed) }) {
-                Text(
-                    text = UiText.StringResource(StringResource.profile_log_out).asString(),
-                    color = VndbTheme.colors.accent,
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { onIntent(ProfileIntent.LogOutDismissed) }) {
-                Text(text = UiText.StringResource(StringResource.action_cancel).asString())
-            }
-        },
-        containerColor = VndbTheme.colors.surfaceCard,
-    )
 }
 
 @Composable

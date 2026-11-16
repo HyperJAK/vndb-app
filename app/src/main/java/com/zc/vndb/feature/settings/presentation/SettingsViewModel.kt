@@ -9,6 +9,7 @@ import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.feature.profile.domain.usecase.LogOutUseCase
 import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
 import com.zc.vndb.feature.settings.domain.usecase.ClearImageCacheUseCase
 import com.zc.vndb.feature.settings.domain.usecase.GetImageCacheSizeUseCase
@@ -36,6 +37,7 @@ class SettingsViewModel(
     private val updateSettings: UpdateSettingsUseCase,
     private val getImageCacheSize: GetImageCacheSizeUseCase,
     private val clearImageCache: ClearImageCacheUseCase,
+    private val logOut: LogOutUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -49,7 +51,15 @@ class SettingsViewModel(
 
     val state: StateFlow<SettingsState> =
         combine(_state, observeSettings(), observeSession()) { state, settings, session ->
-            state.withSettings(settings).copy(isSignedIn = session != null)
+            state.withSettings(settings).copy(
+                isSignedIn = session != null,
+                accountLabel = session?.let {
+                    UiText.StringResource(
+                        StringResource.settings_signed_in_as,
+                        listOf(it.username, it.userId),
+                    )
+                },
+            )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), _state.value)
 
     private val _effect = Channel<SettingsEffect>(Channel.BUFFERED)
@@ -59,6 +69,7 @@ class SettingsViewModel(
         measureImageCache()
     }
 
+    @Suppress("CyclomaticComplexMethod") // A flat dispatch over the screen's intents.
     fun onIntent(intent: SettingsIntent) {
         when (intent) {
             SettingsIntent.BackClicked -> sendEffect(SettingsEffect.NavigateBack)
@@ -106,6 +117,8 @@ class SettingsViewModel(
 
             SettingsIntent.ClearCacheConfirmed -> clearCache()
 
+            SettingsIntent.LogOutConfirmed -> confirmLogOut()
+
             is SettingsIntent.LinkClicked -> sendEffect(SettingsEffect.OpenUrl(intent.url))
         }
     }
@@ -135,6 +148,15 @@ class SettingsViewModel(
                 ),
             )
             measureImageCache()
+        }
+    }
+
+    /** Removes the token, then leaves Settings: Profile shows the log-in prompt again. */
+    private fun confirmLogOut() {
+        closeDialog()
+        viewModelScope.launch {
+            logOut()
+            sendEffect(SettingsEffect.NavigateBack)
         }
     }
 

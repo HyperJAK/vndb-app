@@ -16,7 +16,6 @@ import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.domain.model.UserProfile
 import com.zc.vndb.feature.profile.domain.usecase.GetListEntriesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.GetProfileUseCase
-import com.zc.vndb.feature.profile.domain.usecase.LogOutUseCase
 import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
 import com.zc.vndb.feature.profile.presentation.component.listentrycard.mapper.toCardUIModel
 import com.zc.vndb.feature.profile.presentation.component.profileheader.mapper.toHeaderUIModel
@@ -51,7 +50,6 @@ class ProfileViewModel(
     observeSession: ObserveSessionUseCase,
     private val getProfile: GetProfileUseCase,
     private val getListEntries: GetListEntriesUseCase,
-    private val logOut: LogOutUseCase,
     private val clock: Clock,
     private val observeSettings: ObserveSettingsUseCase,
     private val updateSettings: UpdateSettingsUseCase,
@@ -111,16 +109,6 @@ class ProfileViewModel(
             is ProfileIntent.EntryClicked -> sendEffect(
                 ProfileEffect.NavigateToNovel(intent.novelId),
             )
-
-            ProfileIntent.LogOutClicked -> _state.update { it.copy(isLogOutDialogVisible = true) }
-
-            ProfileIntent.LogOutDismissed -> _state.update {
-                it.copy(
-                    isLogOutDialogVisible = false,
-                )
-            }
-
-            ProfileIntent.LogOutConfirmed -> confirmLogOut()
 
             is ProfileIntent.SortSelected -> selectSort(intent.sort)
 
@@ -311,11 +299,6 @@ class ProfileViewModel(
             ),
         )
         return true
-    }
-
-    private fun confirmLogOut() {
-        _state.update { it.copy(isLogOutDialogVisible = false) }
-        viewModelScope.launch { logOut() }
     }
 
     private fun sendEffect(effect: ProfileEffect) {

@@ -18,6 +18,8 @@ data class SettingsState(
     val spoilIfFinished: Boolean = false,
     /** "Spoil me if finished" needs the user's lists. */
     val isSignedIn: Boolean = false,
+    /** "misterbadluck · u188356" under Log out; null for a guest (no Log out row). */
+    val accountLabel: UiText? = null,
     val showSensitiveContent: Boolean = false,
     val includeAdultInBrowse: Boolean = false,
     val languageOptions: ImmutableList<SettingOptionUIModel> = persistentListOf(),
