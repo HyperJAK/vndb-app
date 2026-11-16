@@ -18,6 +18,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -52,6 +53,8 @@ class DiscoverViewModel(
             DiscoverIntent.Retry,
             -> load()
 
+            DiscoverIntent.Refresh -> refresh()
+
             DiscoverIntent.RandomRollClicked -> roll()
 
             is DiscoverIntent.NovelClicked -> sendEffect(DiscoverEffect.NavigateToNovel(intent.id))
@@ -68,13 +71,33 @@ class DiscoverViewModel(
      */
     private fun load() {
         loadJob?.cancel()
-        _state.update { it.copy(isLoading = true, error = null) }
-        loadJob = viewModelScope.launch {
-            val trending = async { getTrendingReleases() }
-            val stats = async { getDatabaseStats() }
-            val topRated = getTopRatedNovels().getOrElse { error ->
-                trending.cancel()
-                stats.cancel()
+        _state.update { it.copy(isLoading = true, isRefreshing = false, error = null) }
+        loadJob = viewModelScope.launch { fetch(isRefresh = false) }
+    }
+
+    /**
+     * Reloads every section behind the pull-to-refresh indicator. With nothing loaded yet (first
+     * load in flight or failed) it is a plain load; a failed refresh keeps what is shown.
+     */
+    private fun refresh() {
+        val current = _state.value
+        if (current.isRefreshing || current.isLoading) return
+        if (current.error != null) return load()
+        loadJob?.cancel()
+        _state.update { it.copy(isRefreshing = true) }
+        loadJob = viewModelScope.launch { fetch(isRefresh = true) }
+    }
+
+    private suspend fun fetch(isRefresh: Boolean) = coroutineScope {
+        val trending = async { getTrendingReleases() }
+        val stats = async { getDatabaseStats() }
+        val topRated = getTopRatedNovels().getOrElse { error ->
+            trending.cancel()
+            stats.cancel()
+            if (isRefresh) {
+                _state.update { it.copy(isRefreshing = false) }
+                sendEffect(DiscoverEffect.ShowError(error.toErrorUIModel()))
+            } else {
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -85,20 +108,21 @@ class DiscoverViewModel(
                         statsLabel = null,
                     )
                 }
-                return@launch
             }
-            val featured = getFeaturedNovel(topRated).getOrNull()
-            val trendingRows = trending.await().getOrNull().orEmpty()
-            val statsLabel = stats.await().getOrNull()?.toCountLabel()
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    featured = featured?.toUIModel(),
-                    topRated = topRated.toTopRatedCards(),
-                    trending = trendingRows.map { row -> row.toUIModel() }.toImmutableList(),
-                    statsLabel = statsLabel,
-                )
-            }
+            return@coroutineScope
+        }
+        val featured = getFeaturedNovel(topRated).getOrNull()
+        val trendingRows = trending.await().getOrNull().orEmpty()
+        val statsLabel = stats.await().getOrNull()?.toCountLabel()
+        _state.update {
+            it.copy(
+                isLoading = false,
+                isRefreshing = false,
+                featured = featured?.toUIModel(),
+                topRated = topRated.toTopRatedCards(),
+                trending = trendingRows.map { row -> row.toUIModel() }.toImmutableList(),
+                statsLabel = statsLabel,
+            )
         }
     }
 

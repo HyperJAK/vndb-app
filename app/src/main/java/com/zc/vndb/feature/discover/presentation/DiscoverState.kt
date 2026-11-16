@@ -12,6 +12,8 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class DiscoverState(
     val isLoading: Boolean = false,
+    /** Pull to refresh in flight; the loaded sections stay on screen. */
+    val isRefreshing: Boolean = false,
     /** Set only when the screen has nothing to show; section failures just hide that section. */
     val error: ErrorUIModel? = null,
     val featured: FeaturedNovelUIModel? = null,

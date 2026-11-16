@@ -45,6 +45,7 @@ import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -109,12 +110,18 @@ fun DiscoverScreen(
                 CircularProgressIndicator(color = VndbTheme.colors.accent)
             }
 
-            else -> DiscoverContent(
-                state = state,
-                actions = actions,
-                isExpanded = isExpanded,
+            else -> PullToRefreshView(
+                isRefreshing = state.isRefreshing,
+                onRefresh = { onIntent(DiscoverIntent.Refresh) },
                 modifier = contentModifier,
-            )
+            ) {
+                DiscoverContent(
+                    state = state,
+                    actions = actions,
+                    isExpanded = isExpanded,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
         }
     }
 }

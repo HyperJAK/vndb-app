@@ -1,8 +1,11 @@
 package com.zc.vndb.feature.browse.presentation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zc.vndb.common.ui.util.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
@@ -17,13 +20,25 @@ fun BrowseRoute(
     viewModel: BrowseViewModel = koinViewModel { parametersOf(tagId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveAsEvents(viewModel.effect) { effect ->
         when (effect) {
             is BrowseEffect.NavigateToNovel -> onOpenNovel(effect.id)
+
             BrowseEffect.NavigateBack -> onNavigateBack()
+
+            is BrowseEffect.ShowError -> snackbarHostState.showSnackbar(
+                effect.error.message.asString(context),
+            )
         }
     }
 
-    BrowseScreen(state = state, onIntent = viewModel::onIntent, modifier = modifier)
+    BrowseScreen(
+        state = state,
+        onIntent = viewModel::onIntent,
+        modifier = modifier,
+        snackbarHostState = snackbarHostState,
+    )
 }

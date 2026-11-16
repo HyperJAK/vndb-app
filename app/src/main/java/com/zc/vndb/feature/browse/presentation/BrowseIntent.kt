@@ -7,6 +7,9 @@ import com.zc.vndb.feature.browse.domain.model.Genre
 sealed interface BrowseIntent {
     data object Load : BrowseIntent
     data object Retry : BrowseIntent
+
+    /** Pull to refresh: reloads the first page (and tag header) while the results stay on screen. */
+    data object Refresh : BrowseIntent
     data class QueryChanged(val query: String) : BrowseIntent
     data object SearchSubmitted : BrowseIntent
     data object QueryCleared : BrowseIntent
