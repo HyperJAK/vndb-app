@@ -12,7 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,9 +44,12 @@ data object BrowseNavKey : NavKey
 @Serializable
 data object ProfileNavKey : NavKey
 
+/** A destination shown full screen: the navigation bar (or rail) is hidden while it is on top. */
+interface FullScreenNavKey : NavKey
+
 /** Preferences and app info (pushed on the Profile tab). */
 @Serializable
-data object SettingsNavKey : NavKey
+data object SettingsNavKey : FullScreenNavKey
 
 /** Log in with a VNDB API token (pushed on the Profile tab). */
 @Serializable
@@ -64,7 +69,7 @@ data class CharacterNavKey(val id: String) : NavKey
 
 /** A visual novel's detail page. */
 @Serializable
-data class NovelDetailNavKey(val id: String) : NavKey
+data class NovelDetailNavKey(val id: String) : FullScreenNavKey
 
 private enum class TopLevelDestination(val key: NavKey, val icon: ImageVector, val label: UiText) {
     Discover(
@@ -90,8 +95,17 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     val navigator = remember(navigationState) { Navigator(navigationState) }
     val itemColors = navigationItemColors()
 
+    // Full-screen pages slide the navigation bar (or rail) away while they are on top.
+    val currentKey = navigationState.backStacks[navigationState.topLevelRoute]?.lastOrNull()
+    val isNavigationHidden = currentKey is FullScreenNavKey
+    val scaffoldState = rememberNavigationSuiteScaffoldState()
+    LaunchedEffect(isNavigationHidden) {
+        if (isNavigationHidden) scaffoldState.hide() else scaffoldState.show()
+    }
+
     NavigationSuiteScaffold(
         modifier = modifier,
+        state = scaffoldState,
         navigationSuiteColors = NavigationSuiteDefaults.colors(
             navigationBarContainerColor = VndbTheme.colors.surfaceInset,
             navigationRailContainerColor = VndbTheme.colors.surfaceInset,
