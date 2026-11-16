@@ -20,10 +20,9 @@ class BrowseNovelCardUIModelMapperTest {
 
     @Test
     fun `maps display values`() {
-        val card = novel.copy(originalTitle = "シュタインズ・ゲート").toCardUIModel()
+        val card = novel.toCardUIModel()
 
         assertEquals(UiText.StringValue("Novel v2002"), card.title)
-        assertEquals(UiText.StringValue("シュタインズ・ゲート"), card.originalTitle)
         assertEquals(UiText.StringValue("MAGES."), card.creditsLabel)
         assertEquals(UiText.StringValue("2009"), card.yearLabel)
         assertEquals(UiText.StringValue("9.02"), card.ratingLabel)

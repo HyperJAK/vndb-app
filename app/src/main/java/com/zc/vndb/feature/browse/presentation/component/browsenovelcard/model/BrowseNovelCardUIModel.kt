@@ -9,7 +9,6 @@ import kotlinx.collections.immutable.persistentListOf
 data class BrowseNovelCardUIModel(
     val id: String,
     val title: UiText,
-    val originalTitle: UiText?,
     val creditsLabel: UiText?,
     val yearLabel: UiText,
     val ratingLabel: UiText?,

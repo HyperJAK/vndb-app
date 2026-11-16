@@ -9,7 +9,6 @@ import kotlinx.collections.immutable.persistentListOf
 data class ListEntryCardUIModel(
     val novelId: String,
     val title: UiText,
-    val originalTitle: UiText?,
     val coverUrl: String?,
     val isCoverSensitive: Boolean,
     /** "My vote 8.5". */

@@ -2,7 +2,6 @@ package com.zc.vndb.feature.profile.presentation.component.listentrycard.mapper
 
 import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.ui.mapper.primaryTitle
-import com.zc.vndb.common.ui.mapper.secondaryTitle
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -31,47 +30,41 @@ fun ListEntry.toCardUIModel(
     shownLabelId,
     now,
     primaryTitle(title, originalTitle, titleLanguage),
-    secondaryTitle(title, originalTitle, titleLanguage),
 )
 
-private fun ListEntry.toCardUIModel(
-    shownLabelId: Int,
-    now: Instant,
-    primaryTitle: UiText,
-    secondaryTitle: UiText?,
-) = ListEntryCardUIModel(
-    novelId = novelId,
-    title = primaryTitle,
-    originalTitle = secondaryTitle,
-    coverUrl = cover?.thumbnailUrl ?: cover?.url,
-    isCoverSensitive = cover?.isSensitive ?: false,
-    voteLabel = vote?.let {
-        UiText.StringResource(
-            StringResource.profile_my_vote,
-            listOf("%.1f".format(it / VOTE_SCALE)),
-        )
-    },
-    dates = listOfNotNull(
-        started?.let {
+private fun ListEntry.toCardUIModel(shownLabelId: Int, now: Instant, primaryTitle: UiText) =
+    ListEntryCardUIModel(
+        novelId = novelId,
+        title = primaryTitle,
+        coverUrl = cover?.thumbnailUrl ?: cover?.url,
+        isCoverSensitive = cover?.isSensitive ?: false,
+        voteLabel = vote?.let {
             UiText.StringResource(
-                StringResource.profile_started,
-                listOf(it.toString()),
+                StringResource.profile_my_vote,
+                listOf("%.1f".format(it / VOTE_SCALE)),
             )
         },
-        finished?.let {
-            UiText.StringResource(
-                StringResource.profile_finished,
-                listOf(it.toString()),
-            )
-        },
-    ).toImmutableList(),
-    labels = labels
-        .filter { it.id != shownLabelId && it.id != ListLabel.VOTED }
-        .map { UiText.StringValue(it.name) }
-        .toImmutableList(),
-    notes = notes?.let(UiText::StringValue),
-    updatedLabel = lastModified.toUpdatedLabel(now),
-)
+        dates = listOfNotNull(
+            started?.let {
+                UiText.StringResource(
+                    StringResource.profile_started,
+                    listOf(it.toString()),
+                )
+            },
+            finished?.let {
+                UiText.StringResource(
+                    StringResource.profile_finished,
+                    listOf(it.toString()),
+                )
+            },
+        ).toImmutableList(),
+        labels = labels
+            .filter { it.id != shownLabelId && it.id != ListLabel.VOTED }
+            .map { UiText.StringValue(it.name) }
+            .toImmutableList(),
+        notes = notes?.let(UiText::StringValue),
+        updatedLabel = lastModified.toUpdatedLabel(now),
+    )
 
 /** "Updated just now", "… 5 minutes / 3 hours / 12 days ago", then the date. */
 fun Instant.toUpdatedLabel(now: Instant): UiText {

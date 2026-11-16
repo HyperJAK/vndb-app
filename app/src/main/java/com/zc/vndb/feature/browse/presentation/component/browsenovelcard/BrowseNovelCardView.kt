@@ -80,15 +80,6 @@ fun BrowseNovelCardView(
                 maxLines = TITLE_MAX_LINES,
                 overflow = TextOverflow.Ellipsis,
             )
-            model.originalTitle?.let { original ->
-                Text(
-                    text = original.asString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
             TagsAndLength(model)
         }
     }
@@ -148,7 +139,6 @@ private fun BrowseNovelCardViewPreview() {
             model = BrowseNovelCardUIModel(
                 id = "v2002",
                 title = UiText.StringValue("Steins;Gate"),
-                originalTitle = UiText.StringValue("シュタインズ・ゲート"),
                 creditsLabel = UiText.StringValue("5pb. / Nitroplus"),
                 yearLabel = UiText.StringValue("2009"),
                 ratingLabel = UiText.StringValue("8.95"),

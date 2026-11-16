@@ -340,9 +340,9 @@ class BrowseViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        with(viewModel.state.value.results.single()) {
-            assertEquals(UiText.StringValue("シュタインズ・ゲート"), title)
-            assertEquals(UiText.StringValue("Steins;Gate"), originalTitle)
-        }
+        assertEquals(
+            UiText.StringValue("シュタインズ・ゲート"),
+            viewModel.state.value.results.single().title,
+        )
     }
 }

@@ -355,7 +355,6 @@ private val previewCards = listOf(
     BrowseNovelCardUIModel(
         id = "v$index",
         title = UiText.StringValue(title),
-        originalTitle = UiText.StringValue("原題 $index"),
         creditsLabel = UiText.StringValue("Studio"),
         yearLabel = UiText.StringValue("200$index"),
         ratingLabel = UiText.StringValue("8.9$index"),

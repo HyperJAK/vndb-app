@@ -87,15 +87,6 @@ private fun EntryTitles(model: ListEntryCardUIModel) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
-        model.originalTitle?.let { original ->
-            Text(
-                text = original.asString(),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
     }
 }
 
@@ -173,7 +164,6 @@ private fun ListEntryCardViewPreview() {
             model = ListEntryCardUIModel(
                 novelId = "v13631",
                 title = UiText.StringValue("Hello Lady!"),
-                originalTitle = UiText.StringValue("ハロー・レディ！"),
                 coverUrl = null,
                 isCoverSensitive = false,
                 voteLabel = UiText.StringValue("My vote 8.5"),

@@ -289,7 +289,6 @@ private val previewSignedIn = ProfileState(
             ListEntryCardUIModel(
                 novelId = "v58641",
                 title = UiText.StringValue("Z.A.T.O. // I Love the World and Everything In It"),
-                originalTitle = null,
                 coverUrl = null,
                 isCoverSensitive = false,
                 voteLabel = null,
