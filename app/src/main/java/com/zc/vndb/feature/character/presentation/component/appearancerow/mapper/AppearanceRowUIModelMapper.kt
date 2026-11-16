@@ -2,8 +2,8 @@ package com.zc.vndb.feature.character.presentation.component.appearancerow.mappe
 
 import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.CharacterRole
-import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
+import com.zc.vndb.common.ui.mapper.toYearLabel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.character.domain.model.CharacterAppearance
@@ -12,12 +12,7 @@ import com.zc.vndb.feature.character.presentation.component.appearancerow.model.
 fun CharacterAppearance.toRowUIModel(): AppearanceRowUIModel = AppearanceRowUIModel(
     novelId = novelId,
     title = UiText.StringValue(novelTitle),
-    yearLabel = when (val date = releaseDate) {
-        is ReleaseDate.Full -> UiText.StringValue(date.date.year.toString())
-        is ReleaseDate.Month -> UiText.StringValue(date.yearMonth.year.toString())
-        is ReleaseDate.Year -> UiText.StringValue(date.year.toString())
-        ReleaseDate.Tba -> UiText.StringResource(R.string.release_tba)
-    },
+    yearLabel = releaseDate.toYearLabel(),
     roleLabel = UiText.StringResource(role.labelRes()),
     isMajorRole = role == CharacterRole.Main || role == CharacterRole.Primary,
     voiceActorLabel = voiceActor?.let { UiText.StringResource(R.string.detail_cv, listOf(it)) },

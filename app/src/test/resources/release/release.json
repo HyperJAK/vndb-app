@@ -1,0 +1,94 @@
+{
+  "more": false,
+  "results": [
+    {
+      "alttitle": null,
+      "catalog": "W2D-00004",
+      "engine": "CRIware",
+      "extlinks": [
+        {
+          "label": "Official website",
+          "url": "http://steinsgate.jp/"
+        },
+        {
+          "label": "PlayAsia",
+          "url": "https://www.play-asia.com/13/7047e6"
+        }
+      ],
+      "freeware": false,
+      "gtin": "4988648770539",
+      "has_ero": false,
+      "id": "r21541",
+      "images": [
+        {
+          "sexual": 0,
+          "thumbnail": "https://t.vndb.org/cv.t/33/85333.jpg",
+          "type": "pkgfront",
+          "url": "https://t.vndb.org/cv/33/85333.jpg",
+          "violence": 0
+        },
+        {
+          "sexual": 0,
+          "thumbnail": "https://t.vndb.org/cv.t/86/86586.jpg",
+          "type": "pkgback",
+          "url": "https://t.vndb.org/cv/86/86586.jpg",
+          "violence": 0
+        }
+      ],
+      "languages": [
+        {
+          "lang": "ja",
+          "main": true,
+          "mtl": false,
+          "title": "Steins;Gate Platinum collection"
+        }
+      ],
+      "media": [
+        {
+          "medium": "dvd",
+          "qty": 1
+        }
+      ],
+      "minage": 15,
+      "notes": "The Platinum Collection release of \"Steins;Gate\" also includes the Production Enhancement Pack DLC on the disc.",
+      "official": true,
+      "patch": false,
+      "platforms": [
+        "xb3"
+      ],
+      "producers": [
+        {
+          "developer": true,
+          "id": "p42",
+          "name": "NITRO PLUS",
+          "publisher": false
+        },
+        {
+          "developer": true,
+          "id": "p146",
+          "name": "MAGES.",
+          "publisher": true
+        }
+      ],
+      "released": "2011-06-16",
+      "resolution": null,
+      "title": "Steins;Gate Platinum collection",
+      "uncensored": null,
+      "vns": [
+        {
+          "id": "v2002",
+          "image": {
+            "sexual": 0,
+            "thumbnail": "https://t.vndb.org/cv.t/19/77819.jpg",
+            "url": "https://t.vndb.org/cv/19/77819.jpg",
+            "violence": 0
+          },
+          "released": "2009-10-15",
+          "rtype": "complete",
+          "title": "STEINS;GATE"
+        }
+      ],
+      "voiced": 4
+    }
+  ]
+}

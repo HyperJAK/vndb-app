@@ -35,6 +35,7 @@ import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
+import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.component.spoilerfilter.SpoilerFilterView
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
@@ -44,7 +45,6 @@ import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.character.presentation.component.appearancerow.AppearanceRowView
 import com.zc.vndb.feature.character.presentation.component.appearancerow.model.AppearanceRowUIModel
 import com.zc.vndb.feature.character.presentation.component.characterhero.CharacterHeroView
-import com.zc.vndb.feature.character.presentation.component.characterhero.model.CharacterFactUIModel
 import com.zc.vndb.feature.character.presentation.component.characterhero.model.CharacterHeroUIModel
 import com.zc.vndb.feature.character.presentation.component.traitgroups.TraitGroupsView
 import com.zc.vndb.feature.character.presentation.component.traitgroups.model.TraitGroupUIModel
@@ -229,7 +229,7 @@ private val previewState = CharacterState(
         isImageSensitive = false,
         identity = persistentListOf(UiText.StringValue("Female")),
         facts = persistentListOf(
-            CharacterFactUIModel(R.string.character_age, UiText.StringValue("18")),
+            FactUIModel(R.string.character_age, UiText.StringValue("18")),
         ),
     ),
     aliases = persistentListOf(UiText.StringValue("Assistant"), UiText.StringValue("Christina")),

@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.character.presentation.component.characterhero.model
 
 import androidx.compose.runtime.Immutable
+import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.text.UiText
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -15,5 +16,5 @@ data class CharacterHeroUIModel(
     val identity: ImmutableList<UiText> = persistentListOf(),
     /** Spoiler sex / gender, shown with a warning tint. */
     val spoilerIdentity: ImmutableList<UiText> = persistentListOf(),
-    val facts: ImmutableList<CharacterFactUIModel> = persistentListOf(),
+    val facts: ImmutableList<FactUIModel> = persistentListOf(),
 )

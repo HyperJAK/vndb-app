@@ -1,7 +1,6 @@
 package com.zc.vndb.feature.detail.presentation.component.detailhero.mapper
 
 import com.zc.vndb.R
-import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.AgeRange
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.novel
@@ -9,7 +8,6 @@ import com.zc.vndb.feature.detail.domain.model.DetailSamples.tag
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlinx.datetime.YearMonth
 
 class DetailHeroUIModelMapperTest {
 
@@ -52,15 +50,5 @@ class DetailHeroUIModelMapperTest {
             AgeRange(12, 18).toLabel(),
         )
         assertNull(novel().toHeroUIModel(ageRange = null).ageLabel)
-    }
-
-    @Test
-    fun `release dates as VNDB writes them`() {
-        assertEquals(
-            UiText.StringValue("2021-03"),
-            ReleaseDate.Month(YearMonth(2021, 3)).toIsoLabel(),
-        )
-        assertEquals(UiText.StringValue("2021"), ReleaseDate.Year(2021).toIsoLabel())
-        assertEquals(UiText.StringResource(R.string.release_tba), ReleaseDate.Tba.toIsoLabel())
     }
 }

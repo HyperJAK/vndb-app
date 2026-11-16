@@ -7,6 +7,7 @@ import com.zc.vndb.feature.detail.domain.model.PlatformFamily
 @Immutable
 data class EditionRowUIModel(
     val key: String,
+    val releaseId: String,
     val title: UiText,
     val platformLabel: UiText,
     val languagesLabel: UiText?,

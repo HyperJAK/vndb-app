@@ -27,6 +27,6 @@ private val platformNames = mapOf(
 )
 
 /** Display name of a VNDB platform code ("win" → Windows); unknown codes are upper-cased. */
-fun platformLabel(code: String): UiText = UiText.StringValue(
-    platformNames[code] ?: code.uppercase(),
-)
+fun platformName(code: String): String = platformNames[code] ?: code.uppercase()
+
+fun platformLabel(code: String): UiText = UiText.StringValue(platformName(code))
