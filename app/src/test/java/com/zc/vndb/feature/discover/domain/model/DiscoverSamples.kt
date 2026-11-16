@@ -1,5 +1,9 @@
 package com.zc.vndb.feature.discover.domain.model
 
+import com.zc.vndb.common.domain.model.Cover
+import com.zc.vndb.common.domain.model.NovelTag
+import com.zc.vndb.common.domain.model.ReleaseDate
+import com.zc.vndb.common.domain.model.TagCategory
 import kotlinx.datetime.LocalDate
 
 /** Builders for Discover domain models with sensible defaults, for tests. */

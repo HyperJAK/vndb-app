@@ -1,5 +1,7 @@
 package com.zc.vndb.feature.discover.data.mapper
 
+import com.zc.vndb.common.data.mapper.toCover
+import com.zc.vndb.common.data.mapper.toDomain
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.feature.discover.data.dto.VisualNovelDTO
 import com.zc.vndb.feature.discover.domain.model.DiscoverNovel

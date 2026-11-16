@@ -1,5 +1,7 @@
 package com.zc.vndb.feature.discover.domain.model
 
+import com.zc.vndb.common.domain.model.ReleaseDate
+
 /** One VNDB release (an edition of one or more visual novels on some platforms and languages). */
 data class Release(
     val id: String,

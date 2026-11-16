@@ -46,6 +46,40 @@
         <item quantity="other">%1$s Visual Novels</item>
     </plurals>
 
+    <!-- Browse -->
+    <string name="browse_search_hint">Search titles…</string>
+    <string name="browse_clear_search">Clear search</string>
+    <string name="browse_age_all">All Ages</string>
+    <string name="browse_age_adult">18+</string>
+    <string name="browse_sort_relevance">Relevance</string>
+    <string name="browse_sort_popularity">Popularity</string>
+    <string name="browse_sort_rating">Rating</string>
+    <string name="browse_sort_newest">Newest</string>
+    <string name="browse_sort_title">Title</string>
+    <string name="browse_sort_menu">Sort by</string>
+    <string name="browse_genre_romance">Romance</string>
+    <string name="browse_genre_mystery">Mystery</string>
+    <string name="browse_genre_scifi">Sci-Fi</string>
+    <string name="browse_genre_horror">Horror</string>
+    <string name="browse_genre_psychological">Psychological</string>
+    <string name="browse_genre_fantasy">Fantasy</string>
+    <string name="browse_genre_drama">Drama</string>
+    <string name="browse_genre_comedy">Comedy</string>
+    <string name="browse_genre_action">Action</string>
+    <plurals name="browse_found_titles">
+        <item quantity="one">Found %1$s title</item>
+        <item quantity="other">Found %1$s titles</item>
+    </plurals>
+    <string name="browse_indexed_database">INDEXED DATABASE</string>
+    <string name="browse_no_results">No visual novels match these filters.</string>
+    <string name="browse_load_more_failed">Couldn\'t load more results.</string>
+    <string name="length_very_short">&lt;2h</string>
+    <string name="length_short">2-10h</string>
+    <string name="length_medium">10-30h</string>
+    <string name="length_long">30-50h</string>
+    <string name="length_very_long">&gt;50h</string>
+    <string name="credits_separator">%1$s / %2$s</string>
+
     <!-- Content descriptions -->
     <string name="cd_sensitive_cover">Cover hidden: sensitive content</string>
 </resources>

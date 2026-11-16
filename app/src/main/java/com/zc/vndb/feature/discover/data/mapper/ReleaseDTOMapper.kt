@@ -1,5 +1,7 @@
 package com.zc.vndb.feature.discover.data.mapper
 
+import com.zc.vndb.common.data.mapper.toCover
+import com.zc.vndb.common.data.mapper.toReleaseDate
 import com.zc.vndb.feature.discover.data.dto.ReleaseDTO
 import com.zc.vndb.feature.discover.data.dto.ReleaseLanguageDTO
 import com.zc.vndb.feature.discover.data.dto.ReleaseVisualNovelDTO

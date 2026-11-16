@@ -1,5 +1,7 @@
 package com.zc.vndb.feature.discover.domain.model
 
+import com.zc.vndb.common.domain.model.Cover
+
 /** The "VN of the Week" hero. */
 data class FeaturedNovel(
     val id: String,

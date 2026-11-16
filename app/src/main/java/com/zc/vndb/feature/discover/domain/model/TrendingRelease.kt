@@ -1,5 +1,8 @@
 package com.zc.vndb.feature.discover.domain.model
 
+import com.zc.vndb.common.domain.model.Cover
+import com.zc.vndb.common.domain.model.ReleaseDate
+
 /** A row in "New & Trending": a recent release, described through its visual novel. */
 data class TrendingRelease(
     val releaseId: String,

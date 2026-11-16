@@ -1,0 +1,119 @@
+{
+  "count": 9,
+  "more": true,
+  "results": [
+    {
+      "alttitle": null,
+      "developers": [
+        {
+          "id": "p146",
+          "name": "MAGES."
+        },
+        {
+          "id": "p5008",
+          "name": "M2 Co., Ltd."
+        }
+      ],
+      "id": "v17102",
+      "image": {
+        "sexual": 0,
+        "thumbnail": "https://t.vndb.org/cv.t/34/75834.jpg",
+        "url": "https://t.vndb.org/cv/34/75834.jpg",
+        "violence": 0
+      },
+      "length": 4,
+      "length_minutes": 2100,
+      "rating": 80.8,
+      "released": "2015-12-10",
+      "tags": [
+        {
+          "category": "cont",
+          "id": "g249",
+          "name": "Time Travel",
+          "rating": 2.90909099578857,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g848",
+          "name": "Death of Heroine",
+          "rating": 2.77777767181396,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g812",
+          "name": "Scientist Heroine",
+          "rating": 2.72727274894714,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g2380",
+          "name": "Time Jump",
+          "rating": 2.66666674613953,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g321",
+          "name": "Intrigue",
+          "rating": 3,
+          "spoiler": 2
+        },
+        {
+          "category": "tech",
+          "id": "g32",
+          "name": "ADV",
+          "rating": 2.16666674613953,
+          "spoiler": 0
+        }
+      ],
+      "title": "STEINS;GATE 0"
+    },
+    {
+      "alttitle": null,
+      "developers": [
+        {
+          "id": "p8729",
+          "name": "Elm"
+        }
+      ],
+      "id": "v25047",
+      "image": {
+        "sexual": 0,
+        "thumbnail": "https://t.vndb.org/cv/50/37750.jpg",
+        "url": "https://t.vndb.org/cv/50/37750.jpg",
+        "violence": 0
+      },
+      "length": null,
+      "length_minutes": 38,
+      "rating": 70.3,
+      "released": "2019-01-06",
+      "tags": [
+        {
+          "category": "cont",
+          "id": "g249",
+          "name": "Time Travel",
+          "rating": 2.5,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g1265",
+          "name": "Sacrifice",
+          "rating": 2.5,
+          "spoiler": 2
+        },
+        {
+          "category": "tech",
+          "id": "g32",
+          "name": "ADV",
+          "rating": 2,
+          "spoiler": 0
+        }
+      ],
+      "title": "Steins;Gate Gamma"
+    }
+  ]
+}

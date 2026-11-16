@@ -1,9 +1,9 @@
 package com.zc.vndb.feature.discover.presentation.component.trendingrelease.mapper
 
 import com.zc.vndb.R
+import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.discover.domain.model.Platform
-import com.zc.vndb.feature.discover.domain.model.ReleaseDate
 import com.zc.vndb.feature.discover.domain.model.ReleaseKind
 import com.zc.vndb.feature.discover.domain.model.TrendingRelease
 import com.zc.vndb.feature.discover.presentation.component.trendingrelease.model.ReleaseKindTone
