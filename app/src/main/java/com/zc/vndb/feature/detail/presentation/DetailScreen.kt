@@ -69,6 +69,7 @@ private class DetailActions(
     val onSynopsisToggle: () -> Unit,
     val onRelationClick: (String) -> Unit,
     val onCharacterClick: (String) -> Unit,
+    val onTagClick: (String) -> Unit,
 )
 
 @Composable
@@ -84,6 +85,7 @@ fun DetailScreen(
             onSynopsisToggle = { onIntent(DetailIntent.SynopsisToggled) },
             onRelationClick = { onIntent(DetailIntent.RelationClicked(it)) },
             onCharacterClick = { onIntent(DetailIntent.CharacterClicked(it)) },
+            onTagClick = { onIntent(DetailIntent.TagClicked(it)) },
         )
     }
     Scaffold(
@@ -189,6 +191,7 @@ private fun LazyListScope.detailSections(
             groups = state.tagGroups,
             hiddenLabel = state.hiddenTagsLabel,
             notes = state.contentNotes,
+            onTagClick = actions.onTagClick,
             modifier = Modifier.fillMaxWidth(),
         )
     }

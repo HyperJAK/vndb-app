@@ -95,18 +95,36 @@ class VisualNovelDTOMapperTest {
     fun `tags map categories, drop unknown ones and hide unknown spoilers`() {
         val tags = dto(
             tags = listOf(
-                TagDTO(name = "Fantasy", rating = 2.5, spoiler = 0, category = "cont"),
-                TagDTO(name = "Sexual", rating = null, spoiler = null, category = "ero"),
-                TagDTO(name = "ADV", rating = 1.0, spoiler = 0, category = "tech"),
-                TagDTO(name = "Mystery", rating = 1.0, spoiler = 0, category = "new"),
+                TagDTO(
+                    id = "g-Fantasy",
+                    name = "Fantasy",
+                    rating = 2.5,
+                    spoiler = 0,
+                    category = "cont",
+                ),
+                TagDTO(
+                    id = "g-Sexual",
+                    name = "Sexual",
+                    rating = null,
+                    spoiler = null,
+                    category = "ero",
+                ),
+                TagDTO(id = "g-ADV", name = "ADV", rating = 1.0, spoiler = 0, category = "tech"),
+                TagDTO(
+                    id = "g-Mystery",
+                    name = "Mystery",
+                    rating = 1.0,
+                    spoiler = 0,
+                    category = "new",
+                ),
             ),
         ).toNovelDetails().tags
 
         assertEquals(
             listOf(
-                NovelTag("Fantasy", 2.5, 0, TagCategory.Content),
-                NovelTag("Sexual", 0.0, 2, TagCategory.Sexual),
-                NovelTag("ADV", 1.0, 0, TagCategory.Technical),
+                NovelTag("g-Fantasy", "Fantasy", 2.5, 0, TagCategory.Content),
+                NovelTag("g-Sexual", "Sexual", 0.0, 2, TagCategory.Sexual),
+                NovelTag("g-ADV", "ADV", 1.0, 0, TagCategory.Technical),
             ),
             tags,
         )

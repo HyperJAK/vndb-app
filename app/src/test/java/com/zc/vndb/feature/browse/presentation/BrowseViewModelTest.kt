@@ -3,6 +3,7 @@ package com.zc.vndb.feature.browse.presentation
 import app.cash.turbine.test
 import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.browse.domain.model.AgeRating
@@ -10,7 +11,9 @@ import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowseSamples
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
+import com.zc.vndb.feature.browse.domain.model.TagInfo
 import com.zc.vndb.feature.browse.domain.repository.FakeBrowseRepository
+import com.zc.vndb.feature.browse.domain.usecase.GetTagUseCase
 import com.zc.vndb.feature.browse.domain.usecase.SearchNovelsUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,7 +34,11 @@ class BrowseViewModelTest {
         novels = (1..45).map { BrowseSamples.novel("v$it") }
     }
 
-    private fun createViewModel() = BrowseViewModel(SearchNovelsUseCase(repository))
+    private fun createViewModel(tagId: String? = null) = BrowseViewModel(
+        tagId = tagId,
+        searchNovels = SearchNovelsUseCase(repository),
+        getTag = GetTagUseCase(repository),
+    )
 
     @Test
     fun `loads the first page with the default filter`() = runTest {
@@ -207,6 +214,62 @@ class BrowseViewModelTest {
         viewModel.effect.test {
             viewModel.onIntent(BrowseIntent.NovelClicked("v7"))
             assertEquals(BrowseEffect.NavigateToNovel("v7"), awaitItem())
+        }
+    }
+
+    @Test
+    fun `a tag page scopes the list to the tag and shows its header`() = runTest {
+        repository.tags["g249"] = TagInfo(
+            id = "g249",
+            name = "Time Travel",
+            aliases = listOf("Time Loop"),
+            description = "Moving between [url=/g1]points[/url] in time.",
+            category = TagCategory.Content,
+            novelCount = 1067,
+        )
+        val viewModel = createViewModel(tagId = "g249")
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertTrue(state.isTagPage)
+        assertEquals(UiText.StringValue("Time Travel"), state.tagHeader?.name)
+        assertEquals("g249", repository.requests.single().filter.tagId)
+
+        viewModel.onIntent(BrowseIntent.GenreToggled(Genre.Mystery))
+        advanceUntilIdle()
+        assertEquals("g249", repository.requests.last().filter.tagId)
+    }
+
+    @Test
+    fun `a failed tag lookup still lists the tag's novels`() = runTest {
+        val viewModel = createViewModel(tagId = "g-missing")
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(null, state.tagHeader)
+        assertEquals(20, state.results.size)
+        assertEquals("g-missing", repository.requests.single().filter.tagId)
+    }
+
+    @Test
+    fun `the Browse tab is not a tag page`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.isTagPage)
+        assertEquals(null, repository.requests.single().filter.tagId)
+    }
+
+    @Test
+    fun `back and description toggle`() = runTest {
+        val viewModel = createViewModel(tagId = "g249")
+        advanceUntilIdle()
+
+        viewModel.onIntent(BrowseIntent.TagDescriptionToggled)
+        assertTrue(viewModel.state.value.isTagDescriptionExpanded)
+        viewModel.effect.test {
+            viewModel.onIntent(BrowseIntent.BackClicked)
+            assertEquals(BrowseEffect.NavigateBack, awaitItem())
         }
     }
 }

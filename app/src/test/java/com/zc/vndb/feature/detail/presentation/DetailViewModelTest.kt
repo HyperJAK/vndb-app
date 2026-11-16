@@ -152,6 +152,8 @@ class DetailViewModelTest {
             assertEquals(DetailEffect.NavigateToNovel("v17102"), awaitItem())
             viewModel.onIntent(DetailIntent.CharacterClicked("c6487"))
             assertEquals(DetailEffect.NavigateToCharacter("c6487"), awaitItem())
+            viewModel.onIntent(DetailIntent.TagClicked("g249"))
+            assertEquals(DetailEffect.NavigateToTag("g249"), awaitItem())
         }
     }
 }

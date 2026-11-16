@@ -8,6 +8,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteTone
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteUIModel
+import com.zc.vndb.feature.detail.presentation.component.taggroups.model.TagChipUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.TagGroupUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -70,9 +71,12 @@ private fun List<NovelTag>.group(
     category: TagCategory,
     level: SpoilerLevel,
     max: Int,
-): ImmutableList<UiText>? = filter { it.category == category && it.spoilerLevel <= level.maxLevel }
+): ImmutableList<TagChipUIModel>? = filter {
+    it.category == category &&
+        it.spoilerLevel <= level.maxLevel
+}
     .sortedByDescending { it.rating }
     .take(max)
-    .map { UiText.StringValue(it.name) }
+    .map { TagChipUIModel(id = it.id, label = UiText.StringValue(it.name)) }
     .takeIf { it.isNotEmpty() }
     ?.toImmutableList()

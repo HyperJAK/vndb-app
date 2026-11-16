@@ -11,6 +11,7 @@ private const val MAJOR_SPOILER = 2
 fun TagDTO.toDomain(): NovelTag? {
     val category = category.toTagCategory() ?: return null
     return NovelTag(
+        id = id,
         name = name,
         rating = rating ?: 0.0,
         spoilerLevel = spoiler ?: MAJOR_SPOILER,
@@ -18,7 +19,8 @@ fun TagDTO.toDomain(): NovelTag? {
     )
 }
 
-private fun String?.toTagCategory(): TagCategory? = when (this) {
+/** VNDB tag category code ("cont", "ero", "tech"); null when unknown. */
+fun String?.toTagCategory(): TagCategory? = when (this) {
     "cont" -> TagCategory.Content
     "ero" -> TagCategory.Sexual
     "tech" -> TagCategory.Technical

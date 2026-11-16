@@ -87,4 +87,22 @@ class BrowseQueryDomainMapperTest {
             body["filters"],
         )
     }
+
+    @Test
+    fun `a tag page adds its tag to the filters`() {
+        val body = BrowseFilter(tagId = "g249").body()
+
+        assertEquals(
+            json("""["and",["release","!=",["minage",">=",18]],["tag","=","g249"]]"""),
+            body["filters"],
+        )
+    }
+
+    @Test
+    fun `tag lookup by id`() {
+        val body = appJson.encodeToJsonElement(tagQuery("g249")).jsonObject
+
+        assertEquals(json("""["id","=","g249"]"""), body["filters"])
+        assertEquals(json("\"name, aliases, description, category, vn_count\""), body["fields"])
+    }
 }
