@@ -12,10 +12,12 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.profile.domain.model.EntryOrder
 import com.zc.vndb.feature.profile.domain.model.ListLabel
+import com.zc.vndb.feature.profile.domain.model.MyListEntry
 import com.zc.vndb.feature.profile.domain.model.ProfileSamples
 import com.zc.vndb.feature.profile.domain.repository.FakeProfileRepository
 import com.zc.vndb.feature.profile.domain.usecase.GetListEntriesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.GetProfileUseCase
+import com.zc.vndb.feature.profile.domain.usecase.ObserveListChangesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
 import com.zc.vndb.feature.settings.domain.usecase.UpdateSettingsUseCase
 import kotlin.test.Test
@@ -59,6 +61,7 @@ class ProfileViewModelTest {
         clock = FixedClock(Instant.parse("2026-11-16T00:00:00Z")),
         observeSettings = ObserveSettingsUseCase(settings),
         updateSettings = UpdateSettingsUseCase(settings),
+        observeListChanges = ObserveListChangesUseCase(profile),
     )
 
     /** `state` only runs while collected, as on screen. */
@@ -239,4 +242,36 @@ class ProfileViewModelTest {
                 profile.requests.first { it.order == EntryOrder.Vote }.order,
             )
         }
+
+    @Test
+    fun `the edit button opens the list editor with the entry's title`() = runTest {
+        sessions.current.value = ProfileSamples.session()
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.canEditList)
+
+        viewModel.effect.test {
+            viewModel.onIntent(ProfileIntent.EntryEditClicked("v1"))
+            val effect = awaitItem() as ProfileEffect.OpenListEditor
+            assertEquals("v1", effect.novelId)
+        }
+    }
+
+    @Test
+    fun `an entry edited in the app reloads the labels and the list`() = runTest {
+        sessions.current.value = ProfileSamples.session()
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+        advanceUntilIdle()
+        profile.calls.clear()
+
+        profile.saveEntry(
+            MyListEntry(novelId = "v1", labelIds = setOf(ListLabel.FINISHED)),
+            previous = null,
+        )
+        advanceUntilIdle()
+
+        assertTrue(profile.calls.containsAll(listOf("labels", "entries:1:1")))
+    }
 }

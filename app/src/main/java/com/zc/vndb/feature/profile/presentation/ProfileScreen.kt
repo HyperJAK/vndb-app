@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelMark
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
@@ -162,7 +163,7 @@ private fun SignedInContent(state: ProfileState, onIntent: (ProfileIntent) -> Un
                             }
                         }
                     }
-                    entries(state.entries, onIntent)
+                    entries(state.entries, state.canEditList, onIntent)
                 }
             }
         }
@@ -177,12 +178,17 @@ private fun LabelChips(labels: ImmutableList<LabelChipUIModel>, onSelect: (Int) 
                 label = label.label,
                 isSelected = label.isSelected,
                 onClick = { onSelect(label.id) },
+                leading = { EntryLabelMark(label.id) },
             )
         }
     }
 }
 
-private fun LazyListScope.entries(entries: EntriesUIState, onIntent: (ProfileIntent) -> Unit) {
+private fun LazyListScope.entries(
+    entries: EntriesUIState,
+    canEdit: Boolean,
+    onIntent: (ProfileIntent) -> Unit,
+) {
     when {
         entries.isLoading -> item(
             key = "entries-loading",
@@ -202,6 +208,11 @@ private fun LazyListScope.entries(entries: EntriesUIState, onIntent: (ProfileInt
                 ListEntryCardView(
                     model = entry,
                     onClick = { onIntent(ProfileIntent.EntryClicked(entry.novelId)) },
+                    onEdit = if (canEdit) {
+                        { onIntent(ProfileIntent.EntryEditClicked(entry.novelId)) }
+                    } else {
+                        null
+                    },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

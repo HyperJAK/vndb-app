@@ -14,6 +14,9 @@ sealed interface DetailIntent {
     data class LinkClicked(val url: String) : DetailIntent
     data class SpoilerLevelSelected(val level: SpoilerLevel) : DetailIntent
     data object SynopsisToggled : DetailIntent
+
+    /** Add to list / Edit on the My list card. */
+    data object MyListClicked : DetailIntent
     data class RelationClicked(val id: String) : DetailIntent
     data class CharacterClicked(val id: String) : DetailIntent
     data class TagClicked(val id: String) : DetailIntent

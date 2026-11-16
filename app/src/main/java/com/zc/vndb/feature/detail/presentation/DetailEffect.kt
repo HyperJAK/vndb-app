@@ -8,4 +8,5 @@ sealed interface DetailEffect {
     data class NavigateToCharacter(val id: String) : DetailEffect
     data class NavigateToTag(val id: String) : DetailEffect
     data class NavigateToRelease(val id: String) : DetailEffect
+    data class OpenListEditor(val novelId: String, val title: String) : DetailEffect
 }

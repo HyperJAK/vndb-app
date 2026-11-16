@@ -13,8 +13,10 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.statement.readRawBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -53,7 +55,14 @@ fun createHttpClient(
         validateResponse { response ->
             when (response.status.value) {
                 in REDIRECT_CODES -> throw RedirectResponseException(response, UNREAD_BODY)
+
+                // VNDB explains a bad request in a short plain-text body; read it as raw bytes.
+                HttpStatusCode.BadRequest.value -> throw VndbRejectedException(
+                    response.readRawBytes().decodeToString().trim(),
+                )
+
                 in CLIENT_ERROR_CODES -> throw ClientRequestException(response, UNREAD_BODY)
+
                 in SERVER_ERROR_CODES -> throw ServerResponseException(response, UNREAD_BODY)
             }
         }

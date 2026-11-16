@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.profile.presentation.mapper
 
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -83,7 +84,10 @@ class ProfilePresentationMapperTest {
             vote = 85,
         ).toCardUIModel(shownLabelId = ListLabel.PLAYING, now = now)
 
-        assertEquals(listOf<UiText>(UiText.StringValue("Waiting")), card.labels.toList())
+        assertEquals(
+            listOf(EntryLabelUIModel(13, UiText.StringValue("Waiting"))),
+            card.labels.toList(),
+        )
         assertEquals(
             UiText.StringResource(StringResource.profile_my_vote, listOf("8.5")),
             card.voteLabel,

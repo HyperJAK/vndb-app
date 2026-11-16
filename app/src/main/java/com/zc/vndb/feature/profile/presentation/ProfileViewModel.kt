@@ -16,6 +16,7 @@ import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.domain.model.UserProfile
 import com.zc.vndb.feature.profile.domain.usecase.GetListEntriesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.GetProfileUseCase
+import com.zc.vndb.feature.profile.domain.usecase.ObserveListChangesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
 import com.zc.vndb.feature.profile.presentation.component.listentrycard.mapper.toCardUIModel
 import com.zc.vndb.feature.profile.presentation.component.profileheader.mapper.toHeaderUIModel
@@ -53,6 +54,7 @@ class ProfileViewModel(
     private val clock: Clock,
     private val observeSettings: ObserveSettingsUseCase,
     private val updateSettings: UpdateSettingsUseCase,
+    observeListChanges: ObserveListChangesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -82,6 +84,19 @@ class ProfileViewModel(
     private var overviewJob: Job? = null
     private var entriesJob: Job? = null
 
+    init {
+        // An entry edited in the list editor can move between labels: reload what is shown.
+        viewModelScope.launch {
+            observeListChanges().collect {
+                if (session != null && _state.value.isSignedIn) {
+                    loadOverview(
+                        isRefresh = labels.isNotEmpty(),
+                    )
+                }
+            }
+        }
+    }
+
     @Suppress("CyclomaticComplexMethod") // A flat dispatch over the screen's intents.
     fun onIntent(intent: ProfileIntent) {
         when (intent) {
@@ -110,6 +125,12 @@ class ProfileViewModel(
                 ProfileEffect.NavigateToNovel(intent.novelId),
             )
 
+            is ProfileIntent.EntryEditClicked -> {
+                val title = entriesByLabel.values.asSequence().flatMap { it.entries }
+                    .firstOrNull { it.novelId == intent.novelId }?.title ?: intent.novelId
+                sendEffect(ProfileEffect.OpenListEditor(intent.novelId, title))
+            }
+
             is ProfileIntent.SortSelected -> selectSort(intent.sort)
 
             ProfileIntent.SortDirectionToggled -> toggleSortDirection()
@@ -127,7 +148,11 @@ class ProfileViewModel(
         labels = emptyList()
         selectedLabelId = null
         entriesByLabel.clear()
-        _state.value = ProfileState(isSessionKnown = true, header = newSession?.toHeaderUIModel())
+        _state.value = ProfileState(
+            isSessionKnown = true,
+            header = newSession?.toHeaderUIModel(),
+            canEditList = newSession?.canWriteList == true,
+        )
         if (newSession != null) loadOverview(isRefresh = false)
     }
 

@@ -32,6 +32,11 @@ fun Throwable.toErrorUIModel(): ErrorUIModel = when (this) {
         isRetryable = true,
     )
 
+    is DomainError.Rejected -> errorModel(
+        UiText.StringResource(StringResource.error_rejected, listOf(reason)),
+        isRetryable = false,
+    )
+
     else -> errorModel(UiText.StringResource(StringResource.error_generic), isRetryable = true)
 }
 

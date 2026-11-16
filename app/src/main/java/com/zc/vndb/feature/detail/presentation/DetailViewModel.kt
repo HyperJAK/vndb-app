@@ -27,6 +27,7 @@ import com.zc.vndb.feature.detail.domain.usecase.GetNovelReleasesUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelScreenshotsUseCase
 import com.zc.vndb.feature.detail.presentation.component.detailhero.mapper.toHeroUIModel
 import com.zc.vndb.feature.detail.presentation.component.editionrow.mapper.toRowUIModel
+import com.zc.vndb.feature.detail.presentation.component.mylist.mapper.toMyListCard
 import com.zc.vndb.feature.detail.presentation.component.relationcard.mapper.toCardUIModel
 import com.zc.vndb.feature.detail.presentation.component.scorecard.mapper.toScoreUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.mapper.toContentNotes
@@ -50,7 +51,10 @@ import com.zc.vndb.feature.detail.presentation.model.DetailTabUIModel
 import com.zc.vndb.feature.detail.presentation.model.PagedListUIState
 import com.zc.vndb.feature.detail.presentation.model.SectionState
 import com.zc.vndb.feature.detail.presentation.model.dataOrNull
+import com.zc.vndb.feature.profile.domain.usecase.GetMyListEntryUseCase
 import com.zc.vndb.feature.profile.domain.usecase.IsNovelFinishedUseCase
+import com.zc.vndb.feature.profile.domain.usecase.ObserveListChangesUseCase
+import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -58,6 +62,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -82,6 +87,9 @@ class DetailViewModel(
     private val getNovelQuotes: GetNovelQuotesUseCase,
     private val observeSettings: ObserveSettingsUseCase,
     private val isNovelFinished: IsNovelFinishedUseCase,
+    private val observeSession: ObserveSessionUseCase,
+    private val getMyListEntry: GetMyListEntryUseCase,
+    private val observeListChanges: ObserveListChangesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -116,8 +124,12 @@ class DetailViewModel(
         DetailSection.Quotes to FIRST_PAGE,
     )
 
+    private var myListJob: Job? = null
+    private var canWriteList = false
+
     init {
         onIntent(DetailIntent.Load)
+        observeMyList()
     }
 
     @Suppress("CyclomaticComplexMethod") // A flat dispatch over the screen's intents.
@@ -142,6 +154,10 @@ class DetailViewModel(
                 _state.update { it.copy(spoilerLevel = intent.level) }
                 renderSpoilerSections()
             }
+
+            DetailIntent.MyListClicked -> sendEffect(
+                DetailEffect.OpenListEditor(novelId, novel?.title ?: novelId),
+            )
 
             DetailIntent.SynopsisToggled -> _state.update {
                 it.copy(
@@ -225,6 +241,38 @@ class DetailViewModel(
                         )
                     }
                 }
+        }
+    }
+
+    /**
+     * The signed-in user's entry: loaded on sign-in and each time it is edited in the app; hidden
+     * for guests. A failed load just leaves the card out.
+     */
+    private fun observeMyList() {
+        viewModelScope.launch {
+            observeSession().collect { session ->
+                if (session == null) {
+                    myListJob?.cancel()
+                    _state.update { it.copy(myList = null) }
+                } else {
+                    canWriteList = session.canWriteList
+                    loadMyList()
+                }
+            }
+        }
+        viewModelScope.launch {
+            observeListChanges().filter { it == novelId }.collect {
+                loadMyList()
+            }
+        }
+    }
+
+    private fun loadMyList() {
+        myListJob?.cancel()
+        myListJob = viewModelScope.launch {
+            getMyListEntry(novelId).onSuccess { entry ->
+                _state.update { it.copy(myList = entry.toMyListCard(canWriteList)) }
+            }
         }
     }
 

@@ -7,8 +7,16 @@ import kotlinx.datetime.LocalDate
 
 object ProfileSamples {
 
-    fun session(userId: String = "u2", canReadPrivateList: Boolean = true) =
-        Session(userId = userId, username = "Yorhel", canReadPrivateList = canReadPrivateList)
+    fun session(
+        userId: String = "u2",
+        canReadPrivateList: Boolean = true,
+        canWriteList: Boolean = true,
+    ) = Session(
+        userId = userId,
+        username = "Yorhel",
+        canReadPrivateList = canReadPrivateList,
+        canWriteList = canWriteList,
+    )
 
     fun label(id: Int, count: Int = 3, name: String = "Label $id") =
         ListLabel(id = id, name = name, count = count, isPrivate = false)

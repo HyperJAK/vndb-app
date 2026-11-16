@@ -15,6 +15,7 @@ fun ProfileRoute(
     onOpenLogin: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenNovel: (String) -> Unit,
+    onOpenListEditor: (novelId: String, title: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = koinViewModel(),
 ) {
@@ -29,6 +30,8 @@ fun ProfileRoute(
             ProfileEffect.NavigateToSettings -> onOpenSettings()
 
             is ProfileEffect.NavigateToNovel -> onOpenNovel(effect.id)
+
+            is ProfileEffect.OpenListEditor -> onOpenListEditor(effect.novelId, effect.title)
 
             is ProfileEffect.ShowMessage -> snackbarHostState.showSnackbar(
                 effect.message.asString(context),

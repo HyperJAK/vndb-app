@@ -10,6 +10,7 @@ import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.domain.repository.FakeSessionRepository
 import com.zc.vndb.common.domain.repository.FakeSettingsRepository
 import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -28,8 +29,14 @@ import com.zc.vndb.feature.detail.presentation.model.DetailSection
 import com.zc.vndb.feature.detail.presentation.model.DetailTab
 import com.zc.vndb.feature.detail.presentation.model.SectionState
 import com.zc.vndb.feature.detail.presentation.model.dataOrNull
+import com.zc.vndb.feature.profile.domain.model.ListLabel
+import com.zc.vndb.feature.profile.domain.model.MyListEntry
+import com.zc.vndb.feature.profile.domain.model.ProfileSamples
 import com.zc.vndb.feature.profile.domain.repository.FakeProfileRepository
+import com.zc.vndb.feature.profile.domain.usecase.GetMyListEntryUseCase
 import com.zc.vndb.feature.profile.domain.usecase.IsNovelFinishedUseCase
+import com.zc.vndb.feature.profile.domain.usecase.ObserveListChangesUseCase
+import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -80,6 +87,9 @@ class DetailViewModelTest {
         getNovelQuotes = GetNovelQuotesUseCase(repository),
         observeSettings = ObserveSettingsUseCase(settings),
         isNovelFinished = IsNovelFinishedUseCase(sessions, profileRepository),
+        observeSession = ObserveSessionUseCase(sessions),
+        getMyListEntry = GetMyListEntryUseCase(sessions, profileRepository),
+        observeListChanges = ObserveListChangesUseCase(profileRepository),
     )
 
     private fun DetailViewModel.need(section: DetailSection) = onIntent(
@@ -346,5 +356,58 @@ class DetailViewModelTest {
             UiText.StringResource(StringResource.detail_tags_sexual),
             viewModel.state.value.tagGroups.last().title,
         )
+    }
+
+    @Test
+    fun `guests get no My list card`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.myList)
+    }
+
+    @Test
+    fun `signed-in users see their entry, refreshed after an edit, and can open the editor`() =
+        runTest {
+            sessions.current.value = ProfileSamples.session()
+            val viewModel = createViewModel()
+            advanceUntilIdle()
+            with(checkNotNull(viewModel.state.value.myList)) {
+                assertFalse(isOnList)
+                assertTrue(canEdit)
+            }
+
+            profileRepository.saveEntry(
+                MyListEntry(
+                    novelId = "v2002",
+                    labelIds = setOf(ListLabel.PLAYING),
+                    vote = 90,
+                    labelNames = mapOf(ListLabel.PLAYING to "Playing"),
+                ),
+                previous = null,
+            )
+            advanceUntilIdle()
+            with(checkNotNull(viewModel.state.value.myList)) {
+                assertTrue(isOnList)
+                assertEquals(
+                    listOf(EntryLabelUIModel(ListLabel.PLAYING, UiText.StringValue("Playing"))),
+                    labels,
+                )
+                assertNotNull(voteLabel)
+            }
+
+            viewModel.effect.test {
+                viewModel.onIntent(DetailIntent.MyListClicked)
+                assertEquals(DetailEffect.OpenListEditor("v2002", "STEINS;GATE"), awaitItem())
+            }
+        }
+
+    @Test
+    fun `a token without listwrite shows the entry read-only`() = runTest {
+        sessions.current.value = ProfileSamples.session(canWriteList = false)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertFalse(checkNotNull(viewModel.state.value.myList).canEdit)
     }
 }

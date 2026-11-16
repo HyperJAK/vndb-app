@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Notes
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,15 +29,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelChipView
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
+import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.presentation.component.listentrycard.model.ListEntryCardUIModel
 import kotlinx.collections.immutable.persistentListOf
 
 private val CoverWidth = 84.dp
 private val SmallIconSize = 14.dp
 private val NoteIconSize = 16.dp
+private val EditButtonSize = 32.dp
+private val EditIconSize = 18.dp
 private const val NOTES_MAX_LINES = 2
 
 /** A VN on the user's list: cover, titles, vote, dates, other labels, notes and last change. */
@@ -45,6 +53,7 @@ fun ListEntryCardView(
     model: ListEntryCardUIModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onEdit: (() -> Unit)? = null,
 ) {
     val shape = MaterialTheme.shapes.large
     Row(
@@ -73,6 +82,18 @@ fun ListEntryCardView(
             EntryMeta(model)
             model.notes?.let { NotePill(it) }
             UpdatedLine(model.updatedLabel)
+        }
+        onEdit?.let { edit ->
+            IconButton(onClick = edit, modifier = Modifier.size(EditButtonSize)) {
+                Icon(
+                    Icons.Outlined.Edit,
+                    contentDescription = UiText.StringResource(
+                        StringResource.cd_edit_list_entry,
+                    ).asString(),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(EditIconSize),
+                )
+            }
         }
     }
 }
@@ -150,11 +171,13 @@ private fun EntryMeta(model: ListEntryCardUIModel) {
         horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
         verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
     ) {
+        model.labels.forEach { EntryLabelChipView(it) }
         model.voteLabel?.let { TagChipView(label = it, colors = VndbTheme.colors.spoilerMinor) }
         model.dates.forEach { TagChipView(label = it) }
-        model.labels.forEach { TagChipView(label = it, colors = VndbTheme.colors.chipLength) }
     }
 }
+
+private const val PREVIEW_OWN_LABEL_ID = 13
 
 @AdaptivePreviews
 @Composable
@@ -168,7 +191,10 @@ private fun ListEntryCardViewPreview() {
                 isCoverSensitive = false,
                 voteLabel = UiText.StringValue("My vote 8.5"),
                 dates = persistentListOf(UiText.StringValue("Started 2024-10-15")),
-                labels = persistentListOf(UiText.StringValue("Waiting")),
+                labels = persistentListOf(
+                    EntryLabelUIModel(ListLabel.PLAYING, UiText.StringValue("Playing")),
+                    EntryLabelUIModel(PREVIEW_OWN_LABEL_ID, UiText.StringValue("Waiting")),
+                ),
                 notes = UiText.StringValue("Currently on Sorako's route."),
                 updatedLabel = UiText.StringValue("Updated 2 hours ago"),
             ),

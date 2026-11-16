@@ -6,4 +6,6 @@ data class Session(
     val username: String,
     /** The token has `listread`: private labels and entries are visible. */
     val canReadPrivateList: Boolean,
+    /** The token has `listwrite`: the list can be edited from the app. */
+    val canWriteList: Boolean = false,
 )

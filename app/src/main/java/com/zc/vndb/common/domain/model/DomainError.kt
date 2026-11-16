@@ -12,5 +12,8 @@ sealed class DomainError(cause: Throwable? = null) : Exception(cause) {
     data object RateLimited : DomainError()
     data object Server : DomainError()
     data object InvalidData : DomainError()
+
+    /** VNDB refused the request (400) and said why, e.g. an invalid list change. */
+    data class Rejected(val reason: String) : DomainError()
     data class Unknown(override val cause: Throwable) : DomainError(cause)
 }

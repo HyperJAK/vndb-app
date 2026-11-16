@@ -18,4 +18,7 @@ sealed interface ProfileIntent {
     data object LoadMoreRetried : ProfileIntent
     data object EntriesRetried : ProfileIntent
     data class EntryClicked(val novelId: String) : ProfileIntent
+
+    /** The edit button on an entry card: opens the list editor. */
+    data class EntryEditClicked(val novelId: String) : ProfileIntent
 }

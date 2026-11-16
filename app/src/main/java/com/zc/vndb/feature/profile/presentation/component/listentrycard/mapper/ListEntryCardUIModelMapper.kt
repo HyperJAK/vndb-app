@@ -1,12 +1,14 @@
 package com.zc.vndb.feature.profile.presentation.component.listentrycard.mapper
 
 import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.mapper.primaryTitle
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.profile.domain.model.ListEntry
 import com.zc.vndb.feature.profile.domain.model.ListLabel
+import com.zc.vndb.feature.profile.domain.model.MyListEntry
 import com.zc.vndb.feature.profile.presentation.component.listentrycard.model.ListEntryCardUIModel
 import kotlin.time.Duration
 import kotlin.time.Instant
@@ -60,7 +62,8 @@ private fun ListEntry.toCardUIModel(shownLabelId: Int, now: Instant, primaryTitl
         ).toImmutableList(),
         labels = labels
             .filter { it.id != shownLabelId && it.id != ListLabel.VOTED }
-            .map { UiText.StringValue(it.name) }
+            .sortedBy { it.id !in MyListEntry.STATUS_LABELS }
+            .map { EntryLabelUIModel(it.id, UiText.StringValue(it.name)) }
             .toImmutableList(),
         notes = notes?.let(UiText::StringValue),
         updatedLabel = lastModified.toUpdatedLabel(now),

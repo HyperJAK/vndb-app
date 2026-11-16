@@ -26,6 +26,8 @@ data class ProfileState(
     /** A to Z / oldest / lowest vote first (the direction button shows an up arrow). */
     val isSortAscending: Boolean = true,
     val entries: EntriesUIState = EntriesUIState(),
+    /** The token has `listwrite`: entry cards show an edit button. */
+    val canEditList: Boolean = false,
 ) {
     val isSignedIn: Boolean get() = header != null
 
