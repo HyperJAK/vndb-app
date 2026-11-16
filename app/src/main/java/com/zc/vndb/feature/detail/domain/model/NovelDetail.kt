@@ -27,6 +27,9 @@ data class NovelDetail(
     val tags: List<NovelTag>,
     val links: List<ExternalLink>,
     val relations: List<RelatedNovel>,
-    /** Character id → voice actor name. */
-    val voiceActors: Map<String, String>,
+    /** The VN's title in other languages. */
+    val titles: List<NovelTitle>,
+    val aliases: List<String>,
+    /** How many users submitted a play time. */
+    val lengthVotes: Int,
 )

@@ -8,6 +8,7 @@ import com.zc.vndb.common.domain.model.ExternalLink
 import com.zc.vndb.feature.detail.data.dto.DetailNovelDTO
 import com.zc.vndb.feature.detail.data.dto.RelationDTO
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
+import com.zc.vndb.feature.detail.domain.model.NovelTitle
 import com.zc.vndb.feature.detail.domain.model.RelatedNovel
 import com.zc.vndb.feature.detail.domain.model.RelationType
 
@@ -27,9 +28,17 @@ fun DetailNovelDTO.toDomain(): NovelDetail = NovelDetail(
     tags = tags.orEmpty().mapNotNull { it.toDomain() },
     links = extlinks.orEmpty().map { ExternalLink(label = it.label, url = it.url) },
     relations = relations.orEmpty().map { it.toDomain() },
-    voiceActors = va.orEmpty()
-        .groupBy { it.character.id }
-        .mapValues { (_, actors) -> actors.first().staff.name },
+    titles = titles.orEmpty().map {
+        NovelTitle(
+            languageCode = it.lang,
+            title = it.title,
+            latin = it.latin?.takeIf { latin -> latin.isNotBlank() && latin != it.title },
+            isOfficial = it.official ?: false,
+            isMain = it.main ?: false,
+        )
+    },
+    aliases = aliases.orEmpty().filter { it.isNotBlank() }.distinct(),
+    lengthVotes = lengthVotes ?: 0,
 )
 
 fun RelationDTO.toDomain(): RelatedNovel = RelatedNovel(

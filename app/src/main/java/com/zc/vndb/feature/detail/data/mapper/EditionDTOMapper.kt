@@ -24,7 +24,7 @@ fun EditionDTO.toDomain(): List<Edition> = platforms.orEmpty().ifEmpty {
         title = title.orEmpty(),
         releaseDate = released.toReleaseDate(),
         platform = platform,
-        family = platform.toFamily(),
+        family = platform.toPlatformFamily(),
         languageCodes = languages.orEmpty().map { it.lang },
         isOfficial = official ?: false,
         isPatch = patch ?: false,
@@ -32,7 +32,8 @@ fun EditionDTO.toDomain(): List<Edition> = platforms.orEmpty().ifEmpty {
     )
 }
 
-private fun String.toFamily(): PlatformFamily = when (this) {
+/** Rough family of a VNDB platform code. */
+fun String.toPlatformFamily(): PlatformFamily = when (this) {
     in pcPlatforms -> PlatformFamily.Pc
     in consolePlatforms -> PlatformFamily.Console
     in mobilePlatforms -> PlatformFamily.Mobile

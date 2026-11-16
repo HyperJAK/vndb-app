@@ -11,7 +11,12 @@ fun NovelCharacter.toCardUIModel(): CharacterCardUIModel = CharacterCardUIModel(
     name = UiText.StringValue(name),
     originalName = originalName?.let(UiText::StringValue),
     roleLabel = UiText.StringResource(
-        if (role == CharacterRole.Main) R.string.detail_role_main else R.string.detail_role_primary,
+        when (role) {
+            CharacterRole.Main -> R.string.detail_role_main
+            CharacterRole.Primary -> R.string.detail_role_primary
+            CharacterRole.Side -> R.string.detail_role_side
+            CharacterRole.Appears -> R.string.detail_role_appears
+        },
     ),
     isMain = role == CharacterRole.Main,
     voiceActorLabel = voiceActor?.let { UiText.StringResource(R.string.detail_cv, listOf(it)) },

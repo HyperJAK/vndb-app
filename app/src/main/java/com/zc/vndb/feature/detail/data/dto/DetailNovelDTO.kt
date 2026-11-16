@@ -24,5 +24,7 @@ data class DetailNovelDTO(
     @SerialName("tags") val tags: List<TagDTO>?,
     @SerialName("extlinks") val extlinks: List<ExtLinkDTO>?,
     @SerialName("relations") val relations: List<RelationDTO>?,
-    @SerialName("va") val va: List<VoiceActorDTO>?,
+    @SerialName("titles") val titles: List<NovelTitleDTO>?,
+    @SerialName("aliases") val aliases: List<String>?,
+    @SerialName("length_votes") val lengthVotes: Int?,
 )

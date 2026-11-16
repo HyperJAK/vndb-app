@@ -44,6 +44,7 @@ import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
+import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -54,7 +55,6 @@ import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.BrowseN
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.BrowseNovelCardUIModel
 import com.zc.vndb.feature.browse.presentation.component.filterbar.FilterBarView
 import com.zc.vndb.feature.browse.presentation.component.searchfield.SearchFieldView
-import com.zc.vndb.feature.browse.presentation.component.selectablechip.SelectableChipView
 import com.zc.vndb.feature.browse.presentation.component.tagheader.TagHeaderView
 import com.zc.vndb.feature.browse.presentation.model.GenreChipUIState
 import com.zc.vndb.feature.browse.presentation.model.SortOptionUIModel

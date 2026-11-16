@@ -144,6 +144,59 @@
     <string name="detail_relation_other">RELATED</string>
     <string name="detail_relation_score">Score: %1$s</string>
 
+    <!-- Detail: tabs and lazy sections -->
+    <string name="detail_tab_overview">Overview</string>
+    <string name="detail_tab_media">Media</string>
+    <string name="detail_tab_cast">Cast &amp; Staff</string>
+    <string name="detail_tab_releases">Releases</string>
+    <string name="detail_tab_quotes">Quotes</string>
+    <string name="detail_tab_with_count">%1$s %2$s</string>
+    <string name="detail_average_hours_votes">%1$sh avg (%2$s votes)</string>
+    <string name="detail_also_known_as">Also known as</string>
+    <string name="detail_screenshots">Screenshots</string>
+    <string name="detail_see_all_count">See all %1$d</string>
+    <string name="detail_covers">Covers</string>
+    <string name="detail_filter_safe">Safe %1$d</string>
+    <string name="detail_filter_suggestive">Suggestive %1$d</string>
+    <string name="detail_filter_explicit">Explicit %1$d</string>
+    <string name="detail_filter_tame">Tame %1$d</string>
+    <string name="detail_filter_violent">Violent %1$d</string>
+    <string name="detail_filter_brutal">Brutal %1$d</string>
+    <plurals name="detail_hidden_by_filters">
+        <item quantity="one">%1$d hidden by content filters</item>
+        <item quantity="other">%1$d hidden by content filters</item>
+    </plurals>
+    <string name="detail_no_screenshots">No screenshots on VNDB.</string>
+    <string name="detail_no_releases">No releases on VNDB.</string>
+    <string name="detail_no_quotes">No quotes on VNDB.</string>
+    <string name="detail_no_characters">No characters on VNDB.</string>
+    <string name="detail_load_more">Load more</string>
+    <string name="detail_section_failed">Couldn\'t load this section.</string>
+    <string name="detail_role_side">ROLE: SIDE</string>
+    <string name="detail_role_appears">ROLE: APPEARS</string>
+    <string name="detail_characters_main">Main</string>
+    <string name="detail_characters_primary">Primary</string>
+    <string name="detail_characters_side">Side</string>
+    <string name="detail_characters_appears">Makes an appearance</string>
+    <string name="detail_staff">Staff</string>
+    <string name="detail_staff_original">Original edition</string>
+    <string name="detail_staff_scenario">Scenario:</string>
+    <string name="detail_staff_chardesign">Char. design:</string>
+    <string name="detail_staff_art">Artist:</string>
+    <string name="detail_staff_music">Composer:</string>
+    <string name="detail_staff_songs">Vocals:</string>
+    <string name="detail_staff_director">Director:</string>
+    <string name="detail_staff_translator">Translator:</string>
+    <string name="detail_staff_editor">Editor:</string>
+    <string name="detail_staff_qa">QA:</string>
+    <string name="detail_staff_staff">Staff:</string>
+    <string name="detail_staff_other">Other:</string>
+    <string name="detail_quote_score">%1$+d</string>
+    <string name="detail_reviews_link">Reviews on vndb.org</string>
+    <string name="detail_reviews_hint">Reviews are not available through the VNDB API.</string>
+    <string name="detail_close_viewer">Close</string>
+    <string name="detail_viewer_position">%1$d / %2$d</string>
+
     <!-- Tag -->
     <string name="tag_category_content">Content tag</string>
     <string name="tag_category_sexual">Sexual content tag</string>

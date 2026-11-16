@@ -113,45 +113,27 @@
         }
       ],
       "title": "STEINS;GATE 0",
-      "va": [
+      "votecount": 7788,
+      "titles": [
         {
-          "character": {
-            "id": "c38154"
-          },
-          "staff": {
-            "id": "s8184",
-            "name": "Han Megumi"
-          }
+          "lang": "ja",
+          "title": "シュタインズ・ゲート ゼロ",
+          "latin": "Steins;Gate Zero",
+          "official": true,
+          "main": true
         },
         {
-          "character": {
-            "id": "c73595"
-          },
-          "staff": {
-            "id": "s8184",
-            "name": "Han Megumi"
-          }
-        },
-        {
-          "character": {
-            "id": "c73596"
-          },
-          "staff": {
-            "id": "s8184",
-            "name": "Han Megumi"
-          }
-        },
-        {
-          "character": {
-            "id": "c38152"
-          },
-          "staff": {
-            "id": "s670",
-            "name": "Yahagi Sayuri"
-          }
+          "lang": "en",
+          "title": "STEINS;GATE 0",
+          "latin": null,
+          "official": true,
+          "main": false
         }
       ],
-      "votecount": 7788
+      "aliases": [
+        "SG0"
+      ],
+      "length_votes": 412
     }
   ]
 }
