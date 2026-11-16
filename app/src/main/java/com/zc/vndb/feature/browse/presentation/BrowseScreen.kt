@@ -43,6 +43,7 @@ import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -54,6 +55,7 @@ import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.B
 import com.zc.vndb.feature.browse.presentation.component.filterbar.FilterBarView
 import com.zc.vndb.feature.browse.presentation.component.searchfield.SearchFieldView
 import com.zc.vndb.feature.browse.presentation.component.selectablechip.SelectableChipView
+import com.zc.vndb.feature.browse.presentation.component.tagheader.TagHeaderView
 import com.zc.vndb.feature.browse.presentation.model.GenreChipUIState
 import com.zc.vndb.feature.browse.presentation.model.SortOptionUIModel
 import kotlinx.collections.immutable.ImmutableList
@@ -75,6 +77,7 @@ private class BrowseActions(
     val onNovelClick: (String) -> Unit,
     val onRetry: () -> Unit,
     val onLoadMoreRetry: () -> Unit,
+    val onTagDescriptionToggle: () -> Unit,
 )
 
 @Composable
@@ -112,6 +115,7 @@ fun BrowseScreen(
             onNovelClick = { onIntent(BrowseIntent.NovelClicked(it)) },
             onRetry = { onIntent(BrowseIntent.Retry) },
             onLoadMoreRetry = { onIntent(BrowseIntent.LoadMoreRetried) },
+            onTagDescriptionToggle = { onIntent(BrowseIntent.TagDescriptionToggled) },
         )
     }
     val gridState = rememberLazyGridState()
@@ -119,7 +123,11 @@ fun BrowseScreen(
 
     Scaffold(
         modifier = modifier,
-        topBar = { AppTopBarView() },
+        topBar = {
+            AppTopBarView(
+                onBack = if (state.isTagPage) ({ onIntent(BrowseIntent.BackClicked) }) else null,
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
@@ -161,6 +169,7 @@ private fun LazyGridScope.fullWidthItem(key: String, content: @Composable () -> 
 }
 
 private fun LazyGridScope.filters(state: BrowseState, actions: BrowseActions) {
+    tagHeader(state, actions)
     fullWidthItem("search") {
         SearchFieldView(
             value = state.query,
@@ -183,6 +192,25 @@ private fun LazyGridScope.filters(state: BrowseState, actions: BrowseActions) {
     fullWidthItem("genres") { GenreRow(genres = state.genres, onToggle = actions.onGenreToggle) }
     state.resultCountLabel?.let { label ->
         fullWidthItem("count") { ResultCountHeader(label) }
+    }
+}
+
+/** On a tag page: what the tag is, above the usual filters. */
+private fun LazyGridScope.tagHeader(state: BrowseState, actions: BrowseActions) {
+    val header = state.tagHeader ?: return
+    fullWidthItem(
+        "tag-header",
+    ) { TagHeaderView(model = header, modifier = Modifier.fillMaxWidth()) }
+    header.description?.let { description ->
+        fullWidthItem("tag-description") {
+            ExpandableTextView(
+                title = UiText.StringResource(R.string.tag_about),
+                text = description,
+                isExpanded = state.isTagDescriptionExpanded,
+                onToggle = actions.onTagDescriptionToggle,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 

@@ -6,4 +6,5 @@ sealed interface DetailEffect {
     data class OpenUrl(val url: String) : DetailEffect
     data class NavigateToNovel(val id: String) : DetailEffect
     data class NavigateToCharacter(val id: String) : DetailEffect
+    data class NavigateToTag(val id: String) : DetailEffect
 }

@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
+import com.zc.vndb.feature.browse.domain.model.Genre
+import com.zc.vndb.feature.browse.domain.usecase.GetTagUseCase
 import com.zc.vndb.feature.browse.domain.usecase.SearchNovelsUseCase
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.mapper.toCardUIModel
+import com.zc.vndb.feature.browse.presentation.component.tagheader.mapper.toHeaderUIModel
 import com.zc.vndb.feature.browse.presentation.mapper.toGenreChips
 import com.zc.vndb.feature.browse.presentation.mapper.toResultCountLabel
 import com.zc.vndb.feature.browse.presentation.mapper.toSortOptions
@@ -23,21 +26,27 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BrowseViewModel(private val searchNovels: SearchNovelsUseCase) : ViewModel() {
+class BrowseViewModel(
+    /** Set for a tag page; null for the Browse tab. */
+    private val tagId: String?,
+    private val searchNovels: SearchNovelsUseCase,
+    private val getTag: GetTagUseCase,
+) : ViewModel() {
 
-    private val _state = MutableStateFlow(BrowseState())
+    private val _state = MutableStateFlow(BrowseState(isTagPage = tagId != null))
     val state: StateFlow<BrowseState> = _state.asStateFlow()
 
     private val _effect = Channel<BrowseEffect>(Channel.BUFFERED)
     val effect: Flow<BrowseEffect> = _effect.receiveAsFlow()
 
     /** The filter the current results belong to. */
-    private var filter = BrowseFilter()
+    private var filter = BrowseFilter(tagId = tagId)
     private var nextPage = SearchNovelsUseCase.FIRST_PAGE
     private var loadJob: Job? = null
     private var debounceJob: Job? = null
 
     init {
+        loadTag()
         onIntent(BrowseIntent.Load)
     }
 
@@ -51,35 +60,51 @@ class BrowseViewModel(private val searchNovels: SearchNovelsUseCase) : ViewModel
 
             BrowseIntent.SearchSubmitted -> applyFilter(filter.withQuery(_state.value.query))
 
-            BrowseIntent.QueryCleared -> {
-                _state.update { it.copy(query = "") }
-                applyFilter(filter.withQuery(""))
-            }
+            BrowseIntent.QueryCleared -> clearQuery()
 
             is BrowseIntent.AgeRatingSelected -> applyFilter(
                 filter.copy(ageRating = intent.ageRating),
             )
 
-            is BrowseIntent.GenreToggled -> applyFilter(
-                filter.copy(
-                    genres = if (intent.genre in
-                        filter.genres
-                    ) {
-                        filter.genres - intent.genre
-                    } else {
-                        filter.genres +
-                            intent.genre
-                    },
-                ),
-            )
+            is BrowseIntent.GenreToggled -> toggleGenre(intent.genre)
 
             is BrowseIntent.SortSelected -> applyFilter(filter.copy(sort = intent.sort))
 
-            BrowseIntent.EndReached -> if (!_state.value.loadMoreFailed) loadNextPage()
+            BrowseIntent.EndReached -> onEndReached()
 
             BrowseIntent.LoadMoreRetried -> loadNextPage()
 
             is BrowseIntent.NovelClicked -> sendEffect(BrowseEffect.NavigateToNovel(intent.id))
+
+            BrowseIntent.BackClicked -> sendEffect(BrowseEffect.NavigateBack)
+
+            BrowseIntent.TagDescriptionToggled ->
+                _state.update { it.copy(isTagDescriptionExpanded = !it.isTagDescriptionExpanded) }
+        }
+    }
+
+    private fun clearQuery() {
+        _state.update { it.copy(query = "") }
+        applyFilter(filter.withQuery(""))
+    }
+
+    private fun toggleGenre(genre: Genre) {
+        val genres = if (genre in filter.genres) filter.genres - genre else filter.genres + genre
+        applyFilter(filter.copy(genres = genres))
+    }
+
+    /** After a failed page, wait for an explicit retry instead of re-requesting on every scroll. */
+    private fun onEndReached() {
+        if (!_state.value.loadMoreFailed) loadNextPage()
+    }
+
+    /** The tag header is optional: if it fails to load, the list still works. */
+    private fun loadTag() {
+        val id = tagId ?: return
+        viewModelScope.launch {
+            getTag(
+                id,
+            ).onSuccess { tag -> _state.update { it.copy(tagHeader = tag.toHeaderUIModel()) } }
         }
     }
 

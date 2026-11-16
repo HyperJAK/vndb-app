@@ -51,6 +51,10 @@ data object BrowseNavKey : NavKey
 @Serializable
 data object ProfileNavKey : NavKey
 
+/** Browse scoped to one VNDB tag. */
+@Serializable
+data class TagNavKey(val id: String) : NavKey
+
 /** A character's page. */
 @Serializable
 data class CharacterNavKey(val id: String) : NavKey
@@ -160,6 +164,14 @@ private fun AppNavDisplay(backStack: NavBackStack<NavKey>) {
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
                     onOpenCharacter = { id -> backStack.add(CharacterNavKey(id)) },
+                    onOpenTag = { id -> backStack.add(TagNavKey(id)) },
+                )
+            }
+            entry<TagNavKey> { key ->
+                BrowseRoute(
+                    tagId = key.id,
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
                 )
             }
             entry<CharacterNavKey> { key ->

@@ -1,14 +1,22 @@
 package com.zc.vndb.feature.browse.data.repository
 
 import com.zc.vndb.common.data.util.safeApiCall
+import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.feature.browse.data.mapper.tagQuery
 import com.zc.vndb.feature.browse.data.mapper.toDomain
 import com.zc.vndb.feature.browse.data.mapper.toQueryDTO
 import com.zc.vndb.feature.browse.data.remote.BrowseService
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowsePage
+import com.zc.vndb.feature.browse.domain.model.TagInfo
 import com.zc.vndb.feature.browse.domain.repository.BrowseRepository
 
 class BrowseRepositoryImpl(private val service: BrowseService) : BrowseRepository {
+
+    override suspend fun getTag(id: String): Result<TagInfo> = safeApiCall {
+        val tag = service.queryTag(tagQuery(id)).results.firstOrNull() ?: throw DomainError.NotFound
+        tag.toDomain()
+    }
 
     override suspend fun searchNovels(
         filter: BrowseFilter,

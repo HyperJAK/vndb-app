@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TagDTO(
+    @SerialName("id") val id: String,
     @SerialName("name") val name: String,
     @SerialName("rating") val rating: Double?,
     @SerialName("spoiler") val spoiler: Int?,

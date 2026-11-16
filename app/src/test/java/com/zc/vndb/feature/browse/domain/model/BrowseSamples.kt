@@ -26,5 +26,11 @@ object BrowseSamples {
         rating: Double = 2.0,
         spoiler: Int = 0,
         category: TagCategory = TagCategory.Content,
-    ) = NovelTag(name = name, rating = rating, spoilerLevel = spoiler, category = category)
+    ) = NovelTag(
+        id = "g-$name",
+        name = name,
+        rating = rating,
+        spoilerLevel = spoiler,
+        category = category,
+    )
 }

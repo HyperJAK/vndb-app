@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.detail.presentation.component.taggroups
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -8,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
@@ -18,6 +20,7 @@ import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteTone
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteUIModel
+import com.zc.vndb.feature.detail.presentation.component.taggroups.model.TagChipUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.TagGroupUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -28,6 +31,7 @@ fun TagGroupsView(
     groups: ImmutableList<TagGroupUIModel>,
     hiddenLabel: UiText?,
     notes: ImmutableList<ContentNoteUIModel>,
+    onTagClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SectionCardView(
@@ -36,7 +40,16 @@ fun TagGroupsView(
     ) {
         groups.forEach { group ->
             GroupTitle(group.title.asString())
-            ChipFlow { group.tags.forEach { tag -> TagChipView(label = tag) } }
+            ChipFlow {
+                group.tags.forEach { tag ->
+                    TagChipView(
+                        label = tag.label,
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable { onTagClick(tag.id) },
+                    )
+                }
+            }
         }
         hiddenLabel?.let { hidden ->
             Text(
@@ -94,12 +107,13 @@ private fun TagGroupsViewPreview() {
                 TagGroupUIModel(
                     UiText.StringValue("THEMES"),
                     persistentListOf(
-                        UiText.StringValue("Time Travel"),
-                        UiText.StringValue("Mad Scientist"),
+                        TagChipUIModel("g1", UiText.StringValue("Time Travel")),
+                        TagChipUIModel("g2", UiText.StringValue("Mad Scientist")),
                     ),
                 ),
             ),
             hiddenLabel = UiText.StringValue("3 hidden by spoiler filter"),
+            onTagClick = {},
             notes = persistentListOf(
                 ContentNoteUIModel(UiText.StringValue("No sexual content"), ContentNoteTone.Safe),
             ),

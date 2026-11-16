@@ -4,6 +4,7 @@ import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowseNovel
 import com.zc.vndb.feature.browse.domain.model.BrowsePage
+import com.zc.vndb.feature.browse.domain.model.TagInfo
 
 /** Serves [novels] in pages; set [error] (or [errorOnPage]) to fail. Records every request. */
 class FakeBrowseRepository : BrowseRepository {
@@ -15,10 +16,14 @@ class FakeBrowseRepository : BrowseRepository {
         val withCount: Boolean,
     )
 
+    val tags = mutableMapOf<String, TagInfo>()
     var novels: List<BrowseNovel> = emptyList()
     var error: DomainError? = null
     var errorOnPage: Int? = null
     val requests = mutableListOf<Request>()
+
+    override suspend fun getTag(id: String): Result<TagInfo> =
+        tags[id]?.let { Result.success(it) } ?: Result.failure(DomainError.NotFound)
 
     override suspend fun searchNovels(
         filter: BrowseFilter,

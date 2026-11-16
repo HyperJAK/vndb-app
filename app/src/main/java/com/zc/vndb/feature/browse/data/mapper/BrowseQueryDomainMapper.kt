@@ -44,6 +44,7 @@ private fun BrowseFilter.toFilters(): JsonElement {
                 predicate("tag", "=", JsonPrimitive(it.tagId)),
             )
         }
+        tagId?.let { add(predicate("tag", "=", JsonPrimitive(it))) }
     }
     return predicates.singleOrNull() ?: buildJsonArray {
         add("and")
@@ -69,3 +70,14 @@ private fun predicate(name: String, operator: String, value: JsonElement): JsonA
         add(operator)
         add(value)
     }
+
+/** One tag by id, for the tag page header. */
+fun tagQuery(id: String) = QueryDTO(
+    filters = predicate("id", "=", JsonPrimitive(id)),
+    fields = "name, aliases, description, category, vn_count",
+    sort = null,
+    reverse = null,
+    results = 1,
+    page = null,
+    count = null,
+)

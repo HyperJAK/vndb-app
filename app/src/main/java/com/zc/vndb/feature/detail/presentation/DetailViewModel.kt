@@ -89,6 +89,8 @@ class DetailViewModel(
             is DetailIntent.CharacterClicked -> sendEffect(
                 DetailEffect.NavigateToCharacter(intent.id),
             )
+
+            is DetailIntent.TagClicked -> sendEffect(DetailEffect.NavigateToTag(intent.id))
         }
     }
 

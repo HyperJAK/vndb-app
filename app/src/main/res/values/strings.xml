@@ -144,6 +144,17 @@
     <string name="detail_relation_other">RELATED</string>
     <string name="detail_relation_score">Score: %1$s</string>
 
+    <!-- Tag -->
+    <string name="tag_category_content">Content tag</string>
+    <string name="tag_category_sexual">Sexual content tag</string>
+    <string name="tag_category_technical">Technical tag</string>
+    <plurals name="tag_vn_count">
+        <item quantity="one">%1$s visual novel on VNDB</item>
+        <item quantity="other">%1$s visual novels on VNDB</item>
+    </plurals>
+    <string name="tag_aliases">Also known as: %1$s</string>
+    <string name="tag_about">About this tag</string>
+
     <!-- Character -->
     <string name="character_share_chooser">Share character</string>
     <string name="character_age">Age:</string>

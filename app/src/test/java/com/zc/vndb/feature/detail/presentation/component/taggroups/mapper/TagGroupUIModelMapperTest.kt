@@ -8,6 +8,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.novel
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.tag
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteTone
+import com.zc.vndb.feature.detail.presentation.component.taggroups.model.TagChipUIModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -27,8 +28,11 @@ class TagGroupUIModelMapperTest {
     @Test
     fun `spoiler level controls which tags show and how many are hidden`() {
         val none = detail.toTagGroups(SpoilerLevel.None)
-        assertEquals(listOf<UiText>(UiText.StringValue("Time Travel")), none[0].tags)
-        assertEquals(listOf<UiText>(UiText.StringValue("ADV")), none[1].tags)
+        assertEquals(
+            listOf(TagChipUIModel("g-Time Travel", UiText.StringValue("Time Travel"))),
+            none[0].tags,
+        )
+        assertEquals(listOf(TagChipUIModel("g-ADV", UiText.StringValue("ADV"))), none[1].tags)
         assertEquals(
             UiText.StringPlural(R.plurals.detail_hidden_by_spoiler, 2, listOf(2)),
             detail.toHiddenTagsLabel(SpoilerLevel.None),
@@ -41,7 +45,7 @@ class TagGroupUIModelMapperTest {
 
     @Test
     fun `sexual tags are never listed`() {
-        val all = detail.toTagGroups(SpoilerLevel.Major).flatMap { it.tags }
+        val all = detail.toTagGroups(SpoilerLevel.Major).flatMap { it.tags }.map { it.label }
         assertEquals(false, UiText.StringValue("Sexual") in all)
     }
 
