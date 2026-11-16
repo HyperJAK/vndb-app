@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.detail.domain.model
+package com.zc.vndb.common.domain.model
 
 /** A character's role in one VN, most important first. */
 enum class CharacterRole {

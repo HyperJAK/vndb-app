@@ -3,11 +3,11 @@ package com.zc.vndb.feature.detail.presentation.component.taggroups.mapper
 import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.Cover
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.novel
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.tag
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteTone
-import com.zc.vndb.feature.detail.presentation.model.SpoilerLevel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

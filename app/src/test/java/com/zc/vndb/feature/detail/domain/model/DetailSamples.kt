@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.detail.domain.model
 
+import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.Cover
 import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.common.domain.model.NovelTag

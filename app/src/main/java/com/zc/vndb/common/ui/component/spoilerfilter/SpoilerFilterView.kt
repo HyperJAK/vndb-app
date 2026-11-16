@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.detail.presentation.component.spoilerfilter
+package com.zc.vndb.common.ui.component.spoilerfilter
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,11 +22,11 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.R
+import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
-import com.zc.vndb.feature.detail.presentation.component.sectioncard.SectionCardView
-import com.zc.vndb.feature.detail.presentation.model.SpoilerLevel
 
 private val ShieldSize = 16.dp
 

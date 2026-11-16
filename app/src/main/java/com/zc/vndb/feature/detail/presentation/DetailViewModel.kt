@@ -3,9 +3,9 @@ package com.zc.vndb.feature.detail.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zc.vndb.R
+import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.common.ui.text.UiText
-import com.zc.vndb.feature.detail.domain.model.CharacterRole
 import com.zc.vndb.feature.detail.domain.model.NovelCharacter
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
 import com.zc.vndb.feature.detail.domain.model.NovelEditions
@@ -85,6 +85,10 @@ class DetailViewModel(
             }
 
             is DetailIntent.RelationClicked -> sendEffect(DetailEffect.NavigateToNovel(intent.id))
+
+            is DetailIntent.CharacterClicked -> sendEffect(
+                DetailEffect.NavigateToCharacter(intent.id),
+            )
         }
     }
 

@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.detail.presentation.component.charactercard
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -10,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
@@ -20,11 +22,18 @@ import com.zc.vndb.feature.detail.presentation.component.charactercard.model.Cha
 
 private val CardWidth = 132.dp
 
-/** Character portrait with role, name, original name and voice actor. */
+/** Character portrait with role, name, original name and voice actor; opens the character. */
 @Composable
-fun CharacterCardView(model: CharacterCardUIModel, modifier: Modifier = Modifier) {
+fun CharacterCardView(
+    model: CharacterCardUIModel,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = modifier.width(CardWidth),
+        modifier = modifier
+            .width(CardWidth)
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs / 2),
     ) {
         CoverImageView(
@@ -84,6 +93,7 @@ private fun CharacterCardViewPreview() {
                 imageUrl = null,
                 isImageSensitive = false,
             ),
+            onClick = {},
             modifier = Modifier.padding(VndbTheme.spacing.lg),
         )
     }

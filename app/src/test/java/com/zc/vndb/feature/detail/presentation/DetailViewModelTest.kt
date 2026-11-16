@@ -2,16 +2,16 @@ package com.zc.vndb.feature.detail.presentation
 
 import app.cash.turbine.test
 import com.zc.vndb.R
+import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
-import com.zc.vndb.feature.detail.domain.model.CharacterRole
 import com.zc.vndb.feature.detail.domain.model.DetailSamples
 import com.zc.vndb.feature.detail.domain.repository.FakeDetailRepository
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelCharactersUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelDetailUseCase
 import com.zc.vndb.feature.detail.domain.usecase.GetNovelEditionsUseCase
-import com.zc.vndb.feature.detail.presentation.model.SpoilerLevel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -150,6 +150,8 @@ class DetailViewModelTest {
             assertEquals(DetailEffect.OpenUrl("https://en.wikipedia.org"), awaitItem())
             viewModel.onIntent(DetailIntent.RelationClicked("v17102"))
             assertEquals(DetailEffect.NavigateToNovel("v17102"), awaitItem())
+            viewModel.onIntent(DetailIntent.CharacterClicked("c6487"))
+            assertEquals(DetailEffect.NavigateToCharacter("c6487"), awaitItem())
         }
     }
 }

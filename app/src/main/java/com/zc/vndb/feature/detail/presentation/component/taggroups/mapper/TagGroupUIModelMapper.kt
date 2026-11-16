@@ -3,12 +3,12 @@ package com.zc.vndb.feature.detail.presentation.component.taggroups.mapper
 import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.NovelTag
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteTone
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.TagGroupUIModel
-import com.zc.vndb.feature.detail.presentation.model.SpoilerLevel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

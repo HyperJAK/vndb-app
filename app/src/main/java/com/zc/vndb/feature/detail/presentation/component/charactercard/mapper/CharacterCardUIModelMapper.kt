@@ -1,8 +1,8 @@
 package com.zc.vndb.feature.detail.presentation.component.charactercard.mapper
 
 import com.zc.vndb.R
+import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.ui.text.UiText
-import com.zc.vndb.feature.detail.domain.model.CharacterRole
 import com.zc.vndb.feature.detail.domain.model.NovelCharacter
 import com.zc.vndb.feature.detail.presentation.component.charactercard.model.CharacterCardUIModel
 

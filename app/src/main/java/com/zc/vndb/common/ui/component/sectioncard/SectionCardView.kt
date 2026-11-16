@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.detail.presentation.component.sectioncard
+package com.zc.vndb.common.ui.component.sectioncard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
