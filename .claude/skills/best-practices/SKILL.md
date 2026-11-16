@@ -236,7 +236,7 @@ ObserveAsEvents(viewModel.effect) { effect ->
     when (effect) {
         NovelDetailEffect.NavigateBack -> onNavigateBack()
         is NovelDetailEffect.ShowError ->
-            snackbarHostState.showSnackbar(context.getString(effect.error.messageRes))
+            snackbarHostState.showSnackbar(effect.error.message.asString(context))
     }
 }
 
@@ -378,16 +378,16 @@ private fun HttpStatusCode.toDomainError(): DomainError = when (this) {
 
 - Every repository method that calls a service **MUST** wrap the call in `safeApiCall`, so failures reaching `domain` are always `DomainError`.
 - **NEVER** let HTTP status codes, `HttpResponse`, Ktor exceptions or stack traces reach `domain` or `presentation`.
-- `presentation` turns errors into UI with the shared error component: `common/ui/component/error/mapper/ErrorUIModelMapper.kt` maps a `Throwable` to an `ErrorUIModel(@StringRes messageRes, isRetryable)`.
+- `presentation` turns errors into UI with the shared error component: `common/ui/component/error/mapper/ErrorUIModelMapper.kt` maps a `Throwable` to an `ErrorUIModel(message: UiText, isRetryable)` (text rules: `conventions` §2.5).
 
 ```kotlin
 // ✅ common/ui/component/error/mapper/ErrorUIModelMapper.kt
 fun Throwable.toErrorUIModel(): ErrorUIModel = when (this) {
-    DomainError.Network, DomainError.Timeout -> ErrorUIModel(R.string.error_network, isRetryable = true)
-    DomainError.NotFound -> ErrorUIModel(R.string.error_not_found, isRetryable = false)
-    DomainError.RateLimited -> ErrorUIModel(R.string.error_rate_limited, isRetryable = true)
-    DomainError.Unauthorized -> ErrorUIModel(R.string.error_unauthorized, isRetryable = false)
-    else -> ErrorUIModel(R.string.error_generic, isRetryable = true)
+    DomainError.Network, DomainError.Timeout -> ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true)
+    DomainError.NotFound -> ErrorUIModel(UiText.StringResource(R.string.error_not_found), isRetryable = false)
+    DomainError.RateLimited -> ErrorUIModel(UiText.StringResource(R.string.error_rate_limited), isRetryable = true)
+    DomainError.Unauthorized -> ErrorUIModel(UiText.StringResource(R.string.error_unauthorized), isRetryable = false)
+    else -> ErrorUIModel(UiText.StringResource(R.string.error_generic), isRetryable = true)
 }
 ```
 
@@ -437,7 +437,7 @@ private class NovelDetailStateProvider : PreviewParameterProvider<NovelDetailSta
     override val values = sequenceOf(
         NovelDetailState(isLoading = true),
         NovelDetailState(novel = sampleNovel),
-        NovelDetailState(error = ErrorUIModel(R.string.error_network, isRetryable = true)),
+        NovelDetailState(error = ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true)),
     )
 }
 
@@ -605,7 +605,7 @@ class NovelDetailViewModelTest {
             assertEquals(NovelDetailState(isLoading = true), awaitItem())
             val loaded = awaitItem()
             assertFalse(loaded.isLoading)
-            assertEquals("Ever17", loaded.novel?.title)
+            assertEquals(UiText.StringValue("Ever17"), loaded.novel?.title)
         }
     }
 
@@ -614,7 +614,7 @@ class NovelDetailViewModelTest {
         val viewModel = createViewModel()
         viewModel.state.test {
             skipItems(1)
-            assertEquals(R.string.error_not_found, awaitItem().error?.messageRes)
+            assertEquals(UiText.StringResource(R.string.error_not_found), awaitItem().error?.message)
         }
     }
 
@@ -632,8 +632,11 @@ class NovelDetailViewModelTest {
 ```kotlin
 class VisualNovelUIModelMapperTest {
     @Test
-    fun `unknown release date shows TBA`() {
-        assertEquals("TBA", sampleNovel.copy(releaseDate = null).toUIModel().releaseLabel)
+    fun `unknown release date shows TBA resource`() {
+        assertEquals(
+            UiText.StringResource(R.string.release_tba),
+            sampleNovel.copy(releaseDate = null).toUIModel().releaseLabel,
+        )
     }
 }
 ```
@@ -667,5 +670,6 @@ The last `grep` must print nothing for Screens and Views.
 - [ ] Routes use `collectAsStateWithLifecycle()` and `ObserveAsEvents`.
 - [ ] No hardcoded dispatchers (only `DispatcherProvider`); `CancellationException` is never swallowed; Flows reach the ViewModel through `stateIn(WhileSubscribed(5_000))`.
 - [ ] Network failures go through `safeApiCall` → `DomainError` → `ErrorUIModel`; DataStore reads `.catch` `IOException`.
+- [ ] User-visible text in State/UIModel/UIState/Effect is `UiText`, resolved with `asString()`; resource ids are typed `StringResource` / `DrawableResource`, never `Int` / `@StringRes Int`.
 - [ ] Screens and Views are stateless, with `@AdaptivePreviews`; theme tokens only; 48.dp touch targets; meaningful `contentDescription`s.
 - [ ] Tests exist for every new use case, service, mapper and ViewModel, and they pass.

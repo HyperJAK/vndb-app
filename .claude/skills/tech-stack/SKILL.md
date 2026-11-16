@@ -173,7 +173,7 @@ fun AppNavigation() {
                         backStack.add(destination.key)
                     },
                     icon = { Icon(destination.icon, contentDescription = null) },
-                    label = { Text(stringResource(destination.labelRes)) },
+                    label = { Text(destination.label.asString()) },   // label: UiText
                 )
             }
         },

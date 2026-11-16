@@ -35,7 +35,7 @@ Rules marked **MUST** / **NEVER** are non-negotiable. Examples use the feature `
 | Reusable widget | `presentation/component/[name]/` or `common/ui/component/[name]/` | `[Name]View` | `component/ratingbadge/RatingBadgeView` |
 | Koin module | `di` | file `[Name]Module.kt`, `val [name]Module` | `NovelModule.kt` → `val novelModule` |
 
-Acronyms in suffixes are **all caps**: `DTO`, `UI` — never `Dto`, `Ui`, `UiModel`, `UiState`.
+Acronyms in suffixes are **all caps**: `DTO`, `UI` — never `Dto`, `Ui`, `UiModel`, `UiState`. The one exception is the shared text type `UiText` (`common/ui/text/UiText.kt`, see §2.5).
 
 **File name == primary declaration name.** One public top-level class/interface per file (sealed hierarchies nest their members inside the sealed interface).
 
@@ -162,8 +162,8 @@ Pick the suffix by **whether the user can change it**:
 | `[Name]UIModel` | Static, display-ready, read-only data mapped from domain | `VisualNovelUIModel` (formatted date, rating text), list rows, cards, chips |
 | `[Name]UIState` | Dynamic/interactive sub-models whose values change through interaction or lifecycle | `SearchFieldUIState` (text, error, isFocused), `ScreenshotUIState` (isSelected), `SectionUIState` (isExpanded) |
 
-- UI models hold **display-ready** values: pre-formatted strings, `@StringRes`/`@DrawableRes` ids, resolved booleans, `ImmutableList`s. A Composable should never format, parse, or compute business rules.
-- They **may** reference Android/Compose types where useful (`@StringRes Int`, `ImageVector`) — they live in `presentation`.
+- UI models hold **display-ready** values: `UiText` for every user-visible text (§2.5), `DrawableResource` ids, resolved booleans, `ImmutableList`s. A Composable should never format, parse, or compute business rules.
+- They **may** reference Android/Compose types where useful (`StringResource`, `DrawableResource`, `ImageVector`) — they live in `presentation`.
 
 ### 2.4 Maximum immutability (UIModel, UIState, screen State)
 
@@ -194,12 +194,12 @@ data class NovelListState(
 @Immutable
 data class VisualNovelUIModel(
     val id: String,
-    val title: String,
-    val releaseLabel: String,          // "Mar 2021" or "TBA"
-    val ratingLabel: String?,          // "8.42"
-    val coverUrl: String?,
+    val title: UiText,
+    val releaseLabel: UiText,          // "Mar 2021" or R.string.release_tba
+    val ratingLabel: UiText?,          // "8.42"
+    val coverUrl: String?,             // not user-visible text → String
     val blurCover: Boolean,
-    val tags: ImmutableList<String> = persistentListOf(),
+    val tags: ImmutableList<UiText> = persistentListOf(),
 )
 ```
 
@@ -222,6 +222,50 @@ _state.update { state ->
     )
 }
 ```
+
+### 2.5 UI text & resource ids (`UiText`, `ResourceTypes.kt`)
+
+Everything the presentation layer shows as text is a `UiText` (`common/ui/text/UiText.kt`). Resource ids are typed with the aliases in `common/ui/resource/ResourceTypes.kt`.
+
+```kotlin
+// common/ui/text/UiText.kt
+sealed interface UiText {
+    data class StringValue(val value: String) : UiText                                   // hardcoded / API data
+    data class StringResource(val id: StringResource, val args: List<Any> = emptyList()) : UiText   // R.string.*
+    data class StringPlural(val id: Int, val quantity: Int, val args: List<Any> = emptyList()) : UiText // R.plurals.*
+    @Composable fun asString(): String
+    fun asString(context: Context): String
+}
+
+// common/ui/resource/ResourceTypes.kt
+typealias StringResource = Int     // R.string.*
+typealias DrawableResource = Int   // R.drawable.*
+```
+
+**MUST**:
+
+- Every user-visible text in a `UIModel`, `UIState`, screen `State`, `Effect` and `common/ui/component` View parameter is typed `UiText` (or `UiText?`), never `String`, `Int` or `@StringRes Int`. That includes API data, which the mapper wraps in `UiText.StringValue(...)`.
+- Strings are built **only** in mappers and ViewModels: `UiText.StringResource(R.string.x)`, `UiText.StringResource(R.string.x, listOf(arg))`, `UiText.StringPlural(R.plurals.x, count, listOf(count))`.
+- Composables resolve text at the last moment with `text.asString()`. Code outside composition (snackbar in a Route effect, notifications) uses `text.asString(context)`.
+- Any property or parameter holding a resource id is typed `StringResource` or `DrawableResource` (from `ResourceTypes.kt`), never `Int`, `@StringRes Int` or `@DrawableRes Int`. `R.string.*` / `R.drawable.*` appear only as the **values** assigned to them.
+- Non-display strings (ids, URLs, query keys) stay `String`.
+
+**NEVER**:
+
+- `context.getString(...)`, `stringResource(...)` or `pluralStringResource(...)` in a ViewModel, mapper or UI model. ViewModels never hold a `Context`.
+- `String.format` / string templates on localized text in a composable — put the args in `UiText.StringResource(id, args)`.
+- `UiText`, `StringResource` or `DrawableResource` in `domain` or `data`.
+
+| ❌ Don't | ✅ Do |
+|---|---|
+| `val title: String` in a UIModel | `val title: UiText` + `UiText.StringValue(title)` in the mapper |
+| `@StringRes val messageRes: Int` | `val message: UiText` |
+| `@DrawableRes val iconRes: Int` | `val icon: DrawableResource` |
+| `Text(stringResource(model.labelRes))` | `Text(model.label.asString())` |
+| `context.getString(R.string.x)` in a ViewModel | `UiText.StringResource(R.string.x)` |
+| `"$count novels"` in a mapper | `UiText.StringPlural(R.plurals.novel_count, count, listOf(count))` |
+
+A static label that lives only inside one composable (e.g. a `contentDescription` constant) may call `stringResource(R.string.x)` directly. Once that text comes from State, a UIModel or a parameter, it **MUST** be `UiText`.
 
 ---
 
@@ -281,9 +325,10 @@ private val releaseFormat = LocalDate.Format {
 
 fun VisualNovel.toUIModel(): VisualNovelUIModel = VisualNovelUIModel(
     id = id,
-    title = title,
-    releaseLabel = releaseDate?.let(releaseFormat::format) ?: "TBA",
-    ratingLabel = rating?.let { "%.2f".format(it / 10) },
+    title = UiText.StringValue(title),
+    releaseLabel = releaseDate?.let { UiText.StringValue(releaseFormat.format(it)) }
+        ?: UiText.StringResource(R.string.release_tba),
+    ratingLabel = rating?.let { UiText.StringValue("%.2f".format(it / 10)) },
     coverUrl = coverUrl,
     blurCover = isNsfwCover,
 )
@@ -480,7 +525,7 @@ fun NovelDetailRoute(
             NovelDetailEffect.NavigateBack -> onNavigateBack()
             is NovelDetailEffect.OpenScreenshot -> onOpenScreenshot(effect.url)
             is NovelDetailEffect.ShowError ->
-                snackbarHostState.showSnackbar(context.getString(effect.error.messageRes))
+                snackbarHostState.showSnackbar(effect.error.message.asString(context))
         }
     }
 
@@ -513,7 +558,7 @@ fun NovelDetailScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(state.novel?.title.orEmpty()) },
+                title = { state.novel?.title?.let { Text(it.asString()) } },
                 navigationIcon = {
                     IconButton(onClick = { onIntent(NovelDetailIntent.BackClicked) }) {
                         Icon(
@@ -550,9 +595,9 @@ private fun NovelDetailScreenPreview() {
             state = NovelDetailState(
                 novel = VisualNovelUIModel(
                     id = "v17",
-                    title = "Ever17",
-                    releaseLabel = "Aug 2002",
-                    ratingLabel = "8.71",
+                    title = UiText.StringValue("Ever17"),
+                    releaseLabel = UiText.StringValue("Aug 2002"),
+                    ratingLabel = UiText.StringValue("8.71"),
                     coverUrl = null,
                     blurCover = false,
                 ),
@@ -582,9 +627,9 @@ fun NovelHeaderView(
     Row(modifier = modifier.padding(16.dp)) {
         CoverImageView(url = model.coverUrl, blur = model.blurCover)   // common/ui/component
         Column(Modifier.weight(1f).padding(start = 12.dp)) {
-            Text(model.title, style = MaterialTheme.typography.titleLarge)
-            Text(model.releaseLabel, style = MaterialTheme.typography.bodyMedium)
-            model.ratingLabel?.let { Text(it) }
+            Text(model.title.asString(), style = MaterialTheme.typography.titleLarge)
+            Text(model.releaseLabel.asString(), style = MaterialTheme.typography.bodyMedium)
+            model.ratingLabel?.let { Text(it.asString()) }
         }
         IconToggleButton(checked = isFavorite, onCheckedChange = { onFavoriteClick() }) {
             Icon(
@@ -602,7 +647,7 @@ fun NovelHeaderView(
 |---|---|
 | `fun NovelDetailScreen(viewModel: NovelDetailViewModel)` | `fun NovelDetailScreen(state, onIntent)` |
 | `val vm = koinViewModel<...>()` inside a Screen or View | Only in the Route |
-| `Text(novel.releaseDate.format(...))` in a composable | `Text(model.releaseLabel)` (formatted by the mapper) |
+| `Text(novel.releaseDate.format(...))` in a composable | `Text(model.releaseLabel.asString())` (formatted by the mapper) |
 | `fun NovelHeaderView(novel: VisualNovel)` (domain model) | `fun NovelHeaderView(model: VisualNovelUIModel)` |
 | `fun NovelCardView(onIntent: (NovelListIntent) -> Unit)` | `fun NovelCardView(onClick: () -> Unit)` |
 | `LaunchedEffect(Unit) { viewModel.load() }` in Route | `init { onIntent(Load) }` in the ViewModel |

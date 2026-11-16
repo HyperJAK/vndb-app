@@ -154,6 +154,8 @@ Rules are in `library-management`.
 | Koin bindings for `HttpClient`, `Json`, `DataStore`, `DispatcherProvider` | `common/di/CommonModule.kt` |
 | Theme, colors, typography | `common/ui/theme/` |
 | `ObserveAsEvents`, `@AdaptivePreviews` and other non-visual Compose helpers | `common/ui/util/` |
+| `UiText` (all user-visible text in `presentation`) | `common/ui/text/UiText.kt` |
+| `StringResource` / `DrawableResource` typealiases for `R.string` / `R.drawable` ids | `common/ui/resource/ResourceTypes.kt` |
 | `ErrorUIModel`, `ErrorUIModelMapper`, `ErrorView` | `common/ui/component/error/{model,mapper}/`, `ErrorView.kt` |
 | Composable used by 2+ features | `common/ui/component/[name]/[Name]View.kt` |
 | Ktor API calls for one feature | `feature/[name]/data/remote/[Name]Service.kt` |
