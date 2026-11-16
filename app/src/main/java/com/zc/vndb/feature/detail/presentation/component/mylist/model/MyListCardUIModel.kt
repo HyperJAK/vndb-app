@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.detail.presentation.component.mylist.model
 
 import androidx.compose.runtime.Immutable
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.text.UiText
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -12,7 +13,7 @@ data class MyListCardUIModel(
     /** The token has `listwrite`. */
     val canEdit: Boolean,
     /** Status first, then the other labels. */
-    val labels: ImmutableList<UiText> = persistentListOf(),
+    val labels: ImmutableList<EntryLabelUIModel> = persistentListOf(),
     /** "My vote 8.5". */
     val voteLabel: UiText? = null,
     /** "Started 2024-10-15", "Finished 2024-11-02". */

@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelMark
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
@@ -177,6 +178,7 @@ private fun LabelChips(labels: ImmutableList<LabelChipUIModel>, onSelect: (Int) 
                 label = label.label,
                 isSelected = label.isSelected,
                 onClick = { onSelect(label.id) },
+                leading = { EntryLabelMark(label.id) },
             )
         }
     }

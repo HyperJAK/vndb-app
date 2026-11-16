@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.detail.presentation.component.mylist.mapper
 
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.presentation.component.mylist.model.MyListCardUIModel
@@ -17,9 +18,7 @@ fun MyListEntry?.toMyListCard(canEdit: Boolean): MyListCardUIModel {
         isOnList = true,
         canEdit = canEdit,
         labels = ordered.mapNotNull { id ->
-            labelNames[id]?.let(
-                UiText::StringValue,
-            )
+            labelNames[id]?.let { EntryLabelUIModel(id, UiText.StringValue(it)) }
         }.toImmutableList(),
         voteLabel = vote?.let {
             UiText.StringResource(

@@ -58,6 +58,7 @@ internal val Emerald = Color(0xFF10B981)
 internal val Red = Color(0xFFEF4444)
 internal val Rose = Color(0xFFF43F5E)
 internal val Slate = Color(0xFF64748B)
+internal val Violet = Color(0xFFA78BFA)
 
 /** A pill/badge treatment: tinted fill, text and hairline border. */
 @Immutable
@@ -118,8 +119,13 @@ data class VndbColors(
     // Tracking status badges
     val statusPlaying: TintedColors = tinted(SkyBlue),
     val statusFinished: TintedColors = tinted(Emerald),
-    val statusDropped: TintedColors = tinted(Slate),
-    val statusWishlist: TintedColors = tinted(Amber),
+    val statusStalled: TintedColors = tinted(Amber),
+    val statusDropped: TintedColors = tinted(Red),
+
+    // List labels: outline only, so they stay quieter than the status
+    val labelWishlist: TintedColors = TintedColors(Color.Transparent, Violet, Violet),
+    val labelBlacklist: TintedColors = TintedColors(Color.Transparent, OnSurfaceVariant, Slate),
+    val labelOwn: TintedColors = TintedColors(Color.Transparent, OnSurfaceVariant, BorderSubtle),
 
     // Filter chips
     val chipInactiveContainer: Color = SurfaceCard,

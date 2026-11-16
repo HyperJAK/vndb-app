@@ -20,5 +20,8 @@ data class ListLabel(
 
         /** Virtual label for every VN the user voted on. */
         const val VOTED = 7
+
+        /** Ids from here on are labels the user created. */
+        const val FIRST_USER_ID = 10
     }
 }

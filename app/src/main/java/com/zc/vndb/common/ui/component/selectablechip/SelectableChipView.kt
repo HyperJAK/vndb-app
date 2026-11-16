@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
@@ -21,13 +22,15 @@ import com.zc.vndb.common.ui.theme.TintedColors
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
-/** Compact filter chip (28dp, DESIGN.md "Filter Chips"). [selectedColors] styles the selected state. */
+/** Compact filter chip (28dp, DESIGN.md "Filter Chips"). [leading] adds a mark before
+ * the label. [selectedColors] styles the selected state. */
 @Composable
 fun SelectableChipView(
     label: UiText,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    leading: (@Composable () -> Unit)? = null,
     selectedColors: TintedColors = TintedColors(
         container = VndbTheme.colors.chipActiveContainer,
         content = VndbTheme.colors.chipActiveContent,
@@ -44,11 +47,9 @@ fun SelectableChipView(
         )
     }
     val shape = VndbTheme.shapes.pill
-    Text(
-        text = label.asString(),
-        style = MaterialTheme.typography.labelLarge,
-        color = colors.content,
-        maxLines = 1,
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
         modifier = modifier
             .heightIn(min = VndbTheme.dimens.filterChipHeight)
             .clip(shape)
@@ -58,7 +59,15 @@ fun SelectableChipView(
             .semantics { selected = isSelected }
             .padding(horizontal = VndbTheme.spacing.md, vertical = VndbTheme.spacing.xs)
             .wrapContentHeight(),
-    )
+    ) {
+        leading?.invoke()
+        Text(
+            text = label.asString(),
+            style = MaterialTheme.typography.labelLarge,
+            color = colors.content,
+            maxLines = 1,
+        )
+    }
 }
 
 @AdaptivePreviews

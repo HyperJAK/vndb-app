@@ -22,13 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.common.ui.component.chip.TagChipView
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelChipView
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.detail.presentation.component.mylist.model.MyListCardUIModel
+import com.zc.vndb.feature.profile.domain.model.ListLabel
 import kotlinx.collections.immutable.persistentListOf
 
 private val ButtonIconSize = 18.dp
@@ -106,7 +108,7 @@ private fun Entry(model: MyListCardUIModel) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
                 verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
-            ) { model.labels.forEach { TagChipView(label = it) } }
+            ) { model.labels.forEach { EntryLabelChipView(it) } }
         }
         model.voteLabel?.let { vote ->
             Text(
@@ -132,14 +134,17 @@ private fun Entry(model: MyListCardUIModel) {
     }
 }
 
+private const val PREVIEW_OWN_LABEL_ID = 13
+
 private class MyListCardProvider : PreviewParameterProvider<MyListCardUIModel> {
     override val values = sequenceOf(
         MyListCardUIModel(
             isOnList = true,
             canEdit = true,
             labels = persistentListOf(
-                UiText.StringValue("Playing"),
-                UiText.StringValue("Wishlist"),
+                EntryLabelUIModel(ListLabel.PLAYING, UiText.StringValue("Playing")),
+                EntryLabelUIModel(ListLabel.WISHLIST, UiText.StringValue("Wishlist")),
+                EntryLabelUIModel(PREVIEW_OWN_LABEL_ID, UiText.StringValue("Ready to play")),
             ),
             voteLabel = UiText.StringValue("My vote 8.5"),
             dates = persistentListOf(UiText.StringValue("Started 2026-11-01")),

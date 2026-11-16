@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.zc.vndb.common.ui.component.entrylabel.statusColors
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
 import com.zc.vndb.common.ui.resource.StringResource
@@ -173,11 +174,21 @@ private fun ChipFlow(options: ImmutableList<LabelOptionUIModel>, onClick: (Int) 
         verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
     ) {
         options.forEach { option ->
-            SelectableChipView(
-                label = option.label,
-                isSelected = option.isSelected,
-                onClick = { onClick(option.id) },
-            )
+            val statusColors = VndbTheme.colors.statusColors(option.id)
+            if (statusColors != null) {
+                SelectableChipView(
+                    label = option.label,
+                    isSelected = option.isSelected,
+                    onClick = { onClick(option.id) },
+                    selectedColors = statusColors,
+                )
+            } else {
+                SelectableChipView(
+                    label = option.label,
+                    isSelected = option.isSelected,
+                    onClick = { onClick(option.id) },
+                )
+            }
         }
     }
 }

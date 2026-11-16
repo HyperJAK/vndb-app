@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.profile.presentation.component.listentrycard.model
 
 import androidx.compose.runtime.Immutable
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.text.UiText
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -16,7 +17,7 @@ data class ListEntryCardUIModel(
     /** "Started 2024-10-15", "Finished 2024-11-02". */
     val dates: ImmutableList<UiText> = persistentListOf(),
     /** The entry's other labels. */
-    val labels: ImmutableList<UiText> = persistentListOf(),
+    val labels: ImmutableList<EntryLabelUIModel> = persistentListOf(),
     val notes: UiText?,
     /** "Updated 3 days ago". */
     val updatedLabel: UiText,

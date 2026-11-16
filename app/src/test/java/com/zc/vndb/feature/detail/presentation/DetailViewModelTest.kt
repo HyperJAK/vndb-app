@@ -10,6 +10,7 @@ import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.domain.repository.FakeSessionRepository
 import com.zc.vndb.common.domain.repository.FakeSettingsRepository
 import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -388,7 +389,10 @@ class DetailViewModelTest {
             advanceUntilIdle()
             with(checkNotNull(viewModel.state.value.myList)) {
                 assertTrue(isOnList)
-                assertEquals(listOf<UiText>(UiText.StringValue("Playing")), labels)
+                assertEquals(
+                    listOf(EntryLabelUIModel(ListLabel.PLAYING, UiText.StringValue("Playing"))),
+                    labels,
+                )
                 assertNotNull(voteLabel)
             }
 
