@@ -99,6 +99,19 @@ data class VndbColors(
     val spoilerMajor: TintedColors = tinted(Red, containerAlpha = 0.15f, borderAlpha = 0.35f),
     val tagNsfw: TintedColors = tinted(Rose),
 
+    // Neutral metadata chips (tags, platforms)
+    val chipNeutral: TintedColors = TintedColors(
+        container = SurfaceElevated,
+        content = OnSurfaceVariant,
+        border = BorderSubtle,
+    ),
+
+    // Release labels (Discover "New & Trending")
+    val releaseNew: TintedColors = tinted(Tertiary),
+    val releaseTranslation: TintedColors = tinted(SkyBlue),
+    val releasePatch: TintedColors = tinted(Amber),
+    val releaseRerelease: TintedColors = tinted(Emerald),
+
     // Tracking status badges
     val statusPlaying: TintedColors = tinted(SkyBlue),
     val statusFinished: TintedColors = tinted(Emerald),

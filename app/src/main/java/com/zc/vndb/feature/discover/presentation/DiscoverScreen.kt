@@ -1,0 +1,395 @@
+package com.zc.vndb.feature.discover.presentation
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material.icons.outlined.Casino
+import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
+import com.zc.vndb.BuildConfig
+import com.zc.vndb.R
+import com.zc.vndb.common.ui.component.chip.TagChipView
+import com.zc.vndb.common.ui.component.error.ErrorView
+import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.util.AdaptivePreviews
+import com.zc.vndb.feature.discover.presentation.component.featurednovel.FeaturedNovelView
+import com.zc.vndb.feature.discover.presentation.component.featurednovel.model.FeaturedNovelUIModel
+import com.zc.vndb.feature.discover.presentation.component.novelcard.NovelCardView
+import com.zc.vndb.feature.discover.presentation.component.novelcard.model.NovelCardUIModel
+import com.zc.vndb.feature.discover.presentation.component.sectionheader.SectionHeaderView
+import com.zc.vndb.feature.discover.presentation.component.statsfooter.StatsFooterView
+import com.zc.vndb.feature.discover.presentation.component.trendingrelease.TrendingReleaseView
+import com.zc.vndb.feature.discover.presentation.component.trendingrelease.model.ReleaseKindTone
+import com.zc.vndb.feature.discover.presentation.component.trendingrelease.model.TrendingReleaseUIModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+
+private val RollProgressSize = 16.dp
+
+/** Callbacks built once from `onIntent`, so rows and cards get stable lambdas. */
+@Immutable
+private class DiscoverActions(
+    val onNovelClick: (String) -> Unit,
+    val onSeeAllClick: () -> Unit,
+    val onStatsClick: () -> Unit,
+    val onRollClick: () -> Unit,
+)
+
+@Composable
+fun DiscoverScreen(
+    state: DiscoverState,
+    onIntent: (DiscoverIntent) -> Unit,
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+) {
+    val isExpanded = currentWindowAdaptiveInfoV2().windowSizeClass
+        .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+    val actions = remember(onIntent) {
+        DiscoverActions(
+            onNovelClick = { id -> onIntent(DiscoverIntent.NovelClicked(id)) },
+            onSeeAllClick = { onIntent(DiscoverIntent.SeeAllTopRatedClicked) },
+            onStatsClick = { onIntent(DiscoverIntent.StatsClicked) },
+            onRollClick = { onIntent(DiscoverIntent.RandomRollClicked) },
+        )
+    }
+    Scaffold(
+        modifier = modifier,
+        topBar = { DiscoverTopBar() },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { padding ->
+        val contentModifier = Modifier
+            .padding(padding)
+            .fillMaxSize()
+        when {
+            state.error != null -> ErrorView(
+                model = state.error,
+                onRetry = { onIntent(DiscoverIntent.Retry) },
+                modifier = contentModifier,
+            )
+
+            state.isLoading -> Box(contentModifier, contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = VndbTheme.colors.accent)
+            }
+
+            else -> DiscoverContent(
+                state = state,
+                actions = actions,
+                isExpanded = isExpanded,
+                modifier = contentModifier,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DiscoverTopBar() {
+    TopAppBar(
+        title = {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.app_wordmark),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                TagChipView(
+                    label = UiText.StringValue(
+                        stringResource(R.string.app_version_badge, BuildConfig.VERSION_NAME),
+                    ),
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
+    )
+}
+
+@Composable
+private fun DiscoverContent(
+    state: DiscoverState,
+    actions: DiscoverActions,
+    isExpanded: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val margin = if (isExpanded) VndbTheme.spacing.marginDesktop else VndbTheme.spacing.margin
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = margin, vertical = VndbTheme.spacing.lg),
+        verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
+    ) {
+        item(key = "header", contentType = "header") {
+            DiscoverHeader(isRolling = state.isRolling, onRollClick = actions.onRollClick)
+        }
+        if (isExpanded) {
+            expandedSections(state, actions)
+        } else {
+            compactSections(state, actions)
+        }
+        state.statsLabel?.let { label ->
+            item(key = "stats", contentType = "stats") {
+                StatsFooterView(
+                    label = label,
+                    onClick = actions.onStatsClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = VndbTheme.spacing.md),
+                )
+            }
+        }
+    }
+}
+
+private fun LazyListScope.compactSections(state: DiscoverState, actions: DiscoverActions) {
+    state.featured?.let { featured ->
+        item(key = "featured", contentType = "featured") {
+            FeaturedNovelView(
+                model = featured,
+                onViewDetailsClick = { actions.onNovelClick(featured.id) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+    topRatedSection(state.topRated, actions)
+    if (state.trending.isNotEmpty()) {
+        item(key = "trending-header", contentType = "section-header") { TrendingHeader() }
+        items(items = state.trending, key = { it.releaseId }, contentType = { "trending" }) { row ->
+            TrendingReleaseView(
+                model = row,
+                onClick = { actions.onNovelClick(row.novelId) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+private fun LazyListScope.expandedSections(state: DiscoverState, actions: DiscoverActions) {
+    item(key = "featured-and-trending", contentType = "featured-and-trending") {
+        Row(horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.gutterDesktop)) {
+            state.featured?.let { featured ->
+                FeaturedNovelView(
+                    model = featured,
+                    onViewDetailsClick = { actions.onNovelClick(featured.id) },
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
+            ) {
+                if (state.trending.isNotEmpty()) TrendingHeader()
+                state.trending.forEach { row ->
+                    TrendingReleaseView(
+                        model = row,
+                        onClick = { actions.onNovelClick(row.novelId) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        }
+    }
+    topRatedSection(state.topRated, actions)
+}
+
+private fun LazyListScope.topRatedSection(
+    cards: ImmutableList<NovelCardUIModel>,
+    actions: DiscoverActions,
+) {
+    if (cards.isEmpty()) return
+    item(key = "top-rated", contentType = "top-rated") {
+        Column(verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm)) {
+            SectionHeaderView(
+                title = UiText.StringResource(R.string.discover_top_rated),
+                icon = Icons.Outlined.EmojiEvents,
+                modifier = Modifier.padding(top = VndbTheme.spacing.md),
+                action = {
+                    TextButton(onClick = actions.onSeeAllClick) {
+                        Text(
+                            text = stringResource(R.string.discover_see_all),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = VndbTheme.colors.accent,
+                        )
+                    }
+                },
+            )
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md)) {
+                items(items = cards, key = { it.id }) { card ->
+                    NovelCardView(model = card, onClick = { actions.onNovelClick(card.id) })
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrendingHeader() {
+    SectionHeaderView(
+        title = UiText.StringResource(R.string.discover_new_and_trending),
+        icon = Icons.Outlined.Bolt,
+        modifier = Modifier.padding(top = VndbTheme.spacing.md),
+        action = { TagChipView(label = UiText.StringResource(R.string.discover_language_filter)) },
+    )
+}
+
+@Composable
+private fun DiscoverHeader(isRolling: Boolean, onRollClick: () -> Unit) {
+    Row(verticalAlignment = Alignment.Bottom) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.discover_overline),
+                style = MaterialTheme.typography.labelSmall,
+                color = VndbTheme.colors.accent,
+            )
+            Text(
+                text = stringResource(R.string.discover_title),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+        OutlinedButton(
+            onClick = onRollClick,
+            enabled = !isRolling,
+            shape = MaterialTheme.shapes.small,
+            border = BorderStroke(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = VndbTheme.colors.surfaceCard,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
+        ) {
+            if (isRolling) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(RollProgressSize),
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Outlined.Casino,
+                    contentDescription = null,
+                    tint = VndbTheme.colors.score,
+                    modifier = Modifier.size(RollProgressSize),
+                )
+            }
+            Spacer(Modifier.size(VndbTheme.spacing.sm))
+            Text(
+                text = stringResource(R.string.discover_random_roll),
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+    }
+}
+
+private val previewFeatured = FeaturedNovelUIModel(
+    id = "v2002",
+    title = UiText.StringValue("STEINS;GATE"),
+    ratingLabel = UiText.StringValue("9.02 / 10"),
+    developerLabel = UiText.StringValue("NITRO PLUS"),
+    writerLabel = UiText.StringValue("Tanizaki Ouka"),
+    description = UiText.StringValue(
+        "A rag-tag band of students discover a way to change the past via mail.",
+    ),
+    coverUrl = null,
+    isCoverSensitive = false,
+    tags = persistentListOf(UiText.StringValue("Suspense"), UiText.StringValue("Time Travel")),
+    ageLabel = UiText.StringValue("All Ages"),
+)
+
+private val previewCards = listOf(
+    "STEINS;GATE",
+    "CLANNAD",
+    "Muv-Luv Alternative",
+).mapIndexed { index, title ->
+    NovelCardUIModel(
+        id = "v$index",
+        title = UiText.StringValue(title),
+        subtitle = UiText.StringValue("Studio"),
+        ratingLabel = UiText.StringValue("9.0$index"),
+        coverUrl = null,
+        isCoverSensitive = index == 2,
+    )
+}.toImmutableList()
+
+private val previewTrending = ReleaseKindTone.entries.mapIndexed { index, tone ->
+    TrendingReleaseUIModel(
+        releaseId = "r$index",
+        novelId = "v$index",
+        title = UiText.StringValue("Release $index"),
+        kindLabel = UiText.StringValue(tone.name.uppercase()),
+        kindTone = tone,
+        dateLabel = UiText.StringValue("Oct 2024"),
+        ratingLabel = UiText.StringValue("8.1$index"),
+        thumbnailUrl = null,
+        isCoverSensitive = false,
+        platforms = persistentListOf(UiText.StringValue("Windows")),
+    )
+}.toImmutableList()
+
+private class DiscoverStateProvider : PreviewParameterProvider<DiscoverState> {
+    override val values = sequenceOf(
+        DiscoverState(
+            featured = previewFeatured,
+            topRated = previewCards,
+            trending = previewTrending,
+            statsLabel = UiText.StringValue("68,053 Visual Novels"),
+        ),
+        DiscoverState(isLoading = true),
+        DiscoverState(
+            error = ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true),
+        ),
+    )
+}
+
+@AdaptivePreviews
+@Composable
+private fun DiscoverScreenPreview(
+    @PreviewParameter(
+        DiscoverStateProvider::class,
+    ) state: DiscoverState,
+) {
+    VndbTheme {
+        DiscoverScreen(state = state, onIntent = {})
+    }
+}
