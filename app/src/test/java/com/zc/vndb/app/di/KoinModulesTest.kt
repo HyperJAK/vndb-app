@@ -1,5 +1,6 @@
 package com.zc.vndb.app.di
 
+import android.content.Context
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngine
@@ -14,6 +15,7 @@ class KoinModulesTest {
     fun `all modules resolve`() {
         AppModule().module().verify(
             extraTypes = listOf(
+                Context::class,
                 HttpClient::class,
                 HttpClientEngine::class,
                 HttpClientConfig::class,

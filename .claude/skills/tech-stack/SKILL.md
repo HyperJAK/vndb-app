@@ -96,7 +96,7 @@ grep -rnE "runBlocking|GlobalScope|KoinComponent|by inject\(\)" app/src/main
 | DataStore | — | ✅ | — | — | ✅ create instance | — |
 | Compose, Material 3, Adaptive | — | — | ✅ | ✅ | — | ✅ |
 | Compose RichText | — | — | ✅ | ✅ | — | — |
-| Coil | — | — | ✅ | ✅ | — | ✅ `ImageLoader` setup |
+| Coil | — | ✅ `common/data` only: disk/memory cache size and clear (`ImageCacheRepositoryImpl`) | ✅ | ✅ | ✅ `DiskCache` provider | ✅ `ImageLoader` setup |
 | Navigation 3 | — | — | — | — | — | ✅ `NavKey`s, `NavDisplay`, back stack |
 | Lifecycle / ViewModel | — | — | ✅ | — | — | ✅ |
 | Koin | ✅ annotations only (`@Factory`, `@Single`) | ✅ annotations only (`@Single`) | ✅ `@KoinViewModel` / `@Factory`, `koinViewModel()` in Routes only | — | ✅ `@Module`, providers | ✅ `startKoin<AppKoin>` |

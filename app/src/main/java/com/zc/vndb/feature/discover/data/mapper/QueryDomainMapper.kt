@@ -15,12 +15,12 @@ private const val NOVEL_ID_PREFIX = "v"
 private const val TOP_RATED_MIN_VOTES = 500
 
 private const val COVER_FIELDS = "image.url, image.thumbnail, image.sexual, image.violence"
-private const val NOVEL_CARD_FIELDS = "title, rating, $COVER_FIELDS, developers.name"
+private const val NOVEL_CARD_FIELDS = "title, alttitle, rating, $COVER_FIELDS, developers.name"
 private const val NOVEL_DETAIL_FIELDS =
     "$NOVEL_CARD_FIELDS, description, staff.name, staff.role, " +
         "tags.name, tags.rating, tags.spoiler, tags.category"
 private const val RELEASE_FIELDS = "released, patch, platforms, languages.lang, languages.mtl, " +
-    "vns.id, vns.title, vns.olang, vns.released, vns.rating, " +
+    "vns.id, vns.title, vns.alttitle, vns.olang, vns.released, vns.rating, " +
     "vns.image.url, vns.image.thumbnail, vns.image.sexual, vns.image.violence"
 
 fun topRatedNovelsQuery(limit: Int) = QueryDTO(

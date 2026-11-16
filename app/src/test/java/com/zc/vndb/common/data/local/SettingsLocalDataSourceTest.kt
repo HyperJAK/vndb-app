@@ -1,0 +1,62 @@
+package com.zc.vndb.common.data.local
+
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.zc.vndb.common.domain.model.AppSettings
+import com.zc.vndb.common.domain.model.SpoilerPreference
+import com.zc.vndb.common.domain.model.TitleLanguage
+import java.io.File
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
+
+class SettingsLocalDataSourceTest {
+
+    @get:Rule
+    val folder = TemporaryFolder()
+
+    private fun TestScope.dataStore() = PreferenceDataStoreFactory.create(
+        scope = backgroundScope,
+    ) { File(folder.root, "settings.preferences_pb") }
+
+    @Test
+    fun `nothing stored means the defaults`() = runTest {
+        assertEquals(AppSettings(), SettingsLocalDataSource(dataStore()).settings.first())
+    }
+
+    @Test
+    fun `every setting survives a round trip`() = runTest {
+        val local = SettingsLocalDataSource(dataStore())
+        val changed = AppSettings(
+            titleLanguage = TitleLanguage.Original,
+            defaultSpoilerLevel = SpoilerPreference.Minor,
+            spoilIfFinished = true,
+            showSensitiveContent = true,
+            includeAdultInBrowse = true,
+            trendingLanguages = listOf("en", "zh-Hans", "ko"),
+        )
+
+        local.update { changed }
+
+        assertEquals(changed, local.settings.first())
+    }
+
+    @Test
+    fun `unknown or empty stored values fall back to the defaults`() = runTest {
+        val store = dataStore()
+        store.edit {
+            it[stringPreferencesKey("title_language")] = "Klingon"
+            it[stringPreferencesKey("trending_languages")] = "xx,yy"
+        }
+
+        val settings = SettingsLocalDataSource(store).settings.first()
+
+        assertEquals(TitleLanguage.Romanized, settings.titleLanguage)
+        assertEquals(AppSettings.DEFAULT_TRENDING_LANGUAGES, settings.trendingLanguages)
+    }
+}

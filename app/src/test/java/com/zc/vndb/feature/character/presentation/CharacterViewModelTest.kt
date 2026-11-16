@@ -1,7 +1,11 @@
 package com.zc.vndb.feature.character.presentation
 
 import app.cash.turbine.test
+import com.zc.vndb.common.domain.model.AppSettings
 import com.zc.vndb.common.domain.model.CharacterRole
+import com.zc.vndb.common.domain.model.SpoilerPreference
+import com.zc.vndb.common.domain.repository.FakeSettingsRepository
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -41,9 +45,12 @@ class CharacterViewModelTest {
         voiceActors = mapOf("v2002" to "Imai Asami")
     }
 
+    private val settings = FakeSettingsRepository()
+
     private fun createViewModel() = CharacterViewModel(
         characterId = "c6487",
         getCharacter = GetCharacterUseCase(repository),
+        observeSettings = ObserveSettingsUseCase(settings),
     )
 
     @Test
@@ -124,5 +131,14 @@ class CharacterViewModelTest {
             viewModel.onIntent(CharacterIntent.NovelClicked("v2002"))
             assertEquals(CharacterEffect.NavigateToNovel("v2002"), awaitItem())
         }
+    }
+
+    @Test
+    fun `the page starts at the spoiler level from settings`() = runTest {
+        settings.current.value = AppSettings(defaultSpoilerLevel = SpoilerPreference.Minor)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(SpoilerLevel.Minor, viewModel.state.value.spoilerLevel)
     }
 }

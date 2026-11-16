@@ -2,7 +2,10 @@ package com.zc.vndb.feature.discover.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
+import com.zc.vndb.common.ui.mapper.toLanguagesLabel
 import com.zc.vndb.feature.discover.domain.model.DiscoverNovel
 import com.zc.vndb.feature.discover.domain.usecase.GetDatabaseStatsUseCase
 import com.zc.vndb.feature.discover.domain.usecase.GetFeaturedNovelUseCase
@@ -35,6 +38,7 @@ class DiscoverViewModel(
     private val getTrendingReleases: GetTrendingReleasesUseCase,
     private val getDatabaseStats: GetDatabaseStatsUseCase,
     private val rollRandomNovel: RollRandomNovelUseCase,
+    private val observeSettings: ObserveSettingsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DiscoverState())
@@ -91,7 +95,8 @@ class DiscoverViewModel(
     }
 
     private suspend fun fetch(isRefresh: Boolean) = coroutineScope {
-        val trending = async { getTrendingReleases() }
+        val settings = observeSettings.current()
+        val trending = async { getTrendingReleases(settings.trendingLanguages) }
         val stats = async { getDatabaseStats() }
         val topRated = getTopRatedNovels().getOrElse { error ->
             trending.cancel()
@@ -120,9 +125,14 @@ class DiscoverViewModel(
             it.copy(
                 isLoading = false,
                 isRefreshing = false,
-                featured = featured?.toUIModel(),
-                topRated = topRated.toTopRatedCards(),
-                trending = trendingRows.map { row -> row.toUIModel() }.toImmutableList(),
+                featured = featured?.toUIModel(settings.titleLanguage),
+                topRated = topRated.toTopRatedCards(settings.titleLanguage),
+                trending = trendingRows.map { row ->
+                    row.toUIModel(
+                        settings.titleLanguage,
+                    )
+                }.toImmutableList(),
+                trendingLanguagesLabel = settings.trendingLanguages.toLanguagesLabel(),
                 statsLabel = statsLabel,
             )
         }
@@ -143,8 +153,8 @@ class DiscoverViewModel(
         viewModelScope.launch { _effect.send(effect) }
     }
 
-    private fun List<DiscoverNovel>.toTopRatedCards() =
-        take(TOP_RATED_ROW_SIZE).map { it.toNovelCardUIModel() }.toImmutableList()
+    private fun List<DiscoverNovel>.toTopRatedCards(titleLanguage: TitleLanguage) =
+        take(TOP_RATED_ROW_SIZE).map { it.toNovelCardUIModel(titleLanguage) }.toImmutableList()
 
     private companion object {
         /** The row shows the best few; the whole pool only feeds the weekly pick. */

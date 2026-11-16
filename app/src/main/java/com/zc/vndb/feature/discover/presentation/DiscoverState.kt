@@ -20,5 +20,7 @@ data class DiscoverState(
     val topRated: ImmutableList<NovelCardUIModel> = persistentListOf(),
     val trending: ImmutableList<TrendingReleaseUIModel> = persistentListOf(),
     val statsLabel: UiText? = null,
+    /** The New & Trending languages from Settings, e.g. "English, Japanese". */
+    val trendingLanguagesLabel: UiText? = null,
     val isRolling: Boolean = false,
 )

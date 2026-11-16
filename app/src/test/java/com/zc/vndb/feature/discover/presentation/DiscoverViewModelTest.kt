@@ -1,8 +1,12 @@
 package com.zc.vndb.feature.discover.presentation
 
 import app.cash.turbine.test
+import com.zc.vndb.common.domain.model.AppSettings
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.repository.FakeSettingsRepository
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.domain.util.FixedClock
+import com.zc.vndb.common.ui.mapper.toLanguagesLabel
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -42,6 +46,8 @@ class DiscoverViewModelTest {
         novelNumbers = listOf(10)
     }
 
+    private val settings = FakeSettingsRepository()
+
     private fun createViewModel() = DiscoverViewModel(
         getTopRatedNovels = GetTopRatedNovelsUseCase(repository),
         getFeaturedNovel = GetFeaturedNovelUseCase(
@@ -51,6 +57,7 @@ class DiscoverViewModelTest {
         getTrendingReleases = GetTrendingReleasesUseCase(repository),
         getDatabaseStats = GetDatabaseStatsUseCase(repository),
         rollRandomNovel = RollRandomNovelUseCase(repository, Random(seed = 1)),
+        observeSettings = ObserveSettingsUseCase(settings),
     )
 
     @Test
@@ -201,5 +208,18 @@ class DiscoverViewModelTest {
             assertNull(error)
             assertEquals(10, topRated.size)
         }
+    }
+
+    @Test
+    fun `new and trending uses the languages from settings`() = runTest {
+        settings.current.value = AppSettings(trendingLanguages = listOf("ko", "zh-Hans"))
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(listOf("ko", "zh-Hans"), repository.requestedReleaseLanguages)
+        assertEquals(
+            listOf("ko", "zh-Hans").toLanguagesLabel(),
+            viewModel.state.value.trendingLanguagesLabel,
+        )
     }
 }

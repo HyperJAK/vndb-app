@@ -36,6 +36,7 @@ class GetFeaturedNovelUseCase(
     private fun NovelDetails.toFeatured(): FeaturedNovel = FeaturedNovel(
         id = id,
         title = title,
+        originalTitle = originalTitle,
         rating = rating,
         cover = cover,
         description = description,

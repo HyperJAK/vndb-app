@@ -1,8 +1,12 @@
 package com.zc.vndb.feature.browse.presentation
 
 import app.cash.turbine.test
+import com.zc.vndb.common.domain.model.AppSettings
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.domain.repository.FakeSettingsRepository
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -35,10 +39,13 @@ class BrowseViewModelTest {
         novels = (1..45).map { BrowseSamples.novel("v$it") }
     }
 
+    private val settings = FakeSettingsRepository()
+
     private fun createViewModel(tagId: String? = null) = BrowseViewModel(
         tagId = tagId,
         searchNovels = SearchNovelsUseCase(repository),
         getTag = GetTagUseCase(repository),
+        observeSettings = ObserveSettingsUseCase(settings),
     )
 
     @Test
@@ -312,5 +319,30 @@ class BrowseViewModelTest {
         }
         assertFalse(viewModel.state.value.isRefreshing)
         assertEquals(20, viewModel.state.value.results.size)
+    }
+
+    @Test
+    fun `include 18+ in Browse starts with both ages`() = runTest {
+        settings.current.value = AppSettings(includeAdultInBrowse = true)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(AgeRating.Any, repository.requests.single().filter.ageRating)
+        assertEquals(AgeRating.Any, viewModel.state.value.ageRating)
+    }
+
+    @Test
+    fun `original script titles come first when chosen`() = runTest {
+        settings.current.value = AppSettings(titleLanguage = TitleLanguage.Original)
+        repository.novels = listOf(
+            BrowseSamples.novel("v1").copy(title = "Steins;Gate", originalTitle = "シュタインズ・ゲート"),
+        )
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        with(viewModel.state.value.results.single()) {
+            assertEquals(UiText.StringValue("シュタインズ・ゲート"), title)
+            assertEquals(UiText.StringValue("Steins;Gate"), originalTitle)
+        }
     }
 }

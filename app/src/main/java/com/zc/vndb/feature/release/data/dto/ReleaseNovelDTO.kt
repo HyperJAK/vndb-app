@@ -11,4 +11,5 @@ data class ReleaseNovelDTO(
     @SerialName("rtype") val rtype: String?,
     @SerialName("released") val released: String?,
     @SerialName("image") val image: ImageDTO?,
+    @SerialName("alttitle") val altTitle: String? = null,
 )

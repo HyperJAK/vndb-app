@@ -4,6 +4,7 @@ import android.app.Application
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.crossfade
 import com.zc.vndb.BuildConfig
@@ -31,6 +32,7 @@ class AppApplication :
     override fun newImageLoader(context: PlatformContext): ImageLoader =
         ImageLoader.Builder(context)
             .components { add(KtorNetworkFetcherFactory(httpClient = { get<HttpClient>() })) }
+            .diskCache { get<DiskCache>() }
             .crossfade(true)
             .build()
 }

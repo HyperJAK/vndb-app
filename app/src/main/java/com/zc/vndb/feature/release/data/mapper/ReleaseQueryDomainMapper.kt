@@ -9,7 +9,8 @@ private const val RELEASE_FIELDS =
     "title, alttitle, released, minage, official, patch, freeware, uncensored, has_ero, " +
         "platforms, media.medium, media.qty, resolution, engine, voiced, catalog, gtin, notes, " +
         "languages.lang, languages.title, languages.main, languages.mtl, " +
-        "vns.id, vns.title, vns.rtype, vns.released, vns.image.url, vns.image.thumbnail, vns.image.sexual, " +
+        "vns.id, vns.title, vns.alttitle, vns.rtype, vns.released, " +
+        "vns.image.url, vns.image.thumbnail, vns.image.sexual, " +
         "vns.image.violence, producers.name, producers.developer, producers.publisher, " +
         "images.type, images.url, images.thumbnail, images.sexual, images.violence, extlinks.label, extlinks.url"
 

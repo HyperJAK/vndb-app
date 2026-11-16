@@ -2,6 +2,7 @@ package com.zc.vndb.feature.profile.presentation
 
 sealed interface ProfileIntent {
     data object LogInClicked : ProfileIntent
+    data object SettingsClicked : ProfileIntent
     data object Retry : ProfileIntent
 
     /** Pull to refresh: labels, profile and the selected label's first page. */

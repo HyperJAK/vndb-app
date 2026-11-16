@@ -105,4 +105,13 @@ class BrowseQueryDomainMapperTest {
         assertEquals(json("""["id","=","g249"]"""), body["filters"])
         assertEquals(json("\"name, aliases, description, category, vn_count\""), body["fields"])
     }
+
+    @Test
+    fun `both ages alone is an empty filter list, which VNDB accepts`() {
+        assertEquals(json("[]"), BrowseFilter(ageRating = AgeRating.Any).body()["filters"])
+        assertEquals(
+            json("""["search","=","steins"]"""),
+            BrowseFilter(ageRating = AgeRating.Any, query = "steins").body()["filters"],
+        )
+    }
 }

@@ -14,6 +14,9 @@ interface ProfileRepository {
 
     suspend fun getLabels(userId: String): Result<List<ListLabel>>
 
+    /** Label ids [userId] gave [novelId]; empty when it is not on their list. */
+    suspend fun getEntryLabelIds(userId: String, novelId: String): Result<List<Int>>
+
     /** One page (1-based) of the entries with [labelId], most recently changed first. */
     suspend fun getEntries(
         userId: String,

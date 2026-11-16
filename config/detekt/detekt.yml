@@ -95,10 +95,11 @@ ktlint:
 
 Compose:
   CompositionLocalAllowlist:
-    # Theme token locals are the only CompositionLocals allowed.
+    # Theme token locals, plus app-wide display preferences from Settings.
     allowedCompositionLocals:
       - LocalVndbColors
       - LocalVndbShapes
+      - LocalShowSensitiveContent
       - LocalVndbSpacing
       - LocalVndbDimens
   PreviewAnnotationNaming:

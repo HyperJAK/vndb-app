@@ -22,3 +22,18 @@ fun entriesQuery(userId: String, labelId: Int, page: Int, pageSize: Int) = ListQ
     results = pageSize,
     page = page,
 )
+
+/** The labels [userId] gave [novelId] (no results when it is not on their list). */
+fun entryLabelsQuery(userId: String, novelId: String) = ListQueryDTO(
+    user = userId,
+    filters = buildJsonArray {
+        add("id")
+        add("=")
+        add(novelId)
+    },
+    fields = "labels.id, labels.label",
+    sort = "id",
+    reverse = false,
+    results = 1,
+    page = 1,
+)

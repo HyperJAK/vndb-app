@@ -16,4 +16,5 @@ data class VisualNovelDTO(
     @SerialName("developers") val developers: List<DeveloperDTO>?,
     @SerialName("staff") val staff: List<StaffDTO>?,
     @SerialName("tags") val tags: List<TagDTO>?,
+    @SerialName("alttitle") val altTitle: String? = null,
 )

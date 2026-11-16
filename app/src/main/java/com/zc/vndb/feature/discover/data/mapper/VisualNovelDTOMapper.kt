@@ -10,6 +10,7 @@ import com.zc.vndb.feature.discover.domain.model.NovelDetails
 fun VisualNovelDTO.toDiscoverNovel(): DiscoverNovel = DiscoverNovel(
     id = id,
     title = title.orEmpty(),
+    originalTitle = altTitle,
     rating = rating,
     cover = image?.toCover(),
     developerName = developers?.firstOrNull()?.name,
@@ -18,6 +19,7 @@ fun VisualNovelDTO.toDiscoverNovel(): DiscoverNovel = DiscoverNovel(
 fun VisualNovelDTO.toNovelDetails(): NovelDetails = NovelDetails(
     id = id,
     title = title.orEmpty(),
+    originalTitle = altTitle,
     rating = rating,
     cover = image?.toCover(),
     description = description?.takeIf { it.isNotBlank() },

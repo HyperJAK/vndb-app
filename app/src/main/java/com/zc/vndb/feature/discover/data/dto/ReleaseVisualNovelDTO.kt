@@ -12,4 +12,5 @@ data class ReleaseVisualNovelDTO(
     @SerialName("released") val released: String?,
     @SerialName("rating") val rating: Double?,
     @SerialName("image") val image: ImageDTO?,
+    @SerialName("alttitle") val altTitle: String? = null,
 )

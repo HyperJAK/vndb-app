@@ -17,6 +17,8 @@ Root package: `com.zc.vndb` (source root `app/src/main/java/com/zc/vndb/`). Rule
 com.zc.vndb/
 ├── app/                             # Application entry point, root navigation & DI assembly
 │   ├── MainActivity.kt
+│   ├── AppRoute.kt                  # App root: provides app-wide settings (composition locals) around AppNavigation
+│   ├── AppViewModel.kt              # Reads those settings (scanned by AppModule)
 │   ├── AppApplication.kt            # Initializes Koin (+ Coil ImageLoader factory)
 │   ├── di/
 │   │   ├── AppModule.kt             # @Module(includes = [...]): CommonModule and every feature module
@@ -35,7 +37,8 @@ com.zc.vndb/
 │   │       └── SafeApiCall.kt       # safeApiCall { } — Ktor/serialization exceptions -> DomainError
 │   ├── domain/
 │   │   ├── model/                   # Shared pure Kotlin domain primitives, DomainError.kt, result types, Session
-│   │   ├── repository/              # Interfaces used by 2+ features (e.g. SessionRepository)
+│   │   ├── repository/              # Interfaces used by 2+ features (e.g. SessionRepository, SettingsRepository)
+│   │   ├── usecase/                 # Use cases used by 2+ features (e.g. ObserveSettingsUseCase)
 │   │   └── util/
 │   │       └── DispatcherProvider.kt  # DispatcherProvider interface + DefaultDispatcherProvider
 │   ├── di/
@@ -158,7 +161,8 @@ Rules are in `library-management`.
 | DTO used by 2+ features (query body, image, tag) | `common/data/dto/[Name]DTO.kt` |
 | Mapper from a shared DTO to a `common/domain` model | `common/data/mapper/[Name]DTOMapper.kt` |
 | Shared DataStore helpers (file factory, preference key helpers) | `common/data/local/` |
-| `DomainError` and other error/result/value types used by 2+ features' domains | `common/domain/model/` |
+| `DomainError` and other error/result/value types used by 2+ features' domains (incl. `AppSettings`, `Session`) | `common/domain/model/` |
+| Repository interface / use case used by 2+ features (settings, session, image cache) | `common/domain/{repository,usecase}/` |
 | `DispatcherProvider` / `DefaultDispatcherProvider` | `common/domain/util/DispatcherProvider.kt` |
 | Koin providers for types we don't own (`HttpClient`, `Json`, `Clock`, `DataStore`) | `common/di/CommonModule.kt` |
 | Theme, colors, typography | `common/ui/theme/` |

@@ -13,4 +13,6 @@ data class NovelDetails(
     val developerNames: List<String>,
     val staff: List<StaffCredit>,
     val tags: List<NovelTag>,
+    /** Title in the original script, when VNDB has one. */
+    val originalTitle: String? = null,
 )

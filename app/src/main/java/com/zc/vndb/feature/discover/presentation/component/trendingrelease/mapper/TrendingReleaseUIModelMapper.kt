@@ -1,8 +1,10 @@
 package com.zc.vndb.feature.discover.presentation.component.trendingrelease.mapper
 
 import com.zc.vndb.common.domain.model.ReleaseDate
+import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
 import com.zc.vndb.common.ui.mapper.platformLabel
+import com.zc.vndb.common.ui.mapper.primaryTitle
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.discover.domain.model.Platform
@@ -25,10 +27,12 @@ private val monthYearFormat = YearMonth.Format {
     year()
 }
 
-fun TrendingRelease.toUIModel(): TrendingReleaseUIModel = TrendingReleaseUIModel(
+fun TrendingRelease.toUIModel(
+    titleLanguage: TitleLanguage = TitleLanguage.Romanized,
+): TrendingReleaseUIModel = TrendingReleaseUIModel(
     releaseId = releaseId,
     novelId = novelId,
-    title = UiText.StringValue(title),
+    title = primaryTitle(title, originalTitle, titleLanguage),
     kindLabel = kind.toLabel(),
     kindTone = kind.toTone(),
     dateLabel = releaseDate.toLabel(),

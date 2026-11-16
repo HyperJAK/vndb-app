@@ -2,7 +2,10 @@ package com.zc.vndb.feature.browse.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
+import com.zc.vndb.feature.browse.domain.model.AgeRating
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
@@ -34,6 +37,7 @@ class BrowseViewModel(
     @InjectedParam private val tagId: String?,
     private val searchNovels: SearchNovelsUseCase,
     private val getTag: GetTagUseCase,
+    private val observeSettings: ObserveSettingsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BrowseState(isTagPage = tagId != null))
@@ -47,10 +51,18 @@ class BrowseViewModel(
     private var nextPage = SearchNovelsUseCase.FIRST_PAGE
     private var loadJob: Job? = null
     private var debounceJob: Job? = null
+    private var titleLanguage = TitleLanguage.Romanized
 
+    // The starting age rating comes from Settings ("Include 18+ titles in Browse").
     init {
         loadTag()
-        onIntent(BrowseIntent.Load)
+        viewModelScope.launch {
+            val settings = observeSettings.current()
+            filter = filter.copy(
+                ageRating = if (settings.includeAdultInBrowse) AgeRating.Any else AgeRating.AllAges,
+            )
+            onIntent(BrowseIntent.Load)
+        }
     }
 
     fun onIntent(intent: BrowseIntent) {
@@ -150,6 +162,7 @@ class BrowseViewModel(
             )
         }
         loadJob = viewModelScope.launch {
+            titleLanguage = observeSettings.current().titleLanguage
             searchNovels(filter, nextPage)
                 .onSuccess { page ->
                     nextPage++
@@ -157,7 +170,7 @@ class BrowseViewModel(
                         it.copy(
                             isLoading = false,
                             results = page.novels.map { novel ->
-                                novel.toCardUIModel()
+                                novel.toCardUIModel(titleLanguage)
                             }.toImmutableList(),
                             resultCountLabel = page.totalCount?.toResultCountLabel(),
                             canLoadMore = page.hasMore,
@@ -200,7 +213,7 @@ class BrowseViewModel(
                         it.copy(
                             isRefreshing = false,
                             results = page.novels.map { novel ->
-                                novel.toCardUIModel()
+                                novel.toCardUIModel(titleLanguage)
                             }.toImmutableList(),
                             resultCountLabel = page.totalCount?.toResultCountLabel(),
                             canLoadMore = page.hasMore,
@@ -226,7 +239,7 @@ class BrowseViewModel(
                         val known = state.results.mapTo(HashSet()) { it.id }
                         val added = page.novels.filter {
                             it.id !in known
-                        }.map { it.toCardUIModel() }
+                        }.map { it.toCardUIModel(titleLanguage) }
                         state.copy(
                             isLoadingMore = false,
                             results = (state.results + added).toImmutableList(),

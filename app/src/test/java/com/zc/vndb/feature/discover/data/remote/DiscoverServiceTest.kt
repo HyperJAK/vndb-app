@@ -33,7 +33,7 @@ class DiscoverServiceTest {
             json(
                 """
                 {"filters":["votecount",">=",500],
-                 "fields":"title, rating, image.url, image.thumbnail, image.sexual, image.violence, developers.name",
+                 "fields":"title, alttitle, rating, image.url, image.thumbnail, image.sexual, image.violence, developers.name",
                  "sort":"rating","reverse":true,"results":50}
                 """,
             ),
@@ -54,7 +54,7 @@ class DiscoverServiceTest {
             json(
                 """
                 {"filters":["id","=","v2002"],
-                 "fields":"title, rating, image.url, image.thumbnail, image.sexual, image.violence, developers.name, description, staff.name, staff.role, tags.name, tags.rating, tags.spoiler, tags.category",
+                 "fields":"title, alttitle, rating, image.url, image.thumbnail, image.sexual, image.violence, developers.name, description, staff.name, staff.role, tags.name, tags.rating, tags.spoiler, tags.category",
                  "results":1}
                 """,
             ),

@@ -172,7 +172,10 @@ private fun LazyListScope.compactSections(state: DiscoverState, actions: Discove
     }
     topRatedSection(state.topRated, actions)
     if (state.trending.isNotEmpty()) {
-        item(key = "trending-header", contentType = "section-header") { TrendingHeader() }
+        item(
+            key = "trending-header",
+            contentType = "section-header",
+        ) { TrendingHeader(state.trendingLanguagesLabel) }
         items(items = state.trending, key = { it.releaseId }, contentType = { "trending" }) { row ->
             TrendingReleaseView(
                 model = row,
@@ -197,7 +200,7 @@ private fun LazyListScope.expandedSections(state: DiscoverState, actions: Discov
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
             ) {
-                if (state.trending.isNotEmpty()) TrendingHeader()
+                if (state.trending.isNotEmpty()) TrendingHeader(state.trendingLanguagesLabel)
                 state.trending.forEach { row ->
                     TrendingReleaseView(
                         model = row,
@@ -244,16 +247,12 @@ private fun LazyListScope.topRatedSection(
 }
 
 @Composable
-private fun TrendingHeader() {
+private fun TrendingHeader(languagesLabel: UiText?) {
     SectionHeaderView(
         title = UiText.StringResource(StringResource.discover_new_and_trending),
         icon = Icons.Outlined.Bolt,
         modifier = Modifier.padding(top = VndbTheme.spacing.md),
-        action = {
-            TagChipView(
-                label = UiText.StringResource(StringResource.discover_language_filter),
-            )
-        },
+        action = languagesLabel?.let { label -> { TagChipView(label = label) } },
     )
 }
 

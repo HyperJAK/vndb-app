@@ -10,4 +10,6 @@ data class ReleaseNovel(
     val releaseDate: ReleaseDate,
     val cover: Cover?,
     val type: ReleaseType,
+    /** Title in the original script, when VNDB has one. */
+    val originalTitle: String? = null,
 )

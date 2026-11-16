@@ -1,0 +1,174 @@
+package com.zc.vndb.feature.settings.presentation
+
+import app.cash.turbine.test
+import com.zc.vndb.common.domain.model.Session
+import com.zc.vndb.common.domain.model.SpoilerPreference
+import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.domain.repository.FakeSessionRepository
+import com.zc.vndb.common.domain.repository.FakeSettingsRepository
+import com.zc.vndb.common.domain.repository.ImageCacheRepository
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
+import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.common.util.MainDispatcherRule
+import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
+import com.zc.vndb.feature.settings.domain.usecase.ClearImageCacheUseCase
+import com.zc.vndb.feature.settings.domain.usecase.GetImageCacheSizeUseCase
+import com.zc.vndb.feature.settings.domain.usecase.UpdateSettingsUseCase
+import com.zc.vndb.feature.settings.presentation.model.SettingsDialog
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+
+class SettingsViewModelTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
+    private val settings = FakeSettingsRepository()
+    private val sessions = FakeSessionRepository()
+
+    private class FakeImageCache(var bytes: Long) : ImageCacheRepository {
+        var cleared = false
+        override suspend fun size() = bytes
+        override suspend fun clear() {
+            cleared = true
+            bytes = 0
+        }
+    }
+
+    private val cache = FakeImageCache(bytes = 149_000_000)
+
+    private fun createViewModel() = SettingsViewModel(
+        observeSettings = ObserveSettingsUseCase(settings),
+        observeSession = ObserveSessionUseCase(sessions),
+        updateSettings = UpdateSettingsUseCase(settings),
+        getImageCacheSize = GetImageCacheSizeUseCase(cache),
+        clearImageCache = ClearImageCacheUseCase(cache),
+    )
+
+    private fun TestScope.collect(state: StateFlow<SettingsState>) {
+        backgroundScope.launch { state.collect {} }
+    }
+
+    @Test
+    fun `shows the stored settings and the cache size`() = runTest {
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+        advanceUntilIdle()
+
+        with(viewModel.state.value) {
+            assertTrue(isLoaded)
+            assertFalse(isSignedIn)
+            assertEquals(
+                UiText.StringResource(StringResource.settings_title_romanized),
+                titleLanguageLabel,
+            )
+            assertEquals(UiText.StringValue("English, Japanese"), languagesLabel)
+            assertEquals(
+                UiText.StringResource(StringResource.settings_size_mb, listOf("142")),
+                imageCacheLabel,
+            )
+        }
+    }
+
+    @Test
+    fun `choices are saved and close the dialog`() = runTest {
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+
+        viewModel.onIntent(SettingsIntent.DialogOpened(SettingsDialog.TitleLanguage))
+        viewModel.onIntent(
+            SettingsIntent.OptionSelected(
+                SettingsDialog.TitleLanguage,
+                TitleLanguage.Original.name,
+            ),
+        )
+        viewModel.onIntent(
+            SettingsIntent.OptionSelected(
+                SettingsDialog.SpoilerLevel,
+                SpoilerPreference.Major.name,
+            ),
+        )
+        viewModel.onIntent(SettingsIntent.LanguagesConfirmed(setOf("ko")))
+        viewModel.onIntent(SettingsIntent.IncludeAdultChanged(true))
+        advanceUntilIdle()
+
+        with(settings.current.value) {
+            assertEquals(TitleLanguage.Original, titleLanguage)
+            assertEquals(SpoilerPreference.Major, defaultSpoilerLevel)
+            assertEquals(listOf("ko"), trendingLanguages)
+            assertTrue(includeAdultInBrowse)
+        }
+        assertNull(viewModel.state.value.dialog)
+    }
+
+    @Test
+    fun `sensitive content needs confirmation to turn on but not off`() = runTest {
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+
+        viewModel.onIntent(SettingsIntent.ShowSensitiveChanged(true))
+        advanceUntilIdle()
+        assertEquals(SettingsDialog.ConfirmSensitive, viewModel.state.value.dialog)
+        assertFalse(settings.current.value.showSensitiveContent)
+
+        viewModel.onIntent(SettingsIntent.SensitiveConfirmed)
+        advanceUntilIdle()
+        assertTrue(settings.current.value.showSensitiveContent)
+
+        viewModel.onIntent(SettingsIntent.ShowSensitiveChanged(false))
+        advanceUntilIdle()
+        assertFalse(settings.current.value.showSensitiveContent)
+        assertNull(viewModel.state.value.dialog)
+    }
+
+    @Test
+    fun `clearing the cache empties it and says so`() = runTest {
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+        advanceUntilIdle()
+
+        viewModel.effect.test {
+            viewModel.onIntent(SettingsIntent.ClearCacheConfirmed)
+            assertEquals(
+                SettingsEffect.ShowMessage(
+                    UiText.StringResource(StringResource.settings_cache_cleared),
+                ),
+                awaitItem(),
+            )
+        }
+        advanceUntilIdle()
+        assertTrue(cache.cleared)
+        assertEquals(
+            UiText.StringResource(StringResource.settings_size_bytes, listOf("0")),
+            viewModel.state.value.imageCacheLabel,
+        )
+    }
+
+    @Test
+    fun `signed-in users can use spoil me if finished, links open`() = runTest {
+        sessions.current.value = Session("u2", "Yorhel", canReadPrivateList = true)
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.isSignedIn)
+
+        viewModel.onIntent(SettingsIntent.SpoilIfFinishedChanged(true))
+        advanceUntilIdle()
+        assertTrue(settings.current.value.spoilIfFinished)
+
+        viewModel.effect.test {
+            viewModel.onIntent(SettingsIntent.LinkClicked(SettingsViewModel.VNDB_URL))
+            assertEquals(SettingsEffect.OpenUrl("https://vndb.org"), awaitItem())
+        }
+    }
+}

@@ -30,6 +30,7 @@ import com.zc.vndb.feature.discover.presentation.DiscoverRoute
 import com.zc.vndb.feature.login.presentation.LoginRoute
 import com.zc.vndb.feature.profile.presentation.ProfileRoute
 import com.zc.vndb.feature.release.presentation.ReleaseRoute
+import com.zc.vndb.feature.settings.presentation.SettingsRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -40,6 +41,10 @@ data object BrowseNavKey : NavKey
 
 @Serializable
 data object ProfileNavKey : NavKey
+
+/** Preferences and app info (pushed on the Profile tab). */
+@Serializable
+data object SettingsNavKey : NavKey
 
 /** Log in with a VNDB API token (pushed on the Profile tab). */
 @Serializable
@@ -161,8 +166,12 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
     entry<ProfileNavKey> {
         ProfileRoute(
             onOpenLogin = { navigator.navigate(LoginNavKey) },
+            onOpenSettings = { navigator.navigate(SettingsNavKey) },
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
         )
+    }
+    entry<SettingsNavKey> {
+        SettingsRoute(onNavigateBack = navigator::goBack)
     }
     entry<LoginNavKey> {
         LoginRoute(onNavigateBack = navigator::goBack)
