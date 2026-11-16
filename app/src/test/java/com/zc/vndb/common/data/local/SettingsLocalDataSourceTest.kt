@@ -4,6 +4,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.zc.vndb.common.domain.model.AppSettings
+import com.zc.vndb.common.domain.model.ListSort
 import com.zc.vndb.common.domain.model.SpoilerPreference
 import com.zc.vndb.common.domain.model.TitleLanguage
 import java.io.File
@@ -39,6 +40,8 @@ class SettingsLocalDataSourceTest {
             showSensitiveContent = true,
             includeAdultInBrowse = true,
             trendingLanguages = listOf("en", "zh-Hans", "ko"),
+            listSort = ListSort.Vote,
+            isListSortReversed = true,
         )
 
         local.update { changed }

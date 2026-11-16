@@ -26,7 +26,7 @@ import com.zc.vndb.feature.detail.presentation.component.relationcard.model.Rela
 private val CardWidth = 196.dp
 private const val TITLE_MAX_LINES = 2
 
-/** A related VN: id, relation, title, year and score. */
+/** A related VN: id, relation, title, year and score (pinned to the bottom when stretched). */
 @Composable
 fun RelationCardView(
     model: RelationCardUIModel,
@@ -59,6 +59,8 @@ fun RelationCardView(
             maxLines = TITLE_MAX_LINES,
             overflow = TextOverflow.Ellipsis,
         )
+        // Keeps year and score at the bottom when the card is stretched to its row's height.
+        Spacer(Modifier.weight(1f))
         Text(
             text = listOfNotNull(model.yearLabel?.asString(), model.scoreLabel?.asString())
                 .joinToString(

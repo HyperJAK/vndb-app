@@ -3,12 +3,14 @@ package com.zc.vndb.feature.profile.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.ListSort
 import com.zc.vndb.common.domain.model.Session
 import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.feature.profile.domain.model.ListCursor
 import com.zc.vndb.feature.profile.domain.model.ListEntry
 import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.domain.model.UserProfile
@@ -20,7 +22,9 @@ import com.zc.vndb.feature.profile.presentation.component.listentrycard.mapper.t
 import com.zc.vndb.feature.profile.presentation.component.profileheader.mapper.toHeaderUIModel
 import com.zc.vndb.feature.profile.presentation.mapper.pickSelected
 import com.zc.vndb.feature.profile.presentation.mapper.toChips
+import com.zc.vndb.feature.profile.presentation.mapper.toSortOptions
 import com.zc.vndb.feature.profile.presentation.model.EntriesUIState
+import com.zc.vndb.feature.settings.domain.usecase.UpdateSettingsUseCase
 import kotlin.time.Clock
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
@@ -50,6 +54,7 @@ class ProfileViewModel(
     private val logOut: LogOutUseCase,
     private val clock: Clock,
     private val observeSettings: ObserveSettingsUseCase,
+    private val updateSettings: UpdateSettingsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -74,6 +79,8 @@ class ProfileViewModel(
     private var selectedLabelId: Int? = null
     private val entriesByLabel = mutableMapOf<Int, LabelEntries>()
     private var titleLanguage = TitleLanguage.Romanized
+    private var listSort = ListSort.Title
+    private var isSortReversed = false
     private var overviewJob: Job? = null
     private var entriesJob: Job? = null
 
@@ -114,6 +121,10 @@ class ProfileViewModel(
             }
 
             ProfileIntent.LogOutConfirmed -> confirmLogOut()
+
+            is ProfileIntent.SortSelected -> selectSort(intent.sort)
+
+            ProfileIntent.SortDirectionToggled -> toggleSortDirection()
         }
     }
 
@@ -146,7 +157,11 @@ class ProfileViewModel(
         entriesJob?.cancel()
         _state.update { it.copy(isLoading = !isRefresh, isRefreshing = isRefresh, error = null) }
         overviewJob = viewModelScope.launch {
-            titleLanguage = observeSettings.current().titleLanguage
+            val settings = observeSettings.current()
+            titleLanguage = settings.titleLanguage
+            listSort = settings.listSort
+            isSortReversed = settings.isListSortReversed
+            renderSort()
             getProfile(current.userId)
                 .onSuccess { overview ->
                     user = overview.user
@@ -200,12 +215,11 @@ class ProfileViewModel(
         entriesJob?.cancel()
         if (!isRefresh) _state.update { it.copy(entries = EntriesUIState(isLoading = true)) }
         entriesJob = viewModelScope.launch {
-            getListEntries(current.userId, labelId, GetListEntriesUseCase.FIRST_PAGE)
-                .onSuccess { page ->
+            getListEntries(current.userId, labelId, listSort, isSortReversed)
+                .onSuccess { batch ->
                     entriesByLabel[labelId] = LabelEntries(
-                        entries = page.entries,
-                        nextPage = GetListEntriesUseCase.FIRST_PAGE + 1,
-                        hasMore = page.hasMore,
+                        entries = batch.entries,
+                        next = batch.next,
                     )
                     render(labelId)
                     _state.update { it.copy(isRefreshing = false) }
@@ -231,12 +245,11 @@ class ProfileViewModel(
             )
         }
         entriesJob = viewModelScope.launch {
-            getListEntries(userId, labelId, loaded.nextPage)
-                .onSuccess { page ->
+            getListEntries(userId, labelId, listSort, isSortReversed, loaded.next)
+                .onSuccess { batch ->
                     entriesByLabel[labelId] = LabelEntries(
-                        entries = (loaded.entries + page.entries).distinctBy { it.novelId },
-                        nextPage = loaded.nextPage + 1,
-                        hasMore = page.hasMore,
+                        entries = (loaded.entries + batch.entries).distinctBy { it.novelId },
+                        next = batch.next,
                     )
                     render(labelId)
                 }
@@ -309,11 +322,44 @@ class ProfileViewModel(
         viewModelScope.launch { _effect.send(effect) }
     }
 
-    private data class LabelEntries(
-        val entries: List<ListEntry>,
-        val nextPage: Int,
-        val hasMore: Boolean,
-    )
+    /** Choosing a sort saves it (in its natural direction) and reloads the selected label. */
+    private fun selectSort(sort: ListSort) {
+        if (sort == listSort) return
+        applySort(sort, reversed = false)
+    }
+
+    /** Flips the current sort's direction, saves it and reloads the selected label. */
+    private fun toggleSortDirection() = applySort(listSort, reversed = !isSortReversed)
+
+    private fun applySort(sort: ListSort, reversed: Boolean) {
+        listSort = sort
+        isSortReversed = reversed
+        entriesByLabel.clear()
+        renderSort()
+        viewModelScope.launch {
+            updateSettings {
+                it.copy(
+                    listSort = sort,
+                    isListSortReversed = reversed,
+                )
+            }
+        }
+        selectedLabelId?.let { loadFirstPage(it, isRefresh = false) }
+    }
+
+    private fun renderSort() {
+        _state.update {
+            it.copy(
+                sortOptions = listSort.toSortOptions(),
+                // Title runs A to Z naturally; updates and votes run newest / highest first.
+                isSortAscending = (listSort == ListSort.Title) != isSortReversed,
+            )
+        }
+    }
+
+    private data class LabelEntries(val entries: List<ListEntry>, val next: ListCursor?) {
+        val hasMore: Boolean get() = next != null
+    }
 
     private companion object {
         const val STOP_TIMEOUT_MILLIS = 5_000L

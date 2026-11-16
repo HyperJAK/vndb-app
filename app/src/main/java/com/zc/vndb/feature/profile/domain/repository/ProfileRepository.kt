@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.profile.domain.repository
 
+import com.zc.vndb.feature.profile.domain.model.EntryOrder
 import com.zc.vndb.feature.profile.domain.model.EntryPage
 import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.domain.model.UserProfile
@@ -17,11 +18,17 @@ interface ProfileRepository {
     /** Label ids [userId] gave [novelId]; empty when it is not on their list. */
     suspend fun getEntryLabelIds(userId: String, novelId: String): Result<List<Int>>
 
-    /** One page (1-based) of the entries with [labelId], most recently changed first. */
+    /**
+     * One page (1-based) of the entries with [labelId] in [order], [ascending] or not. [voted] keeps
+     * only the entries the user voted on (true) or did not (false); null keeps all.
+     */
     suspend fun getEntries(
         userId: String,
         labelId: Int,
         page: Int,
         pageSize: Int,
+        order: EntryOrder = EntryOrder.Updated,
+        ascending: Boolean = false,
+        voted: Boolean? = null,
     ): Result<EntryPage>
 }

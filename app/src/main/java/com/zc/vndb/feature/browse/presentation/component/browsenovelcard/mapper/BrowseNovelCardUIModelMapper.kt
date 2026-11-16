@@ -4,7 +4,7 @@ import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
 import com.zc.vndb.common.ui.mapper.primaryTitle
 import com.zc.vndb.common.ui.mapper.secondaryTitle
-import com.zc.vndb.common.ui.mapper.toLabel
+import com.zc.vndb.common.ui.mapper.toNameWithRangeLabel
 import com.zc.vndb.common.ui.mapper.toYearLabel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -27,7 +27,7 @@ private fun BrowseNovel.toCardUIModel(primaryTitle: UiText, secondaryTitle: UiTe
         creditsLabel = developerNames.toCreditsLabel(),
         yearLabel = releaseDate.toYearLabel(),
         ratingLabel = rating?.toRatingLabel(),
-        lengthLabel = length?.toLabel(),
+        lengthLabel = length?.toNameWithRangeLabel(),
         coverUrl = cover?.thumbnailUrl ?: cover?.url,
         isCoverSensitive = cover?.isSensitive ?: false,
         tags = tags.map { UiText.StringValue(it.name) }.toImmutableList(),

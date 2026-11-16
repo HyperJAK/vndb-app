@@ -2,6 +2,7 @@ package com.zc.vndb.feature.browse.presentation.component.browsenovelcard.mapper
 
 import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.common.domain.model.ReleaseDate
+import com.zc.vndb.common.ui.mapper.toNameWithRangeLabel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.BrowseSamples
@@ -26,7 +27,7 @@ class BrowseNovelCardUIModelMapperTest {
         assertEquals(UiText.StringValue("MAGES."), card.creditsLabel)
         assertEquals(UiText.StringValue("2009"), card.yearLabel)
         assertEquals(UiText.StringValue("9.02"), card.ratingLabel)
-        assertEquals(UiText.StringResource(StringResource.length_long), card.lengthLabel)
+        assertEquals(NovelLength.Long.toNameWithRangeLabel(), card.lengthLabel)
         assertEquals("thumb", card.coverUrl)
         assertEquals(listOf<UiText>(UiText.StringValue("Time Travel")), card.tags)
     }
@@ -64,13 +65,7 @@ class BrowseNovelCardUIModelMapperTest {
     fun `every length has a label and missing values stay null`() {
         val labels = NovelLength.entries.map { novel.copy(length = it).toCardUIModel().lengthLabel }
         assertEquals(
-            listOf(
-                StringResource.length_very_short,
-                StringResource.length_short,
-                StringResource.length_medium,
-                StringResource.length_long,
-                StringResource.length_very_long,
-            ).map { UiText.StringResource(it) },
+            NovelLength.entries.map { it.toNameWithRangeLabel() },
             labels,
         )
         val bare = novel.copy(length = null, rating = null, cover = null).toCardUIModel()

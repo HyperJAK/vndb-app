@@ -13,6 +13,10 @@ data class AppSettings(
     val includeAdultInBrowse: Boolean = false,
     /** VNDB language codes for Discover's New & Trending; never empty. */
     val trendingLanguages: List<String> = DEFAULT_TRENDING_LANGUAGES,
+    /** Order of the Profile lists. */
+    val listSort: ListSort = ListSort.Title,
+    /** The Profile lists run opposite to [listSort]'s natural order (Z to A, oldest, lowest vote). */
+    val isListSortReversed: Boolean = false,
 ) {
     companion object {
         val DEFAULT_TRENDING_LANGUAGES = listOf("en", "ja")

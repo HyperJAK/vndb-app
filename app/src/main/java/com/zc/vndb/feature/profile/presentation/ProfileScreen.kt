@@ -49,6 +49,7 @@ import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.profile.presentation.component.guestprompt.GuestPromptView
 import com.zc.vndb.feature.profile.presentation.component.listentrycard.ListEntryCardView
 import com.zc.vndb.feature.profile.presentation.component.listentrycard.model.ListEntryCardUIModel
+import com.zc.vndb.feature.profile.presentation.component.listsortmenu.ListSortMenuView
 import com.zc.vndb.feature.profile.presentation.component.profileheader.ProfileHeaderView
 import com.zc.vndb.feature.profile.presentation.component.profileheader.model.ProfileHeaderUIModel
 import com.zc.vndb.feature.profile.presentation.model.EntriesUIState
@@ -157,6 +158,22 @@ private fun SignedInContent(state: ProfileState, onIntent: (ProfileIntent) -> Un
                 else -> {
                     item(key = "labels", contentType = "labels") {
                         LabelChips(state.labels) { onIntent(ProfileIntent.LabelSelected(it)) }
+                    }
+                    if (state.sortOptions.isNotEmpty()) {
+                        item(key = "sort", contentType = "sort") {
+                            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                                ListSortMenuView(
+                                    options = state.sortOptions,
+                                    isAscending = state.isSortAscending,
+                                    onSelect = { onIntent(ProfileIntent.SortSelected(it)) },
+                                    onDirectionToggle = {
+                                        onIntent(
+                                            ProfileIntent.SortDirectionToggled,
+                                        )
+                                    },
+                                )
+                            }
+                        }
                     }
                     entries(state.entries, onIntent)
                 }

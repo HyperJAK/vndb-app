@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.profile.data.mapper
 
 import com.zc.vndb.feature.profile.data.dto.ListQueryDTO
+import com.zc.vndb.feature.profile.domain.model.EntryOrder
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 
@@ -8,20 +9,48 @@ private const val ENTRY_FIELDS =
     "id, vote, lastmod, started, finished, notes, labels.id, labels.label, " +
         "vn.title, vn.alttitle, vn.released, vn.image.url, vn.image.thumbnail, vn.image.sexual, vn.image.violence"
 
-/** A page of [userId]'s entries with [labelId], most recently changed first. */
-fun entriesQuery(userId: String, labelId: Int, page: Int, pageSize: Int) = ListQueryDTO(
+/** VNDB's virtual "Voted" label: every entry with a vote. */
+private const val VOTED_LABEL = 7
+
+/**
+ * A page of [userId]'s entries with [labelId] in [order], [ascending] or not. With [voted], only
+ * entries that also have (true) or lack (false) the Voted label.
+ */
+fun entriesQuery(
+    userId: String,
+    labelId: Int,
+    page: Int,
+    pageSize: Int,
+    order: EntryOrder = EntryOrder.Updated,
+    ascending: Boolean = false,
+    voted: Boolean? = null,
+) = ListQueryDTO(
     user = userId,
-    filters = buildJsonArray {
-        add("label")
-        add("=")
-        add(labelId)
+    filters = if (voted == null) {
+        labelFilter("=", labelId)
+    } else {
+        buildJsonArray {
+            add("and")
+            add(labelFilter("=", labelId))
+            add(labelFilter(if (voted) "=" else "!=", VOTED_LABEL))
+        }
     },
     fields = ENTRY_FIELDS,
-    sort = "lastmod",
-    reverse = true,
+    sort = when (order) {
+        EntryOrder.Title -> "title"
+        EntryOrder.Updated -> "lastmod"
+        EntryOrder.Vote -> "vote"
+    },
+    reverse = !ascending,
     results = pageSize,
     page = page,
 )
+
+private fun labelFilter(operator: String, labelId: Int) = buildJsonArray {
+    add("label")
+    add(operator)
+    add(labelId)
+}
 
 /** The labels [userId] gave [novelId] (no results when it is not on their list). */
 fun entryLabelsQuery(userId: String, novelId: String) = ListQueryDTO(

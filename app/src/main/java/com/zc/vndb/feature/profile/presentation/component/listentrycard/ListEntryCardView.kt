@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Notes
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.chip.TagChipView
@@ -34,6 +35,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 private val CoverWidth = 84.dp
 private val SmallIconSize = 14.dp
+private val NoteIconSize = 16.dp
 private const val NOTES_MAX_LINES = 2
 
 /** A VN on the user's list: cover, titles, vote, dates, other labels, notes and last change. */
@@ -69,16 +71,7 @@ fun ListEntryCardView(
         ) {
             EntryTitles(model)
             EntryMeta(model)
-            model.notes?.let { notes ->
-                Text(
-                    text = "“${notes.asString()}”",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontStyle = FontStyle.Italic,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = NOTES_MAX_LINES,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+            model.notes?.let { NotePill(it) }
             UpdatedLine(model.updatedLabel)
         }
     }
@@ -122,6 +115,36 @@ private fun UpdatedLine(label: UiText) {
             text = label.asString(),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+/** The user's note on this entry, in a tinted pill so it stands out from the details. */
+@Composable
+private fun NotePill(note: UiText) {
+    val colors = VndbTheme.colors.chipNeutral
+    val shape = MaterialTheme.shapes.small
+    Row(
+        modifier = Modifier
+            .clip(shape)
+            .background(colors.container)
+            .border(VndbTheme.dimens.borderWidth, colors.border, shape)
+            .padding(horizontal = VndbTheme.spacing.sm, vertical = VndbTheme.spacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
+        verticalAlignment = Alignment.Top,
+    ) {
+        Icon(
+            Icons.AutoMirrored.Outlined.Notes,
+            contentDescription = null,
+            tint = VndbTheme.colors.accent,
+            modifier = Modifier.size(NoteIconSize),
+        )
+        Text(
+            text = note.asString(),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = NOTES_MAX_LINES,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

@@ -25,3 +25,7 @@ fun NovelLength.toNameLabel(): UiText = UiText.StringResource(
         NovelLength.VeryLong -> StringResource.length_name_very_long
     },
 )
+
+/** "Very Long (>50h)": the category name with its range. */
+fun NovelLength.toNameWithRangeLabel(): UiText =
+    UiText.StringResource(StringResource.length_name_with_range, listOf(toNameLabel(), toLabel()))

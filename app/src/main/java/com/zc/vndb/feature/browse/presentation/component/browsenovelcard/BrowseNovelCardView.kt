@@ -12,11 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +31,6 @@ import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.B
 import kotlinx.collections.immutable.persistentListOf
 
 private val CoverWidth = 92.dp
-private val ClockSize = 12.dp
 private const val TITLE_MAX_LINES = 2
 
 /** A Browse result: cover with score, developers and year, titles, tags and play time. */
@@ -118,7 +113,7 @@ private fun MetaRow(model: BrowseNovelCardUIModel) {
     }
 }
 
-/** Tags that fit on one line, then the play time pinned to the end. */
+/** Tags that fit on one line, then the length pill ("Very Long (>50h)") pinned to the end. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun TagsAndLength(model: BrowseNovelCardUIModel) {
@@ -137,23 +132,10 @@ private fun TagsAndLength(model: BrowseNovelCardUIModel) {
             model.tags.forEach { tag -> TagChipView(label = tag) }
         }
         model.lengthLabel?.let { length ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Schedule,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(ClockSize),
-                )
-                Text(
-                    text = length.asString(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                )
-            }
+            TagChipView(
+                label = length,
+                colors = VndbTheme.colors.chipLength,
+            )
         }
     }
 }
@@ -170,7 +152,7 @@ private fun BrowseNovelCardViewPreview() {
                 creditsLabel = UiText.StringValue("5pb. / Nitroplus"),
                 yearLabel = UiText.StringValue("2009"),
                 ratingLabel = UiText.StringValue("8.95"),
-                lengthLabel = UiText.StringValue("30-50h"),
+                lengthLabel = UiText.StringValue("Long (30-50h)"),
                 coverUrl = null,
                 isCoverSensitive = false,
                 tags = persistentListOf(

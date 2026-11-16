@@ -7,6 +7,7 @@ import com.zc.vndb.feature.profile.data.mapper.entriesQuery
 import com.zc.vndb.feature.profile.data.mapper.entryLabelsQuery
 import com.zc.vndb.feature.profile.data.mapper.toDomain
 import com.zc.vndb.feature.profile.data.remote.ProfileService
+import com.zc.vndb.feature.profile.domain.model.EntryOrder
 import com.zc.vndb.feature.profile.domain.model.EntryPage
 import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.domain.model.UserProfile
@@ -32,8 +33,14 @@ class ProfileRepositoryImpl(
         labelId: Int,
         page: Int,
         pageSize: Int,
+        order: EntryOrder,
+        ascending: Boolean,
+        voted: Boolean?,
     ): Result<EntryPage> = authorized { token ->
-        val result = service.entries(entriesQuery(userId, labelId, page, pageSize), token)
+        val result = service.entries(
+            entriesQuery(userId, labelId, page, pageSize, order, ascending, voted),
+            token,
+        )
         EntryPage(entries = result.results.map { it.toDomain() }, hasMore = result.more)
     }
 

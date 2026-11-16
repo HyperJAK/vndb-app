@@ -5,6 +5,7 @@ import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.feature.profile.presentation.component.profileheader.model.ProfileHeaderUIModel
 import com.zc.vndb.feature.profile.presentation.model.EntriesUIState
 import com.zc.vndb.feature.profile.presentation.model.LabelChipUIModel
+import com.zc.vndb.feature.profile.presentation.model.SortOptionUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -20,6 +21,10 @@ data class ProfileState(
     /** Labels failed to load. */
     val error: ErrorUIModel? = null,
     val labels: ImmutableList<LabelChipUIModel> = persistentListOf(),
+    /** Title / Recently updated / My vote, the chosen one selected. */
+    val sortOptions: ImmutableList<SortOptionUIModel> = persistentListOf(),
+    /** A to Z / oldest / lowest vote first (the direction button shows an up arrow). */
+    val isSortAscending: Boolean = true,
     val entries: EntriesUIState = EntriesUIState(),
     val isLogOutDialogVisible: Boolean = false,
 ) {

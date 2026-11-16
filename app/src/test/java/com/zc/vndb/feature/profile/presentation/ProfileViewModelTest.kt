@@ -2,6 +2,7 @@ package com.zc.vndb.feature.profile.presentation
 
 import app.cash.turbine.test
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.ListSort
 import com.zc.vndb.common.domain.repository.FakeSessionRepository
 import com.zc.vndb.common.domain.repository.FakeSettingsRepository
 import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
@@ -9,6 +10,7 @@ import com.zc.vndb.common.domain.util.FixedClock
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
+import com.zc.vndb.feature.profile.domain.model.EntryOrder
 import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.domain.model.ProfileSamples
 import com.zc.vndb.feature.profile.domain.repository.FakeProfileRepository
@@ -16,6 +18,7 @@ import com.zc.vndb.feature.profile.domain.usecase.GetListEntriesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.GetProfileUseCase
 import com.zc.vndb.feature.profile.domain.usecase.LogOutUseCase
 import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
+import com.zc.vndb.feature.settings.domain.usecase.UpdateSettingsUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -58,6 +61,7 @@ class ProfileViewModelTest {
         logOut = LogOutUseCase(sessions),
         clock = FixedClock(Instant.parse("2026-11-16T00:00:00Z")),
         observeSettings = ObserveSettingsUseCase(settings),
+        updateSettings = UpdateSettingsUseCase(settings),
     )
 
     /** `state` only runs while collected, as on screen. */
@@ -195,4 +199,52 @@ class ProfileViewModelTest {
         assertEquals(25, viewModel.state.value.entries.items.size)
         assertTrue(profile.calls.containsAll(listOf("labels", "user", "entries:1:1")))
     }
+
+    @Test
+    fun `lists are A to Z by default and a chosen sort is saved and reloads`() = runTest {
+        sessions.current.value = ProfileSamples.session()
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+        advanceUntilIdle()
+        assertEquals(EntryOrder.Title, profile.requests.last().order)
+        assertEquals(
+            ListSort.Title,
+            viewModel.state.value.sortOptions.single { it.isSelected }.sort,
+        )
+
+        viewModel.onIntent(ProfileIntent.SortSelected(ListSort.Updated))
+        advanceUntilIdle()
+
+        assertEquals(ListSort.Updated, settings.current.value.listSort)
+        assertEquals(EntryOrder.Updated, profile.requests.last().order)
+        assertEquals(
+            ListSort.Updated,
+            viewModel.state.value.sortOptions.single { it.isSelected }.sort,
+        )
+    }
+
+    @Test
+    fun `reversing the direction is saved, reloads, and a new sort starts in its natural direction`() =
+        runTest {
+            sessions.current.value = ProfileSamples.session()
+            val viewModel = createViewModel()
+            collect(viewModel.state)
+            advanceUntilIdle()
+            assertTrue(viewModel.state.value.isSortAscending)
+
+            viewModel.onIntent(ProfileIntent.SortDirectionToggled)
+            advanceUntilIdle()
+            assertTrue(settings.current.value.isListSortReversed)
+            assertFalse(viewModel.state.value.isSortAscending)
+            assertEquals(false, profile.requests.last().ascending)
+
+            viewModel.onIntent(ProfileIntent.SortSelected(ListSort.Vote))
+            advanceUntilIdle()
+            assertFalse(settings.current.value.isListSortReversed)
+            assertFalse(viewModel.state.value.isSortAscending)
+            assertEquals(
+                EntryOrder.Vote,
+                profile.requests.first { it.order == EntryOrder.Vote }.order,
+            )
+        }
 }
