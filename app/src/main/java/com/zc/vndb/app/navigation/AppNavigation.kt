@@ -57,15 +57,15 @@ data object LoginNavKey : NavKey
 
 /** A release's page. */
 @Serializable
-data class ReleaseNavKey(val id: String) : NavKey
+data class ReleaseNavKey(val id: String) : FullScreenNavKey
 
 /** Browse scoped to one VNDB tag. */
 @Serializable
-data class TagNavKey(val id: String) : NavKey
+data class TagNavKey(val id: String) : FullScreenNavKey
 
 /** A character's page. */
 @Serializable
-data class CharacterNavKey(val id: String) : NavKey
+data class CharacterNavKey(val id: String) : FullScreenNavKey
 
 /** A visual novel's detail page. */
 @Serializable
