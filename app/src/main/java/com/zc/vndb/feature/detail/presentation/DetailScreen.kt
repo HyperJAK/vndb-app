@@ -36,6 +36,8 @@ import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
+import com.zc.vndb.common.ui.component.linksrow.LinksRowView
+import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.component.spoilerfilter.SpoilerFilterView
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
@@ -49,8 +51,6 @@ import com.zc.vndb.feature.detail.presentation.component.detailhero.DetailHeroVi
 import com.zc.vndb.feature.detail.presentation.component.detailhero.model.DetailHeroUIModel
 import com.zc.vndb.feature.detail.presentation.component.editionrow.EditionRowView
 import com.zc.vndb.feature.detail.presentation.component.editionrow.model.EditionRowUIModel
-import com.zc.vndb.feature.detail.presentation.component.linksrow.LinksRowView
-import com.zc.vndb.feature.detail.presentation.component.linksrow.model.LinkUIModel
 import com.zc.vndb.feature.detail.presentation.component.relationcard.RelationCardView
 import com.zc.vndb.feature.detail.presentation.component.relationcard.model.RelationCardUIModel
 import com.zc.vndb.feature.detail.presentation.component.scorecard.ScoreCardView
@@ -70,6 +70,7 @@ private class DetailActions(
     val onRelationClick: (String) -> Unit,
     val onCharacterClick: (String) -> Unit,
     val onTagClick: (String) -> Unit,
+    val onEditionClick: (String) -> Unit,
 )
 
 @Composable
@@ -86,6 +87,7 @@ fun DetailScreen(
             onRelationClick = { onIntent(DetailIntent.RelationClicked(it)) },
             onCharacterClick = { onIntent(DetailIntent.CharacterClicked(it)) },
             onTagClick = { onIntent(DetailIntent.TagClicked(it)) },
+            onEditionClick = { onIntent(DetailIntent.EditionClicked(it)) },
         )
     }
     Scaffold(
@@ -196,7 +198,7 @@ private fun LazyListScope.detailSections(
         )
     }
     charactersSection(state, actions)
-    editionsSection(state)
+    editionsSection(state, actions)
     relationsSection(state, actions)
 }
 
@@ -226,7 +228,7 @@ private fun LazyListScope.charactersSection(state: DetailState, actions: DetailA
     }
 }
 
-private fun LazyListScope.editionsSection(state: DetailState) {
+private fun LazyListScope.editionsSection(state: DetailState, actions: DetailActions) {
     if (state.editions.isEmpty()) return
     item(key = "editions", contentType = "editions") {
         SectionCardView(
@@ -236,6 +238,7 @@ private fun LazyListScope.editionsSection(state: DetailState) {
             state.editions.forEach { edition ->
                 EditionRowView(
                     model = edition,
+                    onClick = { actions.onEditionClick(edition.releaseId) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -315,6 +318,7 @@ private val previewState = DetailState(
     editions = persistentListOf(
         EditionRowUIModel(
             key = "r1-win",
+            releaseId = "r1",
             title = UiText.StringValue("Steins;Gate"),
             platformLabel = UiText.StringValue("Windows"),
             languagesLabel = UiText.StringValue("Japanese"),

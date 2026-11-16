@@ -1,9 +1,9 @@
 package com.zc.vndb.feature.detail.presentation.component.detailhero.mapper
 
 import com.zc.vndb.R
-import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
+import com.zc.vndb.common.ui.mapper.toIsoLabel
 import com.zc.vndb.common.ui.mapper.toLabel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.AgeRange
@@ -41,14 +41,6 @@ fun NovelDetail.toHeroUIModel(ageRange: AgeRange?): DetailHeroUIModel = DetailHe
         .map { UiText.StringValue(it.name) }
         .toImmutableList(),
 )
-
-/** "2009-10-15", "2009-10", "2009" or TBA, as VNDB writes them. */
-fun ReleaseDate.toIsoLabel(): UiText = when (this) {
-    is ReleaseDate.Full -> UiText.StringValue(date.toString())
-    is ReleaseDate.Month -> UiText.StringValue(yearMonth.toString())
-    is ReleaseDate.Year -> UiText.StringValue(year.toString())
-    ReleaseDate.Tba -> UiText.StringResource(R.string.release_tba)
-}
 
 /** "All Ages", "18+", "All Ages / 15+" or "12+ / 18+". */
 fun AgeRange.toLabel(): UiText = when {

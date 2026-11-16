@@ -2,12 +2,12 @@ package com.zc.vndb.feature.detail.presentation
 
 import androidx.compose.runtime.Immutable
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.presentation.component.charactercard.model.CharacterCardUIModel
 import com.zc.vndb.feature.detail.presentation.component.detailhero.model.DetailHeroUIModel
 import com.zc.vndb.feature.detail.presentation.component.editionrow.model.EditionRowUIModel
-import com.zc.vndb.feature.detail.presentation.component.linksrow.model.LinkUIModel
 import com.zc.vndb.feature.detail.presentation.component.relationcard.model.RelationCardUIModel
 import com.zc.vndb.feature.detail.presentation.component.scorecard.model.ScoreUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteUIModel

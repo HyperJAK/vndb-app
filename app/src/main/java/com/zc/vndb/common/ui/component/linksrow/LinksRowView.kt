@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.detail.presentation.component.linksrow
+package com.zc.vndb.common.ui.component.linksrow
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,10 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
-import com.zc.vndb.feature.detail.presentation.component.linksrow.model.LinkUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

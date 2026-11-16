@@ -1,11 +1,11 @@
 package com.zc.vndb.feature.detail.domain.usecase
 
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.ExternalLink
 import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.date
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.novel
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.relation
-import com.zc.vndb.feature.detail.domain.model.ExternalLink
 import com.zc.vndb.feature.detail.domain.repository.FakeDetailRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals

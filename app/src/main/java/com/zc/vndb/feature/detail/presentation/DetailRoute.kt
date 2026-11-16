@@ -19,6 +19,7 @@ fun DetailRoute(
     onOpenNovel: (String) -> Unit,
     onOpenCharacter: (String) -> Unit,
     onOpenTag: (String) -> Unit,
+    onOpenRelease: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DetailViewModel = koinViewModel { parametersOf(novelId) },
 ) {
@@ -35,6 +36,8 @@ fun DetailRoute(
             is DetailEffect.NavigateToCharacter -> onOpenCharacter(effect.id)
 
             is DetailEffect.NavigateToTag -> onOpenTag(effect.id)
+
+            is DetailEffect.NavigateToRelease -> onOpenRelease(effect.id)
 
             is DetailEffect.OpenUrl -> uriHandler.openUri(effect.url)
 

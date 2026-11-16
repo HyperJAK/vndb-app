@@ -32,16 +32,36 @@ sealed interface UiText {
         val args: List<Any> = emptyList(),
     ) : UiText
 
+    /** Arguments that are themselves [UiText] are resolved first, so labels can be composed. */
     @Composable
     fun asString(): String = when (this) {
         is StringValue -> value
-        is StringResource -> stringResource(id, *args.toTypedArray())
-        is StringPlural -> pluralStringResource(id, quantity, *args.toTypedArray())
+
+        is StringResource -> stringResource(
+            id,
+            *args.map { if (it is UiText) it.asString() else it }.toTypedArray(),
+        )
+
+        is StringPlural ->
+            pluralStringResource(
+                id,
+                quantity,
+                *args.map { if (it is UiText) it.asString() else it }.toTypedArray(),
+            )
     }
 
     fun asString(context: Context): String = when (this) {
         is StringValue -> value
-        is StringResource -> context.getString(id, *args.toTypedArray())
-        is StringPlural -> context.resources.getQuantityString(id, quantity, *args.toTypedArray())
+
+        is StringResource -> context.getString(
+            id,
+            *args.map { if (it is UiText) it.asString(context) else it }.toTypedArray(),
+        )
+
+        is StringPlural -> context.resources.getQuantityString(
+            id,
+            quantity,
+            *args.map { if (it is UiText) it.asString(context) else it }.toTypedArray(),
+        )
     }
 }

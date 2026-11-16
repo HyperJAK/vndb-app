@@ -1,8 +1,8 @@
 package com.zc.vndb.feature.detail.presentation.component.relationcard.mapper
 
 import com.zc.vndb.R
-import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
+import com.zc.vndb.common.ui.mapper.toYearLabel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.RelatedNovel
@@ -14,12 +14,7 @@ fun RelatedNovel.toCardUIModel(): RelationCardUIModel = RelationCardUIModel(
     title = UiText.StringValue(title),
     relationLabel = UiText.StringResource(relation.labelRes()),
     isOfficial = isOfficial,
-    yearLabel = when (val date = releaseDate) {
-        is ReleaseDate.Full -> UiText.StringValue(date.date.year.toString())
-        is ReleaseDate.Month -> UiText.StringValue(date.yearMonth.year.toString())
-        is ReleaseDate.Year -> UiText.StringValue(date.year.toString())
-        ReleaseDate.Tba -> UiText.StringResource(R.string.release_tba)
-    },
+    yearLabel = releaseDate.toYearLabel(),
     scoreLabel = rating?.let {
         val score = (it.toRatingLabel() as? UiText.StringValue)?.value.orEmpty()
         UiText.StringResource(R.string.detail_relation_score, listOf(score))

@@ -40,6 +40,7 @@ import com.zc.vndb.feature.browse.presentation.BrowseRoute
 import com.zc.vndb.feature.character.presentation.CharacterRoute
 import com.zc.vndb.feature.detail.presentation.DetailRoute
 import com.zc.vndb.feature.discover.presentation.DiscoverRoute
+import com.zc.vndb.feature.release.presentation.ReleaseRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -50,6 +51,10 @@ data object BrowseNavKey : NavKey
 
 @Serializable
 data object ProfileNavKey : NavKey
+
+/** A release's page. */
+@Serializable
+data class ReleaseNavKey(val id: String) : NavKey
 
 /** Browse scoped to one VNDB tag. */
 @Serializable
@@ -165,6 +170,14 @@ private fun AppNavDisplay(backStack: NavBackStack<NavKey>) {
                     onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
                     onOpenCharacter = { id -> backStack.add(CharacterNavKey(id)) },
                     onOpenTag = { id -> backStack.add(TagNavKey(id)) },
+                    onOpenRelease = { id -> backStack.add(ReleaseNavKey(id)) },
+                )
+            }
+            entry<ReleaseNavKey> { key ->
+                ReleaseRoute(
+                    releaseId = key.id,
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
                 )
             }
             entry<TagNavKey> { key ->

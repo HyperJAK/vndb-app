@@ -17,6 +17,7 @@ class EditionRowUIModelMapperTest {
         ).copy(languageCodes = listOf("en", "ja")).toRowUIModel()
 
         assertEquals("r1-xbo", row.key)
+        assertEquals("r1", row.releaseId)
         assertEquals(UiText.StringValue("Xbox One"), row.platformLabel)
         assertEquals(UiText.StringValue("2010-01-01"), row.dateLabel)
         assertEquals(UiText.StringResource(R.string.detail_family_pc), row.familyLabel)

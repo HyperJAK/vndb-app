@@ -14,4 +14,5 @@ sealed interface DetailIntent {
     data class RelationClicked(val id: String) : DetailIntent
     data class CharacterClicked(val id: String) : DetailIntent
     data class TagClicked(val id: String) : DetailIntent
+    data class EditionClicked(val releaseId: String) : DetailIntent
 }

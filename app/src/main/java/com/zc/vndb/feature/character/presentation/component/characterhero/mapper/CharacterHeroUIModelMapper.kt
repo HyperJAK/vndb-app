@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.character.presentation.component.characterhero.mapper
 
 import com.zc.vndb.R
+import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -9,7 +10,6 @@ import com.zc.vndb.feature.character.domain.model.CharacterProfile
 import com.zc.vndb.feature.character.domain.model.Gender
 import com.zc.vndb.feature.character.domain.model.Measurements
 import com.zc.vndb.feature.character.domain.model.Sex
-import com.zc.vndb.feature.character.presentation.component.characterhero.model.CharacterFactUIModel
 import com.zc.vndb.feature.character.presentation.component.characterhero.model.CharacterHeroUIModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -40,7 +40,7 @@ fun CharacterProfile.toHeroUIModel(level: SpoilerLevel): CharacterHeroUIModel =
         facts = facts().toImmutableList(),
     )
 
-private fun CharacterProfile.facts(): List<CharacterFactUIModel> = listOfNotNull(
+private fun CharacterProfile.facts(): List<FactUIModel> = listOfNotNull(
     age?.let { fact(R.string.character_age, UiText.StringValue(it.toString())) },
     birthday?.let { fact(R.string.character_birthday, UiText.StringValue(it.format())) },
     bloodType?.let { fact(R.string.character_blood_type, UiText.StringValue(it.uppercase())) },
@@ -59,7 +59,7 @@ private fun CharacterProfile.facts(): List<CharacterFactUIModel> = listOfNotNull
     measurements?.let { fact(R.string.character_measurements, it.toLabel()) },
 )
 
-private fun fact(label: StringResource, value: UiText) = CharacterFactUIModel(
+private fun fact(label: StringResource, value: UiText) = FactUIModel(
     label = label,
     value = value,
 )

@@ -11,23 +11,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
+import com.zc.vndb.common.ui.component.factline.FactLineView
+import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
-import com.zc.vndb.feature.character.presentation.component.characterhero.model.CharacterFactUIModel
 import com.zc.vndb.feature.character.presentation.component.characterhero.model.CharacterHeroUIModel
 import kotlinx.collections.immutable.persistentListOf
 
 private val PortraitWidth = 128.dp
-private val FactLabelWidth = 88.dp
 
 /** Portrait, names, sex / gender chips and profile facts. */
 @Composable
@@ -59,7 +57,7 @@ fun CharacterHeroView(model: CharacterHeroUIModel, modifier: Modifier = Modifier
                     )
                 }
                 IdentityChips(model)
-                model.facts.forEach { fact -> FactLine(fact) }
+                model.facts.forEach { fact -> FactLineView(fact) }
             }
         }
     }
@@ -84,23 +82,6 @@ private fun IdentityChips(model: CharacterHeroUIModel) {
     }
 }
 
-@Composable
-private fun FactLine(fact: CharacterFactUIModel) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = stringResource(fact.label),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(FactLabelWidth),
-        )
-        Text(
-            text = fact.value.asString(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
 @AdaptivePreviews
 @Composable
 private fun CharacterHeroViewPreview() {
@@ -113,9 +94,9 @@ private fun CharacterHeroViewPreview() {
                 isImageSensitive = false,
                 identity = persistentListOf(UiText.StringValue("Female")),
                 facts = persistentListOf(
-                    CharacterFactUIModel(R.string.character_age, UiText.StringValue("18")),
-                    CharacterFactUIModel(R.string.character_birthday, UiText.StringValue("Jul 25")),
-                    CharacterFactUIModel(R.string.character_height, UiText.StringValue("160 cm")),
+                    FactUIModel(R.string.character_age, UiText.StringValue("18")),
+                    FactUIModel(R.string.character_birthday, UiText.StringValue("Jul 25")),
+                    FactUIModel(R.string.character_height, UiText.StringValue("160 cm")),
                 ),
             ),
             modifier = Modifier.padding(VndbTheme.spacing.lg),

@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.detail.presentation.component.editionrow
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,10 +40,12 @@ private val IconSize = 20.dp
 
 /** One edition: platform icon, title, "Windows • English, Japanese • 2016-09-08", family badge. */
 @Composable
-fun EditionRowView(model: EditionRowUIModel, modifier: Modifier = Modifier) {
+fun EditionRowView(model: EditionRowUIModel, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .background(VndbTheme.colors.surfaceInset, MaterialTheme.shapes.medium)
+            .clip(MaterialTheme.shapes.medium)
+            .background(VndbTheme.colors.surfaceInset)
+            .clickable(onClick = onClick)
             .padding(VndbTheme.spacing.sm),
         horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
         verticalAlignment = Alignment.CenterVertically,
@@ -113,6 +117,7 @@ private fun EditionRowViewPreview() {
         EditionRowView(
             model = EditionRowUIModel(
                 key = "r1-win",
+                releaseId = "r1",
                 title = UiText.StringValue("Steins;Gate - Steam Edition"),
                 platformLabel = UiText.StringValue("Windows"),
                 languagesLabel = UiText.StringValue("English, Japanese"),
@@ -120,6 +125,7 @@ private fun EditionRowViewPreview() {
                 family = PlatformFamily.Pc,
                 familyLabel = UiText.StringValue("PC"),
             ),
+            onClick = {},
             modifier = Modifier.fillMaxWidth().padding(VndbTheme.spacing.lg),
         )
     }

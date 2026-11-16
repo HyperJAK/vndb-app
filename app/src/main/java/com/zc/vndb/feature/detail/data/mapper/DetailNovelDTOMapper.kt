@@ -4,9 +4,9 @@ import com.zc.vndb.common.data.mapper.toCover
 import com.zc.vndb.common.data.mapper.toDomain
 import com.zc.vndb.common.data.mapper.toNovelLength
 import com.zc.vndb.common.data.mapper.toReleaseDate
+import com.zc.vndb.common.domain.model.ExternalLink
 import com.zc.vndb.feature.detail.data.dto.DetailNovelDTO
 import com.zc.vndb.feature.detail.data.dto.RelationDTO
-import com.zc.vndb.feature.detail.domain.model.ExternalLink
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
 import com.zc.vndb.feature.detail.domain.model.RelatedNovel
 import com.zc.vndb.feature.detail.domain.model.RelationType

@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.detail.data.dto
+package com.zc.vndb.common.data.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

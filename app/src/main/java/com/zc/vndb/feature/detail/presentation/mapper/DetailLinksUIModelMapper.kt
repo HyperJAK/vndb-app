@@ -1,9 +1,9 @@
 package com.zc.vndb.feature.detail.presentation.mapper
 
 import com.zc.vndb.R
+import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
-import com.zc.vndb.feature.detail.presentation.component.linksrow.model.LinkUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
