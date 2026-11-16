@@ -5,6 +5,7 @@ import com.zc.vndb.feature.browse.di.BrowseModule
 import com.zc.vndb.feature.character.di.CharacterModule
 import com.zc.vndb.feature.detail.di.DetailModule
 import com.zc.vndb.feature.discover.di.DiscoverModule
+import com.zc.vndb.feature.listeditor.di.ListEditorModule
 import com.zc.vndb.feature.login.di.LoginModule
 import com.zc.vndb.feature.profile.di.ProfileModule
 import com.zc.vndb.feature.release.di.ReleaseModule
@@ -25,6 +26,7 @@ import org.koin.core.annotation.Module
         ProfileModule::class,
         LoginModule::class,
         SettingsModule::class,
+        ListEditorModule::class,
     ],
 )
 class AppModule

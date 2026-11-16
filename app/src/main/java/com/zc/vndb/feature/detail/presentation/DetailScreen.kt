@@ -69,6 +69,7 @@ import com.zc.vndb.feature.detail.presentation.component.detailtabs.DetailTabRow
 import com.zc.vndb.feature.detail.presentation.component.editionrow.EditionRowView
 import com.zc.vndb.feature.detail.presentation.component.imageviewer.ImageViewerView
 import com.zc.vndb.feature.detail.presentation.component.lazysection.LazySectionView
+import com.zc.vndb.feature.detail.presentation.component.mylist.MyListCardView
 import com.zc.vndb.feature.detail.presentation.component.quotecard.QuoteCardView
 import com.zc.vndb.feature.detail.presentation.component.relationcard.RelationCardView
 import com.zc.vndb.feature.detail.presentation.component.scorecard.ScoreCardView
@@ -174,7 +175,7 @@ private fun DetailContent(
             ),
             verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
         ) {
-            header(state, hero)
+            header(state, hero, actions.onIntent)
             stickyHeader(key = "tabs", contentType = "tabs") {
                 DetailTabRowView(
                     tabs = state.tabs,
@@ -232,7 +233,11 @@ private fun DetailTopBar(onIntent: (DetailIntent) -> Unit) {
     )
 }
 
-private fun LazyListScope.header(state: DetailState, hero: DetailHeroUIModel) {
+private fun LazyListScope.header(
+    state: DetailState,
+    hero: DetailHeroUIModel,
+    onIntent: (DetailIntent) -> Unit,
+) {
     item(key = "id", contentType = "id") { TagChipView(label = UiText.StringValue(state.novelId)) }
     item(
         key = "hero",
@@ -243,6 +248,15 @@ private fun LazyListScope.header(state: DetailState, hero: DetailHeroUIModel) {
             key = "score",
             contentType = "score",
         ) { ScoreCardView(model = score, modifier = Modifier.fillMaxWidth()) }
+    }
+    state.myList?.let { myList ->
+        item(key = "my-list", contentType = "my-list") {
+            MyListCardView(
+                model = myList,
+                onEdit = { onIntent(DetailIntent.MyListClicked) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 

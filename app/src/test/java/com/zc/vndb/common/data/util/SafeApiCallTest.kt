@@ -75,8 +75,16 @@ class SafeApiCallTest {
     @Test
     fun `maps other 4xx to Unknown`() = runTest {
         assertIs<DomainError.Unknown>(
-            safeApiCall(call(jsonResponse("{}", HttpStatusCode.BadRequest))).exceptionOrNull(),
+            safeApiCall(call(jsonResponse("{}", HttpStatusCode.Conflict))).exceptionOrNull(),
         )
+    }
+
+    @Test
+    fun `maps 400 to Rejected with VNDB's reason`() = runTest {
+        val result = safeApiCall(
+            call(jsonResponse("Invalid 'finished' member.", HttpStatusCode.BadRequest)),
+        )
+        assertEquals(DomainError.Rejected("Invalid 'finished' member."), result.exceptionOrNull())
     }
 
     @Test

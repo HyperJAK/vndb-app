@@ -1,5 +1,6 @@
 package com.zc.vndb.common.data.util
 
+import com.zc.vndb.common.data.network.VndbRejectedException
 import com.zc.vndb.common.domain.model.DomainError
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -29,6 +30,7 @@ suspend fun <T> safeApiCall(block: suspend () -> T): Result<T> =
 
 private fun Throwable.toDomainError(): DomainError = when (this) {
     is DomainError -> this
+    is VndbRejectedException -> DomainError.Rejected(reason)
     is HttpRequestTimeoutException, is ConnectTimeoutException, is SocketTimeoutException -> DomainError.Timeout
     is ClientRequestException -> response.status.toDomainError(this)
     is ServerResponseException -> DomainError.Server

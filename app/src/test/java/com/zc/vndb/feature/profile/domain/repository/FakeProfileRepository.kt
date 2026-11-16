@@ -5,7 +5,10 @@ import com.zc.vndb.feature.profile.domain.model.EntryOrder
 import com.zc.vndb.feature.profile.domain.model.EntryPage
 import com.zc.vndb.feature.profile.domain.model.ListEntry
 import com.zc.vndb.feature.profile.domain.model.ListLabel
+import com.zc.vndb.feature.profile.domain.model.MyListEntry
 import com.zc.vndb.feature.profile.domain.model.UserProfile
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 class FakeProfileRepository : ProfileRepository {
 
@@ -17,6 +20,40 @@ class FakeProfileRepository : ProfileRepository {
 
     /** Label ids per novel on the user's list. */
     val entryLabels = mutableMapOf<String, List<Int>>()
+
+    /** The user's own entries, by novel id (what the list editor reads and writes). */
+    val myEntries = mutableMapOf<String, MyListEntry>()
+    var myEntryError: DomainError? = null
+    var writeError: DomainError? = null
+
+    /** Every entry passed to [saveEntry], and every id passed to [removeEntry]. */
+    val saved = mutableListOf<MyListEntry>()
+    val removed = mutableListOf<String>()
+
+    private val changes = MutableSharedFlow<String>(extraBufferCapacity = 8)
+    override val listChanges: Flow<String> = changes
+
+    override suspend fun getMyEntry(userId: String, novelId: String): Result<MyListEntry?> {
+        calls += "myEntry:$novelId"
+        myEntryError?.let { return Result.failure(it) }
+        return Result.success(myEntries[novelId])
+    }
+
+    override suspend fun saveEntry(entry: MyListEntry, previous: MyListEntry?): Result<Unit> {
+        writeError?.let { return Result.failure(it) }
+        saved += entry
+        myEntries[entry.novelId] = entry
+        changes.tryEmit(entry.novelId)
+        return Result.success(Unit)
+    }
+
+    override suspend fun removeEntry(novelId: String): Result<Unit> {
+        writeError?.let { return Result.failure(it) }
+        removed += novelId
+        myEntries.remove(novelId)
+        changes.tryEmit(novelId)
+        return Result.success(Unit)
+    }
 
     /** "labels", "user", "entries:<label>:<page>". */
     val calls = mutableListOf<String>()

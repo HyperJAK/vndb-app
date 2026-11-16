@@ -424,4 +424,38 @@
 
     <!-- Content descriptions -->
     <string name="cd_sensitive_cover">Cover hidden: sensitive content</string>
+
+    <!-- List editor -->
+    <string name="list_editor_title_add">Add to my list</string>
+    <string name="list_editor_title_edit">My list</string>
+    <string name="list_editor_status">STATUS</string>
+    <string name="list_editor_labels">LABELS</string>
+    <string name="list_editor_vote">MY VOTE</string>
+    <string name="list_editor_no_vote">No vote</string>
+    <string name="list_editor_clear_vote">Clear vote</string>
+    <string name="list_editor_dates">DATES</string>
+    <string name="list_editor_started">Started</string>
+    <string name="list_editor_finished">Finished</string>
+    <string name="list_editor_set_date">Set date</string>
+    <string name="list_editor_notes">NOTES</string>
+    <string name="list_editor_notes_hint">Anything you want to remember about it</string>
+    <string name="list_editor_save">Save</string>
+    <string name="list_editor_add">Add to list</string>
+    <string name="list_editor_remove">Remove from list</string>
+    <string name="list_editor_remove_title">Remove from your list?</string>
+    <string name="list_editor_remove_body">Its status, labels, vote, dates, notes and releases are removed from your VNDB list.</string>
+    <string name="cd_clear_date">Clear date</string>
+    <string name="list_editor_notes_counter">%1$d / %2$d</string>
+    <string name="list_editor_dates_hint">VNDB can change a saved date but not remove it.</string>
+    <string name="list_editor_error_date_range">Pick a date between 1970-01-01 and today.</string>
+    <string name="list_editor_error_finished_before">Finished can\'t be before Started.</string>
+    <string name="list_editor_error_date_cleared">A saved date can\'t be removed. Pick another date instead.</string>
+    <string name="list_editor_error_notes_length">Notes can be at most %1$d characters.</string>
+    <string name="list_editor_error_invalid">Fix the highlighted fields first.</string>
+    <string name="error_rejected">VNDB rejected this: %1$s</string>
+    <string name="cd_edit_list_entry">Edit list entry</string>
+    <string name="detail_my_list">My list</string>
+    <string name="detail_my_list_edit">Edit</string>
+    <string name="detail_my_list_empty">Not on your list yet.</string>
+    <string name="detail_my_list_read_only">This token can\'t edit your list. Log in with a token that has list write access to change it here.</string>
 </resources>

@@ -162,7 +162,7 @@ private fun SignedInContent(state: ProfileState, onIntent: (ProfileIntent) -> Un
                             }
                         }
                     }
-                    entries(state.entries, onIntent)
+                    entries(state.entries, state.canEditList, onIntent)
                 }
             }
         }
@@ -182,7 +182,11 @@ private fun LabelChips(labels: ImmutableList<LabelChipUIModel>, onSelect: (Int) 
     }
 }
 
-private fun LazyListScope.entries(entries: EntriesUIState, onIntent: (ProfileIntent) -> Unit) {
+private fun LazyListScope.entries(
+    entries: EntriesUIState,
+    canEdit: Boolean,
+    onIntent: (ProfileIntent) -> Unit,
+) {
     when {
         entries.isLoading -> item(
             key = "entries-loading",
@@ -202,6 +206,11 @@ private fun LazyListScope.entries(entries: EntriesUIState, onIntent: (ProfileInt
                 ListEntryCardView(
                     model = entry,
                     onClick = { onIntent(ProfileIntent.EntryClicked(entry.novelId)) },
+                    onEdit = if (canEdit) {
+                        { onIntent(ProfileIntent.EntryEditClicked(entry.novelId)) }
+                    } else {
+                        null
+                    },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

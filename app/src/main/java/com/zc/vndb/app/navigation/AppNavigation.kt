@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -29,6 +31,7 @@ import com.zc.vndb.feature.browse.presentation.BrowseRoute
 import com.zc.vndb.feature.character.presentation.CharacterRoute
 import com.zc.vndb.feature.detail.presentation.DetailRoute
 import com.zc.vndb.feature.discover.presentation.DiscoverRoute
+import com.zc.vndb.feature.listeditor.presentation.ListEditorRoute
 import com.zc.vndb.feature.login.presentation.LoginRoute
 import com.zc.vndb.feature.profile.presentation.ProfileRoute
 import com.zc.vndb.feature.release.presentation.ReleaseRoute
@@ -67,6 +70,16 @@ data class TagNavKey(val id: String) : FullScreenNavKey
 @Serializable
 data class CharacterNavKey(val id: String) : FullScreenNavKey
 
+/**
+ * A destination shown over the page below it (a bottom sheet). The navigation bar keeps the
+ * state of that page: shown over a tab, hidden over a full-screen page.
+ */
+interface OverlayNavKey : NavKey
+
+/** The signed-in user's list entry for a VN, edited in a bottom sheet. */
+@Serializable
+data class ListEditorNavKey(val novelId: String, val novelTitle: String) : OverlayNavKey
+
 /** A visual novel's detail page. */
 @Serializable
 data class NovelDetailNavKey(val id: String) : FullScreenNavKey
@@ -96,7 +109,8 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     val itemColors = navigationItemColors()
 
     // Full-screen pages slide the navigation bar (or rail) away while they are on top.
-    val currentKey = navigationState.backStacks[navigationState.topLevelRoute]?.lastOrNull()
+    val currentKey = navigationState.backStacks[navigationState.topLevelRoute]
+        ?.lastOrNull { it !is OverlayNavKey }
     val isNavigationHidden = currentKey is FullScreenNavKey
     val scaffoldState = rememberNavigationSuiteScaffoldState()
     LaunchedEffect(isNavigationHidden) {
@@ -161,9 +175,11 @@ private fun navigationItemColors(): NavigationSuiteItemColors {
 
 @Composable
 private fun AppNavDisplay(navigationState: NavigationState, navigator: Navigator) {
+    val bottomSheetStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
     NavDisplay(
         entries = navigationState.toDecoratedEntries(appEntryProvider(navigator)),
         onBack = navigator::goBack,
+        sceneStrategies = listOf(bottomSheetStrategy),
     )
 }
 
@@ -182,6 +198,7 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
             onOpenLogin = { navigator.navigate(LoginNavKey) },
             onOpenSettings = { navigator.navigate(SettingsNavKey) },
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+            onOpenListEditor = { id, title -> navigator.navigate(ListEditorNavKey(id, title)) },
         )
     }
     entry<SettingsNavKey> {
@@ -198,6 +215,20 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
             onOpenCharacter = { id -> navigator.navigate(CharacterNavKey(id)) },
             onOpenTag = { id -> navigator.navigate(TagNavKey(id)) },
             onOpenRelease = { id -> navigator.navigate(ReleaseNavKey(id)) },
+            onOpenListEditor = { id, title -> navigator.navigate(ListEditorNavKey(id, title)) },
+        )
+    }
+    pageEntries(navigator)
+}
+
+/** Pages opened from a VN or a tab, and the list editor sheet. */
+@OptIn(ExperimentalMaterial3Api::class) // The list editor's bottom sheet.
+private fun EntryProviderScope<NavKey>.pageEntries(navigator: Navigator) {
+    entry<ListEditorNavKey>(metadata = BottomSheetSceneStrategy.bottomSheet()) { key ->
+        ListEditorRoute(
+            novelId = key.novelId,
+            novelTitle = key.novelTitle,
+            onClose = navigator::goBack,
         )
     }
     entry<ReleaseNavKey> { key ->

@@ -6,5 +6,6 @@ sealed interface ProfileEffect {
     data object NavigateToLogin : ProfileEffect
     data object NavigateToSettings : ProfileEffect
     data class NavigateToNovel(val id: String) : ProfileEffect
+    data class OpenListEditor(val novelId: String, val title: String) : ProfileEffect
     data class ShowMessage(val message: UiText) : ProfileEffect
 }

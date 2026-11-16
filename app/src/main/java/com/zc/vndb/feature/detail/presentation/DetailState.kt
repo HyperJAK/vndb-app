@@ -7,6 +7,7 @@ import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.presentation.component.detailhero.model.DetailHeroUIModel
 import com.zc.vndb.feature.detail.presentation.component.editionrow.model.EditionRowUIModel
+import com.zc.vndb.feature.detail.presentation.component.mylist.model.MyListCardUIModel
 import com.zc.vndb.feature.detail.presentation.component.relationcard.model.RelationCardUIModel
 import com.zc.vndb.feature.detail.presentation.component.scorecard.model.ScoreUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteUIModel
@@ -39,6 +40,8 @@ data class DetailState(
     // Overview (loaded on open)
     val hero: DetailHeroUIModel? = null,
     val score: ScoreUIModel? = null,
+    /** The signed-in user's entry; null for guests or until it loads. */
+    val myList: MyListCardUIModel? = null,
     val links: ImmutableList<LinkUIModel> = persistentListOf(),
     val spoilerLevel: SpoilerLevel = SpoilerLevel.None,
     val synopsis: UiText? = null,

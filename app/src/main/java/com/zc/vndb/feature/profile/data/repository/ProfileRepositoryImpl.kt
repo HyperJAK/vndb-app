@@ -5,13 +5,19 @@ import com.zc.vndb.common.data.util.safeApiCall
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.feature.profile.data.mapper.entriesQuery
 import com.zc.vndb.feature.profile.data.mapper.entryLabelsQuery
+import com.zc.vndb.feature.profile.data.mapper.myEntryQuery
 import com.zc.vndb.feature.profile.data.mapper.toDomain
+import com.zc.vndb.feature.profile.data.mapper.toPatchBody
 import com.zc.vndb.feature.profile.data.remote.ProfileService
 import com.zc.vndb.feature.profile.domain.model.EntryOrder
 import com.zc.vndb.feature.profile.domain.model.EntryPage
 import com.zc.vndb.feature.profile.domain.model.ListLabel
+import com.zc.vndb.feature.profile.domain.model.MyListEntry
 import com.zc.vndb.feature.profile.domain.model.UserProfile
 import com.zc.vndb.feature.profile.domain.repository.ProfileRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.annotation.Single
 
 @Single
@@ -19,6 +25,9 @@ class ProfileRepositoryImpl(
     private val service: ProfileService,
     private val local: SessionLocalDataSource,
 ) : ProfileRepository {
+
+    private val changes = MutableSharedFlow<String>(extraBufferCapacity = CHANGES_BUFFER)
+    override val listChanges: Flow<String> = changes.asSharedFlow()
 
     override suspend fun getUser(userId: String): Result<UserProfile> = safeApiCall {
         service.user(userId)[userId]?.toDomain() ?: throw DomainError.NotFound
@@ -44,6 +53,20 @@ class ProfileRepositoryImpl(
         EntryPage(entries = result.results.map { it.toDomain() }, hasMore = result.more)
     }
 
+    override suspend fun getMyEntry(userId: String, novelId: String): Result<MyListEntry?> =
+        authorized { token ->
+            service.myEntry(myEntryQuery(userId, novelId), token).results.firstOrNull()?.toDomain()
+        }
+
+    override suspend fun saveEntry(entry: MyListEntry, previous: MyListEntry?): Result<Unit> =
+        authorized { token ->
+            service.updateEntry(entry.novelId, entry.toPatchBody(previous), token)
+        }.onSuccess { changes.tryEmit(entry.novelId) }
+
+    override suspend fun removeEntry(novelId: String): Result<Unit> = authorized { token ->
+        service.removeEntry(novelId, token)
+    }.onSuccess { changes.tryEmit(novelId) }
+
     override suspend fun getEntryLabelIds(userId: String, novelId: String): Result<List<Int>> =
         authorized { token ->
             service.entryLabels(entryLabelsQuery(userId, novelId), token).results
@@ -56,5 +79,9 @@ class ProfileRepositoryImpl(
         return safeApiCall { block(token) }.onFailure { error ->
             if (error == DomainError.Unauthorized && token != null) local.clear()
         }
+    }
+
+    private companion object {
+        const val CHANGES_BUFFER = 8
     }
 }
