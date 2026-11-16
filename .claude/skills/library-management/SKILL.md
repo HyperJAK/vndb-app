@@ -267,12 +267,12 @@ class KotlinOnlyConventionPlugin : Plugin<Project> {
 3. Add the `[libraries]` / `[plugins]` entry, plus a `[bundles]` entry if it always ships with others.
 4. Reference it via `libs.*` in the module's `dependencies {}`, or in a convention plugin if several modules or the build itself need it.
 5. Add its row to the artifact map (§2).
-6. Run `./gradlew assembleDebug testDebugUnitTest detekt`.
+6. Run `./gradlew assembleDevelopmentDebug testDevelopmentDebugUnitTest detekt`.
 
 ### Updating a version
 1. Change only the `[versions]` value. Every artifact on that release train moves together.
 2. Read the release notes for breaking changes and migrate call sites in the same change.
-3. Run `./gradlew assembleDebug testDebugUnitTest detekt`.
+3. Run `./gradlew assembleDevelopmentDebug testDevelopmentDebugUnitTest detekt`.
 
 ### Removing a library
 1. Remove its usages and the `libs.*` references.

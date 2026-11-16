@@ -16,7 +16,7 @@ Top bar with Back · sections of rows (title, one-line explanation, control on t
 | | Include 18+ titles in Browse — Browse starts unfiltered instead of All Ages | Switch | Off |
 | **Discover** | New & Trending languages | Multi-select of release languages | English, Japanese |
 | **Storage** | Image cache — size on disk | "142 MB · Clear" (confirm dialog) | — |
-| **About** | Data from vndb.org (credit + link) · Source code (GitHub repo) · Privacy: "Your API token is encrypted, stays on this device and is only sent to api.vndb.org" · Version `1.0 (1)` from `BuildConfig` | Links / text | — |
+| **About** | Data from vndb.org (credit + link) · Source code (GitHub repo) · Privacy: "Your API token is encrypted, stays on this device and is only sent to api.vndb.org" · Version `1.0.0 (1)` from `BuildConfig` | Links / text | — |
 
 Changes apply immediately, and screens already open pick them up the next time they load (or at once, where the screen observes settings).
 
