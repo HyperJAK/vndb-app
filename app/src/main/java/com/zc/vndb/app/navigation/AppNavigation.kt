@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
@@ -150,23 +149,24 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     }
 }
 
-/** Selected tab in the accent color with no indicator pill, as in the design. */
+/** Selected tab in the accent color on an elevated-surface indicator pill, as in the design. */
 @Composable
 private fun navigationItemColors(): NavigationSuiteItemColors {
     val accent = VndbTheme.colors.accent
     val idle = MaterialTheme.colorScheme.onSurfaceVariant
+    val indicator = VndbTheme.colors.surfaceElevated
     return NavigationSuiteDefaults.itemColors(
         navigationBarItemColors = NavigationBarItemDefaults.colors(
             selectedIconColor = accent,
             selectedTextColor = accent,
-            indicatorColor = Color.Transparent,
+            indicatorColor = indicator,
             unselectedIconColor = idle,
             unselectedTextColor = idle,
         ),
         navigationRailItemColors = NavigationRailItemDefaults.colors(
             selectedIconColor = accent,
             selectedTextColor = accent,
-            indicatorColor = Color.Transparent,
+            indicatorColor = indicator,
             unselectedIconColor = idle,
             unselectedTextColor = idle,
         ),
