@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.character.presentation.component.characterhero.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.character.domain.model.CharacterSamples.profile
 import com.zc.vndb.feature.character.domain.model.Gender
@@ -19,23 +19,26 @@ class CharacterHeroUIModelMapperTest {
 
         assertEquals(
             listOf(
-                R.string.character_age,
-                R.string.character_birthday,
-                R.string.character_blood_type,
-                R.string.character_height,
-                R.string.character_weight,
-                R.string.character_measurements,
+                StringResource.character_age,
+                StringResource.character_birthday,
+                StringResource.character_blood_type,
+                StringResource.character_height,
+                StringResource.character_weight,
+                StringResource.character_measurements,
             ),
-            facts.map { it.label },
+            facts.map { (it.label as UiText.StringResource).id },
         )
         assertEquals(UiText.StringValue("Jul 25"), facts[1].value)
         assertEquals(UiText.StringValue("A"), facts[2].value)
         assertEquals(
-            UiText.StringResource(R.string.character_height_value, listOf(160)),
+            UiText.StringResource(StringResource.character_height_value, listOf(160)),
             facts[3].value,
         )
         assertEquals(
-            UiText.StringResource(R.string.character_measurements_value, listOf("79", "56", "83")),
+            UiText.StringResource(
+                StringResource.character_measurements_value,
+                listOf("79", "56", "83"),
+            ),
             facts[5].value,
         )
 
@@ -45,7 +48,7 @@ class CharacterHeroUIModelMapperTest {
             .toHeroUIModel(SpoilerLevel.None).facts.last().value
         assertEquals(
             UiText.StringResource(
-                R.string.character_measurements_with_cup,
+                StringResource.character_measurements_with_cup,
                 listOf("79", "?", "?", "C"),
             ),
             withCup,
@@ -55,13 +58,13 @@ class CharacterHeroUIModelMapperTest {
     @Test
     fun `gender shows only when it differs from sex`() {
         assertEquals(
-            listOf<UiText>(UiText.StringResource(R.string.character_sex_female)),
+            listOf<UiText>(UiText.StringResource(StringResource.character_sex_female)),
             profile().toHeroUIModel(SpoilerLevel.None).identity,
         )
         assertEquals(
             listOf<UiText>(
-                UiText.StringResource(R.string.character_sex_male),
-                UiText.StringResource(R.string.character_gender_female),
+                UiText.StringResource(StringResource.character_sex_male),
+                UiText.StringResource(StringResource.character_gender_female),
             ),
             profile(
                 sex = Sex.Male,
@@ -77,8 +80,8 @@ class CharacterHeroUIModelMapperTest {
         assertTrue(twist.toHeroUIModel(SpoilerLevel.Minor).spoilerIdentity.isEmpty())
         assertEquals(
             listOf<UiText>(
-                UiText.StringResource(R.string.character_sex_actually_male),
-                UiText.StringResource(R.string.character_gender_non_binary),
+                UiText.StringResource(StringResource.character_sex_actually_male),
+                UiText.StringResource(StringResource.character_gender_non_binary),
             ),
             twist.toHeroUIModel(SpoilerLevel.Major).spoilerIdentity,
         )

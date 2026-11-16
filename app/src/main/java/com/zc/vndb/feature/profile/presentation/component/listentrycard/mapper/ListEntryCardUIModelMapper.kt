@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.profile.presentation.component.listentrycard.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.profile.domain.model.ListEntry
 import com.zc.vndb.feature.profile.domain.model.ListLabel
@@ -27,13 +28,23 @@ fun ListEntry.toCardUIModel(shownLabelId: Int, now: Instant) = ListEntryCardUIMo
     isCoverSensitive = cover?.isSensitive ?: false,
     voteLabel = vote?.let {
         UiText.StringResource(
-            R.string.profile_my_vote,
+            StringResource.profile_my_vote,
             listOf("%.1f".format(it / VOTE_SCALE)),
         )
     },
     dates = listOfNotNull(
-        started?.let { UiText.StringResource(R.string.profile_started, listOf(it.toString())) },
-        finished?.let { UiText.StringResource(R.string.profile_finished, listOf(it.toString())) },
+        started?.let {
+            UiText.StringResource(
+                StringResource.profile_started,
+                listOf(it.toString()),
+            )
+        },
+        finished?.let {
+            UiText.StringResource(
+                StringResource.profile_finished,
+                listOf(it.toString()),
+            )
+        },
     ).toImmutableList(),
     labels = labels
         .filter { it.id != shownLabelId && it.id != ListLabel.VOTED }
@@ -50,28 +61,28 @@ fun Instant.toUpdatedLabel(now: Instant): UiText {
     val hours = elapsed.inWholeHours.toInt()
     val days = elapsed.inWholeDays.toInt()
     return when {
-        minutes < 1 -> UiText.StringResource(R.string.profile_updated_just_now)
+        minutes < 1 -> UiText.StringResource(StringResource.profile_updated_just_now)
 
         hours < 1 -> UiText.StringPlural(
-            R.plurals.profile_updated_minutes,
+            PluralResource.profile_updated_minutes,
             minutes,
             listOf(minutes),
         )
 
         hours < HOURS_PER_DAY -> UiText.StringPlural(
-            R.plurals.profile_updated_hours,
+            PluralResource.profile_updated_hours,
             hours,
             listOf(hours),
         )
 
         days < DAYS_SHOWN_AS_AGO -> UiText.StringPlural(
-            R.plurals.profile_updated_days,
+            PluralResource.profile_updated_days,
             days,
             listOf(days),
         )
 
         else -> UiText.StringResource(
-            R.string.profile_updated_on,
+            StringResource.profile_updated_on,
             listOf(toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()),
         )
     }

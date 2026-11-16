@@ -1,12 +1,11 @@
 package com.zc.vndb.feature.profile.domain.model
 
 import com.zc.vndb.common.domain.model.ReleaseDate
+import com.zc.vndb.common.domain.model.Session
 import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 
 object ProfileSamples {
-
-    const val TOKEN = "hsoo-ybws4-j8yb9-qxkw-5obay-px8to-bfyk"
 
     fun session(userId: String = "u2", canReadPrivateList: Boolean = true) =
         Session(userId = userId, username = "Yorhel", canReadPrivateList = canReadPrivateList)

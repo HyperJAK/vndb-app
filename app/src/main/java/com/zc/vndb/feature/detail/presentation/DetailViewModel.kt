@@ -2,7 +2,6 @@ package com.zc.vndb.feature.detail.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -379,12 +378,12 @@ class DetailViewModel(
 
             DetailTab.Quotes -> state.quotes.dataOrNull?.takeIf { !it.hasMore }?.items?.size
         }
-        val name = UiText.StringResource(tab.labelRes())
+        val name = tab.toLabel()
         DetailTabUIModel(
             tab = tab,
             label = count?.let {
                 UiText.StringResource(
-                    R.string.detail_tab_with_count,
+                    StringResource.detail_tab_with_count,
                     listOf(name, it),
                 )
             } ?: name,
@@ -451,13 +450,15 @@ class DetailViewModel(
         viewModelScope.launch { _effect.send(effect) }
     }
 
-    private fun DetailTab.labelRes(): StringResource = when (this) {
-        DetailTab.Overview -> R.string.detail_tab_overview
-        DetailTab.Media -> R.string.detail_tab_media
-        DetailTab.Cast -> R.string.detail_tab_cast
-        DetailTab.Releases -> R.string.detail_tab_releases
-        DetailTab.Quotes -> R.string.detail_tab_quotes
-    }
+    private fun DetailTab.toLabel(): UiText = UiText.StringResource(
+        when (this) {
+            DetailTab.Overview -> StringResource.detail_tab_overview
+            DetailTab.Media -> StringResource.detail_tab_media
+            DetailTab.Cast -> StringResource.detail_tab_cast
+            DetailTab.Releases -> StringResource.detail_tab_releases
+            DetailTab.Quotes -> StringResource.detail_tab_quotes
+        },
+    )
 
     private companion object {
         const val FIRST_PAGE = 1

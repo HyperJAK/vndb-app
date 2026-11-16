@@ -34,19 +34,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.window.core.layout.WindowSizeClass
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
 import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -223,7 +222,7 @@ private fun LazyGridScope.tagHeader(state: BrowseState, actions: BrowseActions) 
     header.description?.let { description ->
         fullWidthItem("tag-description") {
             ExpandableTextView(
-                title = UiText.StringResource(R.string.tag_about),
+                title = UiText.StringResource(StringResource.tag_about),
                 text = description,
                 isExpanded = state.isTagDescriptionExpanded,
                 onToggle = actions.onTagDescriptionToggle,
@@ -294,7 +293,7 @@ private fun ResultCountHeader(label: UiText) {
             modifier = Modifier.weight(1f),
         )
         Text(
-            text = stringResource(R.string.browse_indexed_database),
+            text = UiText.StringResource(StringResource.browse_indexed_database).asString(),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -316,7 +315,7 @@ private fun CenteredProgress() {
 @Composable
 private fun EmptyResults() {
     Text(
-        text = stringResource(R.string.browse_no_results),
+        text = UiText.StringResource(StringResource.browse_no_results).asString(),
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,
@@ -335,12 +334,15 @@ private fun LoadMoreFailed(onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(R.string.browse_load_more_failed),
+            text = UiText.StringResource(StringResource.browse_load_more_failed).asString(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         TextButton(onClick = onRetry) {
-            Text(text = stringResource(R.string.action_retry), color = VndbTheme.colors.accent)
+            Text(
+                text = UiText.StringResource(StringResource.action_retry).asString(),
+                color = VndbTheme.colors.accent,
+            )
         }
     }
 }
@@ -382,7 +384,10 @@ private class BrowseStateProvider : PreviewParameterProvider<BrowseState> {
         ),
         previewFilters.copy(isLoading = true),
         previewFilters.copy(
-            error = ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true),
+            error = ErrorUIModel(
+                UiText.StringResource(StringResource.error_network),
+                isRetryable = true,
+            ),
         ),
     )
 }

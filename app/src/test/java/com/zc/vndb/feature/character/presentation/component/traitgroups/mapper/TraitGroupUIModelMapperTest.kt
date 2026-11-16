@@ -1,7 +1,8 @@
 package com.zc.vndb.feature.character.presentation.component.traitgroups.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.character.domain.model.CharacterSamples.trait
 import kotlin.test.Test
@@ -36,11 +37,11 @@ class TraitGroupUIModelMapperTest {
     @Test
     fun `spoiler and lie traits are hidden and counted until allowed`() {
         assertEquals(
-            UiText.StringPlural(R.plurals.detail_hidden_by_spoiler, 2, listOf(2)),
+            UiText.StringPlural(PluralResource.detail_hidden_by_spoiler, 2, listOf(2)),
             traits.toHiddenTraitsLabel(SpoilerLevel.None),
         )
         assertEquals(
-            UiText.StringPlural(R.plurals.detail_hidden_by_spoiler, 1, listOf(1)),
+            UiText.StringPlural(PluralResource.detail_hidden_by_spoiler, 1, listOf(1)),
             traits.toHiddenTraitsLabel(SpoilerLevel.Minor),
         )
         assertNull(traits.toHiddenTraitsLabel(SpoilerLevel.Major))
@@ -49,7 +50,7 @@ class TraitGroupUIModelMapperTest {
             SpoilerLevel.Major,
         ).single { (it.title as UiText.StringValue).value == "PERSONALITY" }
         assertEquals(
-            UiText.StringResource(R.string.character_trait_lie, listOf("Liar")),
+            UiText.StringResource(StringResource.character_trait_lie, listOf("Liar")),
             personality.traits.last(),
         )
     }

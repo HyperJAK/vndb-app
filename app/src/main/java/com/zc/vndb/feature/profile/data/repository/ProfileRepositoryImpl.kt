@@ -1,8 +1,8 @@
 package com.zc.vndb.feature.profile.data.repository
 
+import com.zc.vndb.common.data.local.SessionLocalDataSource
 import com.zc.vndb.common.data.util.safeApiCall
 import com.zc.vndb.common.domain.model.DomainError
-import com.zc.vndb.feature.profile.data.local.SessionLocalDataSource
 import com.zc.vndb.feature.profile.data.mapper.entriesQuery
 import com.zc.vndb.feature.profile.data.mapper.toDomain
 import com.zc.vndb.feature.profile.data.remote.ProfileService

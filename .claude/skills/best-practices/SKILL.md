@@ -383,11 +383,11 @@ private fun HttpStatusCode.toDomainError(): DomainError = when (this) {
 ```kotlin
 // ✅ common/ui/component/error/mapper/ErrorUIModelMapper.kt
 fun Throwable.toErrorUIModel(): ErrorUIModel = when (this) {
-    DomainError.Network, DomainError.Timeout -> ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true)
-    DomainError.NotFound -> ErrorUIModel(UiText.StringResource(R.string.error_not_found), isRetryable = false)
-    DomainError.RateLimited -> ErrorUIModel(UiText.StringResource(R.string.error_rate_limited), isRetryable = true)
-    DomainError.Unauthorized -> ErrorUIModel(UiText.StringResource(R.string.error_unauthorized), isRetryable = false)
-    else -> ErrorUIModel(UiText.StringResource(R.string.error_generic), isRetryable = true)
+    DomainError.Network, DomainError.Timeout -> ErrorUIModel(UiText.StringResource(StringResource.error_network), isRetryable = true)
+    DomainError.NotFound -> ErrorUIModel(UiText.StringResource(StringResource.error_not_found), isRetryable = false)
+    DomainError.RateLimited -> ErrorUIModel(UiText.StringResource(StringResource.error_rate_limited), isRetryable = true)
+    DomainError.Unauthorized -> ErrorUIModel(UiText.StringResource(StringResource.error_unauthorized), isRetryable = false)
+    else -> ErrorUIModel(UiText.StringResource(StringResource.error_generic), isRetryable = true)
 }
 ```
 
@@ -437,7 +437,7 @@ private class NovelDetailStateProvider : PreviewParameterProvider<NovelDetailSta
     override val values = sequenceOf(
         NovelDetailState(isLoading = true),
         NovelDetailState(novel = sampleNovel),
-        NovelDetailState(error = ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true)),
+        NovelDetailState(error = ErrorUIModel(UiText.StringResource(StringResource.error_network), isRetryable = true)),
     )
 }
 
@@ -455,16 +455,16 @@ private fun NovelDetailScreenPreview(
 - Colors and type come from `MaterialTheme.colorScheme` / `MaterialTheme.typography` / `MaterialTheme.shapes`. **NEVER** hardcode `Color(0xFF…)`, `fontSize = 18.sp` or `FontWeight` in Screens or Views.
 - Responsive layout uses Material 3 Adaptive (`tech-stack` §4). Window size is read in the composable, never stored in `State`.
 - Every interactive element has a touch target of at least **48.dp**. Material components (`IconButton`, `Button`, `Checkbox`) already do this; custom clickables add `Modifier.minimumInteractiveComponentSize()`.
-- `contentDescription` is a meaningful localized string (`stringResource(...)`) for informative images and icons, and `null` only for decorative ones. Clickable rows that merge text use `Modifier.semantics(mergeDescendants = true) {}`.
+- `contentDescription` is a meaningful localized string (`UiText.StringResource(StringResource.x).asString()`) for informative images and icons, and `null` only for decorative ones. Clickable rows that merge text use `Modifier.semantics(mergeDescendants = true) {}`.
 
 ```kotlin
 // ✅
 IconButton(onClick = onFavoriteClick) {
     Icon(
         imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-        contentDescription = stringResource(
-            if (isFavorite) R.string.cd_remove_favorite else R.string.cd_add_favorite,
-        ),
+        contentDescription = UiText.StringResource(
+            if (isFavorite) StringResource.cd_remove_favorite else StringResource.cd_add_favorite,
+        ).asString(),
     )
 }
 
@@ -614,7 +614,7 @@ class NovelDetailViewModelTest {
         val viewModel = createViewModel()
         viewModel.state.test {
             skipItems(1)
-            assertEquals(UiText.StringResource(R.string.error_not_found), awaitItem().error?.message)
+            assertEquals(UiText.StringResource(StringResource.error_not_found), awaitItem().error?.message)
         }
     }
 
@@ -634,7 +634,7 @@ class VisualNovelUIModelMapperTest {
     @Test
     fun `unknown release date shows TBA resource`() {
         assertEquals(
-            UiText.StringResource(R.string.release_tba),
+            UiText.StringResource(StringResource.release_tba),
             sampleNovel.copy(releaseDate = null).toUIModel().releaseLabel,
         )
     }
@@ -670,6 +670,6 @@ The last `grep` must print nothing for Screens and Views.
 - [ ] Routes use `collectAsStateWithLifecycle()` and `ObserveAsEvents`.
 - [ ] No hardcoded dispatchers (only `DispatcherProvider`); `CancellationException` is never swallowed; Flows reach the ViewModel through `stateIn(WhileSubscribed(5_000))`.
 - [ ] Network failures go through `safeApiCall` → `DomainError` → `ErrorUIModel`; DataStore reads `.catch` `IOException`.
-- [ ] User-visible text in State/UIModel/UIState/Effect is `UiText`, resolved with `asString()`; resource ids are typed `StringResource` / `PluralResource` / `DrawableResource`, never `Int` / `@StringRes Int`.
+- [ ] User-visible text in State/UIModel/UIState/Effect is `UiText`, resolved with `asString()`; strings are referenced as `StringResource.x` / `PluralResource.x` (never `R.string` / `R.plurals`), and nothing outside `UiText` calls `stringResource()` / `getString()` or carries a raw resource id.
 - [ ] Screens and Views are stateless, with `@AdaptivePreviews`; theme tokens only; 48.dp touch targets; meaningful `contentDescription`s.
 - [ ] Tests exist for every new use case, service, mapper and ViewModel, and they pass.

@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.detail.presentation.component.editionrow.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.mapper.platformLabel
 import com.zc.vndb.common.ui.mapper.toIsoLabel
 import com.zc.vndb.common.ui.resource.StringResource
@@ -22,17 +21,19 @@ fun Edition.toRowUIModel(): EditionRowUIModel = EditionRowUIModel(
     },
     dateLabel = releaseDate.toIsoLabel(),
     family = family,
-    familyLabel = UiText.StringResource(family.labelRes()),
+    familyLabel = family.toLabel(),
 )
 
 /** "en" → "English", "zh-Hans" → "Chinese", in the device language. */
 private fun String.toLanguageName(): String =
     Locale.forLanguageTag(this).displayLanguage.ifBlank { this }
 
-private fun PlatformFamily.labelRes(): StringResource = when (this) {
-    PlatformFamily.Pc -> R.string.detail_family_pc
-    PlatformFamily.Console -> R.string.detail_family_console
-    PlatformFamily.Mobile -> R.string.detail_family_mobile
-    PlatformFamily.Web -> R.string.detail_family_web
-    PlatformFamily.Other -> R.string.detail_family_other
-}
+private fun PlatformFamily.toLabel(): UiText = UiText.StringResource(
+    when (this) {
+        PlatformFamily.Pc -> StringResource.detail_family_pc
+        PlatformFamily.Console -> StringResource.detail_family_console
+        PlatformFamily.Mobile -> StringResource.detail_family_mobile
+        PlatformFamily.Web -> StringResource.detail_family_web
+        PlatformFamily.Other -> StringResource.detail_family_other
+    },
+)

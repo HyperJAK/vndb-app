@@ -12,9 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -30,7 +30,7 @@ private val LanguageWidth = 96.dp
 fun AlsoKnownAsView(model: AlsoKnownAsUIModel, modifier: Modifier = Modifier) {
     SectionCardView(
         modifier = modifier,
-        title = UiText.StringResource(R.string.detail_also_known_as),
+        title = UiText.StringResource(StringResource.detail_also_known_as),
     ) {
         model.titles.forEach { line ->
             Row {

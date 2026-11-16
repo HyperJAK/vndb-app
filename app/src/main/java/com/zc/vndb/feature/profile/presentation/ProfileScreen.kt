@@ -33,16 +33,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -75,7 +74,9 @@ fun ProfileScreen(
                         IconButton(onClick = { onIntent(ProfileIntent.LogOutClicked) }) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.Logout,
-                                contentDescription = stringResource(R.string.cd_log_out),
+                                contentDescription = UiText.StringResource(
+                                    StringResource.cd_log_out,
+                                ).asString(),
                             )
                         }
                     }
@@ -141,7 +142,7 @@ private fun SignedInContent(state: ProfileState, onIntent: (ProfileIntent) -> Un
                 }
 
                 state.isListEmpty -> item(key = "empty", contentType = "note") {
-                    MutedNote(UiText.StringResource(R.string.profile_no_lists))
+                    MutedNote(UiText.StringResource(StringResource.profile_no_lists))
                 }
 
                 else -> {
@@ -180,7 +181,7 @@ private fun LazyListScope.entries(entries: EntriesUIState, onIntent: (ProfileInt
         }
 
         entries.items.isEmpty() -> item(key = "entries-empty", contentType = "note") {
-            MutedNote(UiText.StringResource(R.string.profile_no_entries))
+            MutedNote(UiText.StringResource(StringResource.profile_no_entries))
         }
 
         else -> {
@@ -210,7 +211,7 @@ private fun LazyListScope.loadMoreFooter(
             Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 TextButton(onClick = { onIntent(ProfileIntent.LoadMoreRetried) }) {
                     Text(
-                        text = stringResource(R.string.action_retry),
+                        text = UiText.StringResource(StringResource.action_retry).asString(),
                         color = VndbTheme.colors.accent,
                     )
                 }
@@ -240,19 +241,19 @@ private fun LoadMoreTrigger(listState: LazyListState, onLoadMore: () -> Unit) {
 private fun LogOutDialog(onIntent: (ProfileIntent) -> Unit) {
     AlertDialog(
         onDismissRequest = { onIntent(ProfileIntent.LogOutDismissed) },
-        title = { Text(stringResource(R.string.profile_log_out_title)) },
-        text = { Text(stringResource(R.string.profile_log_out_body)) },
+        title = { Text(UiText.StringResource(StringResource.profile_log_out_title).asString()) },
+        text = { Text(UiText.StringResource(StringResource.profile_log_out_body).asString()) },
         confirmButton = {
             TextButton(onClick = { onIntent(ProfileIntent.LogOutConfirmed) }) {
                 Text(
-                    text = stringResource(R.string.profile_log_out),
+                    text = UiText.StringResource(StringResource.profile_log_out).asString(),
                     color = VndbTheme.colors.accent,
                 )
             }
         },
         dismissButton = {
             TextButton(onClick = { onIntent(ProfileIntent.LogOutDismissed) }) {
-                Text(text = stringResource(R.string.action_cancel))
+                Text(text = UiText.StringResource(StringResource.action_cancel).asString())
             }
         },
         containerColor = VndbTheme.colors.surfaceCard,
@@ -316,7 +317,10 @@ private class ProfileStateProvider : PreviewParameterProvider<ProfileState> {
         previewSignedIn,
         previewSignedIn.copy(
             labels = persistentListOf(),
-            error = ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true),
+            error = ErrorUIModel(
+                UiText.StringResource(StringResource.error_network),
+                isRetryable = true,
+            ),
         ),
     )
 }

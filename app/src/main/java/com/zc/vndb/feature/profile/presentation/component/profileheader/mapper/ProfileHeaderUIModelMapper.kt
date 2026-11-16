@@ -1,8 +1,9 @@
 package com.zc.vndb.feature.profile.presentation.component.profileheader.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.domain.model.Session
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
-import com.zc.vndb.feature.profile.domain.model.Session
 import com.zc.vndb.feature.profile.domain.model.UserProfile
 import com.zc.vndb.feature.profile.presentation.component.profileheader.model.ProfileHeaderUIModel
 import kotlin.math.roundToInt
@@ -19,21 +20,21 @@ fun Session.toHeaderUIModel(user: UserProfile? = null) = ProfileHeaderUIModel(
         null
     } else {
         UiText.StringResource(
-            R.string.profile_private_hidden,
+            StringResource.profile_private_hidden,
         )
     },
 )
 
 private fun UserProfile.toStatsLabel(): UiText = UiText.StringResource(
-    R.string.profile_stats_line,
+    StringResource.profile_stats_line,
     listOf(
         UiText.StringPlural(
-            R.plurals.profile_length_votes,
+            PluralResource.profile_length_votes,
             lengthVotes,
             listOf("%,d".format(lengthVotes)),
         ),
         UiText.StringResource(
-            R.string.profile_hours_logged,
+            StringResource.profile_hours_logged,
             listOf("%,d".format((lengthVotesMinutes / MINUTES_PER_HOUR).roundToInt())),
         ),
     ),

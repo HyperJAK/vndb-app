@@ -9,9 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -33,7 +32,7 @@ fun ScoreCardView(model: ScoreUIModel, modifier: Modifier = Modifier) {
                         color = VndbTheme.colors.score,
                     )
                     Text(
-                        text = stringResource(R.string.detail_score_out_of),
+                        text = UiText.StringResource(StringResource.detail_score_out_of).asString(),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = VndbTheme.spacing.xs),

@@ -25,10 +25,9 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -83,7 +82,9 @@ fun CoverImageView(
 
             isSensitive -> Icon(
                 imageVector = Icons.Outlined.VisibilityOff,
-                contentDescription = stringResource(R.string.cd_sensitive_cover),
+                contentDescription = UiText.StringResource(
+                    StringResource.cd_sensitive_cover,
+                ).asString(),
                 tint = VndbTheme.colors.placeholder,
                 modifier = Modifier.size(OverlayIconSize),
             )

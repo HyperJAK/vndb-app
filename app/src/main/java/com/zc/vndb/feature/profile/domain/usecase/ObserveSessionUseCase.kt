@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.profile.domain.usecase
 
-import com.zc.vndb.feature.profile.domain.model.Session
-import com.zc.vndb.feature.profile.domain.repository.SessionRepository
+import com.zc.vndb.common.domain.model.Session
+import com.zc.vndb.common.domain.repository.SessionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 

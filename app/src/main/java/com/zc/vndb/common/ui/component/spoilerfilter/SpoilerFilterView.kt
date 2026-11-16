@@ -16,15 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
@@ -49,14 +48,14 @@ fun SpoilerFilterView(
                 modifier = Modifier.size(ShieldSize),
             )
             Text(
-                text = stringResource(R.string.detail_spoiler_filter),
+                text = UiText.StringResource(StringResource.detail_spoiler_filter).asString(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.weight(1f))
             SpoilerLevel.entries.forEach { option ->
                 LevelOption(
-                    label = option.labelRes(),
+                    label = option.toLabel(),
                     isSelected = option == level,
                     onClick = { onLevelSelect(option) },
                 )
@@ -66,9 +65,9 @@ fun SpoilerFilterView(
 }
 
 @Composable
-private fun LevelOption(label: StringResource, isSelected: Boolean, onClick: () -> Unit) {
+private fun LevelOption(label: UiText, isSelected: Boolean, onClick: () -> Unit) {
     Text(
-        text = stringResource(label),
+        text = label.asString(),
         style = MaterialTheme.typography.labelMedium,
         color = if (isSelected) VndbTheme.colors.onAccent else MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier
@@ -80,11 +79,13 @@ private fun LevelOption(label: StringResource, isSelected: Boolean, onClick: () 
     )
 }
 
-private fun SpoilerLevel.labelRes(): StringResource = when (this) {
-    SpoilerLevel.None -> R.string.detail_spoiler_none
-    SpoilerLevel.Minor -> R.string.detail_spoiler_minor
-    SpoilerLevel.Major -> R.string.detail_spoiler_major
-}
+private fun SpoilerLevel.toLabel(): UiText = UiText.StringResource(
+    when (this) {
+        SpoilerLevel.None -> StringResource.detail_spoiler_none
+        SpoilerLevel.Minor -> StringResource.detail_spoiler_minor
+        SpoilerLevel.Major -> StringResource.detail_spoiler_major
+    },
+)
 
 @AdaptivePreviews
 @Composable

@@ -1,10 +1,10 @@
 package com.zc.vndb.feature.detail.presentation
 
 import app.cash.turbine.test
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.detail.domain.model.DetailSamples
@@ -104,7 +104,7 @@ class DetailViewModelTest {
         val state = viewModel.state.value
         assertEquals(listOf("r1-win"), state.editions.dataOrNull?.map { it.key })
         assertEquals(
-            UiText.StringResource(R.string.detail_age_min, listOf(18)),
+            UiText.StringResource(StringResource.detail_age_min, listOf(18)),
             state.hero?.ageLabel,
         )
     }
@@ -121,15 +121,15 @@ class DetailViewModelTest {
             val cast = checkNotNull(this.cast.dataOrNull)
             assertEquals(listOf("c1"), cast.preview.map { it.id })
             assertEquals(
-                UiText.StringResource(R.string.detail_cv, listOf("Miyano Mamoru")),
+                UiText.StringResource(StringResource.detail_cv, listOf("Miyano Mamoru")),
                 cast.preview.first().voiceActorLabel,
             )
             assertNotNull(cast.hiddenLabel)
             assertNotNull(hiddenTagsLabel)
             assertEquals(
                 UiText.StringResource(
-                    R.string.detail_tab_with_count,
-                    listOf(UiText.StringResource(R.string.detail_tab_cast), 2),
+                    StringResource.detail_tab_with_count,
+                    listOf(UiText.StringResource(StringResource.detail_tab_cast), 2),
                 ),
                 tabs.single { it.tab == DetailTab.Cast }.label,
             )
@@ -228,7 +228,7 @@ class DetailViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
         assertEquals(
-            UiText.StringResource(R.string.error_not_found),
+            UiText.StringResource(StringResource.error_not_found),
             viewModel.state.value.error?.message,
         )
 

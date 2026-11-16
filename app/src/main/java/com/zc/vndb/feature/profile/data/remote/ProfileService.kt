@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.profile.data.remote
 
-import com.zc.vndb.feature.profile.data.dto.AuthInfoDTO
 import com.zc.vndb.feature.profile.data.dto.ListEntryPageDTO
 import com.zc.vndb.feature.profile.data.dto.ListLabelsDTO
 import com.zc.vndb.feature.profile.data.dto.ListQueryDTO
@@ -17,10 +16,6 @@ import io.ktor.http.HttpHeaders
 
 /** Account endpoints. A [token] is sent as `Authorization: Token …`, so private data is included. */
 class ProfileService(private val client: HttpClient) {
-
-    suspend fun authInfo(token: String): AuthInfoDTO = client.get(
-        "authinfo",
-    ) { authorize(token) }.body()
 
     suspend fun user(userId: String): Map<String, UserDTO?> = client.get("user") {
         parameter("q", userId)

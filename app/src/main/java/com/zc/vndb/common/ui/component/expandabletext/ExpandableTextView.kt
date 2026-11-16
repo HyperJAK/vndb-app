@@ -19,11 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -66,9 +65,9 @@ private fun ReadMoreButton(isExpanded: Boolean, onToggle: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = stringResource(
-                    if (isExpanded) R.string.detail_read_less else R.string.detail_read_more,
-                ),
+                text = UiText.StringResource(
+                    if (isExpanded) StringResource.detail_read_less else StringResource.detail_read_more,
+                ).asString(),
                 style = MaterialTheme.typography.labelLarge,
                 color = VndbTheme.colors.accent,
             )

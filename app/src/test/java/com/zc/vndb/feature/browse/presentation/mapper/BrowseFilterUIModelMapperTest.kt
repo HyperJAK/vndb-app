@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.browse.presentation.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
@@ -21,7 +22,7 @@ class BrowseFilterUIModelMapperTest {
             BrowseFilter(query = "steins").toSortOptions().map { it.sort },
         )
         assertEquals(
-            UiText.StringResource(R.string.browse_sort_relevance),
+            UiText.StringResource(StringResource.browse_sort_relevance),
             BrowseSort.Relevance.toLabel(),
         )
     }
@@ -33,7 +34,7 @@ class BrowseFilterUIModelMapperTest {
         assertEquals(Genre.entries, chips.map { it.genre })
         assertEquals(listOf(Genre.Horror), chips.filter { it.isSelected }.map { it.genre })
         assertEquals(
-            UiText.StringResource(R.string.browse_genre_scifi),
+            UiText.StringResource(StringResource.browse_genre_scifi),
             chips.single { it.genre == Genre.SciFi }.label,
         )
     }
@@ -41,7 +42,11 @@ class BrowseFilterUIModelMapperTest {
     @Test
     fun `result count is a grouped plural`() {
         assertEquals(
-            UiText.StringPlural(R.plurals.browse_found_titles, 35880, listOf("%,d".format(35880))),
+            UiText.StringPlural(
+                PluralResource.browse_found_titles,
+                35880,
+                listOf("%,d".format(35880)),
+            ),
             35880.toResultCountLabel(),
         )
     }

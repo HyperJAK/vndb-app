@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.release.presentation.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.mapper.bbCodeToPlainText
 import com.zc.vndb.common.ui.resource.StringResource
@@ -20,7 +19,7 @@ fun releaseUrl(id: String): String = "https://vndb.org/$id"
 fun ReleaseDetail.toLinks(): ImmutableList<LinkUIModel> = buildList {
     add(
         LinkUIModel(
-            UiText.StringResource(R.string.detail_vndb_link, listOf(id)),
+            UiText.StringResource(StringResource.detail_vndb_link, listOf(id)),
             releaseUrl(id),
             isVndb = true,
         ),
@@ -48,8 +47,12 @@ fun ReleaseDetail.toProducerUIModels(): ImmutableList<ReleaseProducerUIModel> =
         ReleaseProducerUIModel(
             name = UiText.StringValue(producer.name),
             roles = listOfNotNull(
-                UiText.StringResource(R.string.release_developer).takeIf { producer.isDeveloper },
-                UiText.StringResource(R.string.release_publisher).takeIf { producer.isPublisher },
+                UiText.StringResource(
+                    StringResource.release_developer,
+                ).takeIf { producer.isDeveloper },
+                UiText.StringResource(
+                    StringResource.release_publisher,
+                ).takeIf { producer.isPublisher },
             ).toImmutableList(),
         )
     }.toImmutableList()
@@ -58,7 +61,7 @@ fun ReleaseDetail.toImageUIModels(): ImmutableList<ReleaseImageUIModel> = images
     ReleaseImageUIModel(
         url = image.image.url,
         thumbnailUrl = image.image.thumbnailUrl,
-        typeLabel = UiText.StringResource(image.type.labelRes()),
+        typeLabel = image.type.toLabel(),
         isSensitive = image.image.isSensitive,
     )
 }.toImmutableList()
@@ -68,12 +71,14 @@ fun ReleaseDetail.toNotes(): UiText? = notes
     ?.takeIf { it.isNotEmpty() }
     ?.let(UiText::StringValue)
 
-private fun ReleaseImageType.labelRes(): StringResource = when (this) {
-    ReleaseImageType.PackageFront -> R.string.release_image_front
-    ReleaseImageType.PackageBack -> R.string.release_image_back
-    ReleaseImageType.PackageContents -> R.string.release_image_contents
-    ReleaseImageType.PackageSide -> R.string.release_image_side
-    ReleaseImageType.PackageMedia -> R.string.release_image_media
-    ReleaseImageType.Digital -> R.string.release_image_digital
-    ReleaseImageType.Other -> R.string.release_image_other
-}
+private fun ReleaseImageType.toLabel(): UiText = UiText.StringResource(
+    when (this) {
+        ReleaseImageType.PackageFront -> StringResource.release_image_front
+        ReleaseImageType.PackageBack -> StringResource.release_image_back
+        ReleaseImageType.PackageContents -> StringResource.release_image_contents
+        ReleaseImageType.PackageSide -> StringResource.release_image_side
+        ReleaseImageType.PackageMedia -> StringResource.release_image_media
+        ReleaseImageType.Digital -> StringResource.release_image_digital
+        ReleaseImageType.Other -> StringResource.release_image_other
+    },
+)

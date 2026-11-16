@@ -2,33 +2,15 @@ package com.zc.vndb.feature.profile.data.mapper
 
 import com.zc.vndb.common.data.mapper.toCover
 import com.zc.vndb.common.data.mapper.toReleaseDate
-import com.zc.vndb.feature.profile.data.dto.AuthInfoDTO
 import com.zc.vndb.feature.profile.data.dto.ListEntryDTO
 import com.zc.vndb.feature.profile.data.dto.ListLabelDTO
 import com.zc.vndb.feature.profile.data.dto.UserDTO
-import com.zc.vndb.feature.profile.data.local.StoredSession
 import com.zc.vndb.feature.profile.domain.model.EntryLabel
 import com.zc.vndb.feature.profile.domain.model.ListEntry
 import com.zc.vndb.feature.profile.domain.model.ListLabel
-import com.zc.vndb.feature.profile.domain.model.Session
 import com.zc.vndb.feature.profile.domain.model.UserProfile
 import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
-
-private const val LIST_READ = "listread"
-
-fun AuthInfoDTO.toStoredSession(token: String) = StoredSession(
-    token = token,
-    userId = id,
-    username = username,
-    permissions = permissions.orEmpty().toSet(),
-)
-
-fun StoredSession.toDomain() = Session(
-    userId = userId,
-    username = username,
-    canReadPrivateList = LIST_READ in permissions,
-)
 
 fun UserDTO.toDomain() = UserProfile(
     id = id,

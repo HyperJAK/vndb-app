@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.discover.presentation.component.featurednovel.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.Cover
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.discover.domain.model.FeaturedNovel
 import kotlin.test.Test
@@ -35,7 +35,7 @@ class FeaturedNovelUIModelMapperTest {
 
         assertEquals(UiText.StringValue("Fate/stay night"), model.title)
         assertEquals(
-            UiText.StringResource(R.string.rating_out_of_ten, listOf("8.92")),
+            UiText.StringResource(StringResource.rating_out_of_ten, listOf("8.92")),
             model.ratingLabel,
         )
         assertEquals(UiText.StringValue("TYPE-MOON"), model.developerLabel)
@@ -49,7 +49,7 @@ class FeaturedNovelUIModelMapperTest {
             ),
             model.tags,
         )
-        assertEquals(UiText.StringResource(R.string.discover_all_ages), model.ageLabel)
+        assertEquals(UiText.StringResource(StringResource.discover_all_ages), model.ageLabel)
     }
 
     @Test

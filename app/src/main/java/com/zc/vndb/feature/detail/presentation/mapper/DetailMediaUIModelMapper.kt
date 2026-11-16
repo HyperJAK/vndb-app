@@ -1,6 +1,6 @@
 package com.zc.vndb.feature.detail.presentation.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.CoverArt
@@ -41,7 +41,7 @@ fun List<Screenshot>.toMediaUIModel(filters: Set<ContentFilter>): MediaUIModel {
         preview = groups.flatMap { it.screenshots }.take(PREVIEW_SIZE).toImmutableList(),
         visibleCount = visible.size,
         hiddenLabel = hidden.takeIf { it > 0 }
-            ?.let { UiText.StringPlural(R.plurals.detail_hidden_by_filters, it, listOf(it)) },
+            ?.let { UiText.StringPlural(PluralResource.detail_hidden_by_filters, it, listOf(it)) },
     )
 }
 
@@ -90,7 +90,7 @@ private fun List<Screenshot>.toggles(
         val count = count { (if (sexual) it.sexualLevel else it.violenceLevel) == filter.level }
         ContentToggleUIState(
             filter = filter,
-            label = UiText.StringResource(filter.labelRes(), listOf(count)),
+            label = filter.toLabel(count),
             isSelected = filter in filters,
         )
     }.toImmutableList()
@@ -112,11 +112,14 @@ private val Screenshot.sexualLevel: Int get() = image.sexual.roundToInt().coerce
 
 private val Screenshot.violenceLevel: Int get() = image.violence.roundToInt().coerceIn(0, MAX_LEVEL)
 
-private fun ContentFilter.labelRes(): StringResource = when (this) {
-    ContentFilter.Safe -> R.string.detail_filter_safe
-    ContentFilter.Suggestive -> R.string.detail_filter_suggestive
-    ContentFilter.Explicit -> R.string.detail_filter_explicit
-    ContentFilter.Tame -> R.string.detail_filter_tame
-    ContentFilter.Violent -> R.string.detail_filter_violent
-    ContentFilter.Brutal -> R.string.detail_filter_brutal
-}
+private fun ContentFilter.toLabel(count: Int): UiText = UiText.StringResource(
+    when (this) {
+        ContentFilter.Safe -> StringResource.detail_filter_safe
+        ContentFilter.Suggestive -> StringResource.detail_filter_suggestive
+        ContentFilter.Explicit -> StringResource.detail_filter_explicit
+        ContentFilter.Tame -> StringResource.detail_filter_tame
+        ContentFilter.Violent -> StringResource.detail_filter_violent
+        ContentFilter.Brutal -> StringResource.detail_filter_brutal
+    },
+    listOf(count),
+)

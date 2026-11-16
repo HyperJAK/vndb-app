@@ -17,18 +17,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.feature.browse.presentation.BrowseRoute
 import com.zc.vndb.feature.character.presentation.CharacterRoute
 import com.zc.vndb.feature.detail.presentation.DetailRoute
 import com.zc.vndb.feature.discover.presentation.DiscoverRoute
-import com.zc.vndb.feature.profile.presentation.LoginRoute
+import com.zc.vndb.feature.login.presentation.LoginRoute
 import com.zc.vndb.feature.profile.presentation.ProfileRoute
 import com.zc.vndb.feature.release.presentation.ReleaseRoute
 import kotlinx.serialization.Serializable
@@ -62,14 +61,18 @@ data class CharacterNavKey(val id: String) : NavKey
 @Serializable
 data class NovelDetailNavKey(val id: String) : NavKey
 
-private enum class TopLevelDestination(
-    val key: NavKey,
-    val icon: ImageVector,
-    val label: StringResource,
-) {
-    Discover(DiscoverNavKey, Icons.Outlined.Explore, R.string.nav_discover),
-    Browse(BrowseNavKey, Icons.Outlined.Tune, R.string.nav_browse),
-    Profile(ProfileNavKey, Icons.Outlined.Person, R.string.nav_profile),
+private enum class TopLevelDestination(val key: NavKey, val icon: ImageVector, val label: UiText) {
+    Discover(
+        DiscoverNavKey,
+        Icons.Outlined.Explore,
+        UiText.StringResource(StringResource.nav_discover),
+    ),
+    Browse(BrowseNavKey, Icons.Outlined.Tune, UiText.StringResource(StringResource.nav_browse)),
+    Profile(
+        ProfileNavKey,
+        Icons.Outlined.Person,
+        UiText.StringResource(StringResource.nav_profile),
+    ),
 }
 
 /** App root: adaptive navigation suite (bar / rail / drawer) around the Navigation 3 back stack. */
@@ -104,7 +107,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                         }
                     },
                     icon = { Icon(destination.icon, contentDescription = null) },
-                    label = { Text(stringResource(destination.label)) },
+                    label = { Text(destination.label.asString()) },
                     colors = itemColors,
                 )
             }

@@ -12,8 +12,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
@@ -35,7 +35,9 @@ fun AppTopBarView(
                 IconButton(onClick = onBack) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.cd_navigate_back),
+                        contentDescription = UiText.StringResource(
+                            StringResource.cd_navigate_back,
+                        ).asString(),
                     )
                 }
             }
@@ -43,7 +45,7 @@ fun AppTopBarView(
         actions = actions,
         title = {
             Text(
-                text = stringResource(R.string.app_wordmark),
+                text = UiText.StringResource(StringResource.app_wordmark).asString(),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )

@@ -1,15 +1,15 @@
 package com.zc.vndb.feature.profile.presentation
 
 import app.cash.turbine.test
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.repository.FakeSessionRepository
 import com.zc.vndb.common.domain.util.FixedClock
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.domain.model.ProfileSamples
 import com.zc.vndb.feature.profile.domain.repository.FakeProfileRepository
-import com.zc.vndb.feature.profile.domain.repository.FakeSessionRepository
 import com.zc.vndb.feature.profile.domain.usecase.GetListEntriesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.GetProfileUseCase
 import com.zc.vndb.feature.profile.domain.usecase.LogOutUseCase
@@ -145,7 +145,9 @@ class ProfileViewModelTest {
         viewModel.effect.test {
             advanceUntilIdle()
             assertEquals(
-                ProfileEffect.ShowMessage(UiText.StringResource(R.string.profile_session_expired)),
+                ProfileEffect.ShowMessage(
+                    UiText.StringResource(StringResource.profile_session_expired),
+                ),
                 awaitItem(),
             )
         }

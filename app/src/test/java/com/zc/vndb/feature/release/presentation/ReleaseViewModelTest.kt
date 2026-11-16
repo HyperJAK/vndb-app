@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.release.presentation
 
 import app.cash.turbine.test
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.release.domain.model.ReleaseSamples
@@ -54,7 +54,7 @@ class ReleaseViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
         assertEquals(
-            UiText.StringResource(R.string.error_not_found),
+            UiText.StringResource(StringResource.error_not_found),
             viewModel.state.value.error?.message,
         )
 

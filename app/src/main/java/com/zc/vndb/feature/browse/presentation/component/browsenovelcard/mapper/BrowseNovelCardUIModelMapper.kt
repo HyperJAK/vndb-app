@@ -1,9 +1,9 @@
 package com.zc.vndb.feature.browse.presentation.component.browsenovelcard.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
 import com.zc.vndb.common.ui.mapper.toLabel
 import com.zc.vndb.common.ui.mapper.toYearLabel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.BrowseNovel
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.BrowseNovelCardUIModel
@@ -26,5 +26,5 @@ fun BrowseNovel.toCardUIModel(): BrowseNovelCardUIModel = BrowseNovelCardUIModel
 private fun List<String>.toCreditsLabel(): UiText? = when (size) {
     0 -> null
     1 -> UiText.StringValue(first())
-    else -> UiText.StringResource(R.string.credits_separator, listOf(this[0], this[1]))
+    else -> UiText.StringResource(StringResource.credits_separator, listOf(this[0], this[1]))
 }

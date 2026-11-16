@@ -21,10 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
@@ -59,12 +59,12 @@ fun GuestPromptView(onLogInClick: () -> Unit, modifier: Modifier = Modifier) {
             )
         }
         Text(
-            text = stringResource(R.string.profile_guest_title),
+            text = UiText.StringResource(StringResource.profile_guest_title).asString(),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
         Text(
-            text = stringResource(R.string.profile_guest_body),
+            text = UiText.StringResource(StringResource.profile_guest_body).asString(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -80,13 +80,13 @@ fun GuestPromptView(onLogInClick: () -> Unit, modifier: Modifier = Modifier) {
         ) {
             Icon(Icons.AutoMirrored.Outlined.Login, contentDescription = null)
             Text(
-                text = stringResource(R.string.profile_log_in),
+                text = UiText.StringResource(StringResource.profile_log_in).asString(),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(start = VndbTheme.spacing.sm),
             )
         }
         Text(
-            text = stringResource(R.string.profile_guest_note),
+            text = UiText.StringResource(StringResource.profile_guest_note).asString(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

@@ -21,12 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.TintedColors
 import com.zc.vndb.common.ui.theme.VndbTheme
@@ -97,7 +96,7 @@ private fun ReleaseLabelRow(model: TrendingReleaseUIModel) {
             color = model.kindTone.colors().content,
         )
         Text(
-            text = stringResource(R.string.separator_dot),
+            text = UiText.StringResource(StringResource.separator_dot).asString(),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

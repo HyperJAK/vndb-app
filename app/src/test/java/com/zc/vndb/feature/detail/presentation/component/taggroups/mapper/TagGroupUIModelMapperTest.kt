@@ -1,9 +1,9 @@
 package com.zc.vndb.feature.detail.presentation.component.taggroups.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.Cover
 import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.novel
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.tag
@@ -34,7 +34,7 @@ class TagGroupUIModelMapperTest {
         )
         assertEquals(listOf(TagChipUIModel("g-ADV", UiText.StringValue("ADV"))), none[1].tags)
         assertEquals(
-            UiText.StringPlural(R.plurals.detail_hidden_by_spoiler, 2, listOf(2)),
+            UiText.StringPlural(PluralResource.detail_hidden_by_spoiler, 2, listOf(2)),
             detail.toHiddenTagsLabel(SpoilerLevel.None),
         )
 
@@ -75,7 +75,7 @@ class TagGroupUIModelMapperTest {
 
         // Themes hold 12: at Major all 12 slots go to the higher-rated spoiler tags, not 30.
         assertEquals(
-            UiText.StringPlural(R.plurals.detail_hidden_by_spoiler, 12, listOf(12)),
+            UiText.StringPlural(PluralResource.detail_hidden_by_spoiler, 12, listOf(12)),
             crowded.toHiddenTagsLabel(SpoilerLevel.None),
         )
         assertNull(crowded.toHiddenTagsLabel(SpoilerLevel.Major))

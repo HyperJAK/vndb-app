@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.discover.presentation.component.trendingrelease.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.ReleaseDate
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.discover.domain.model.Platform
 import com.zc.vndb.feature.discover.domain.model.ReleaseKind
@@ -29,7 +29,10 @@ class TrendingReleaseUIModelMapperTest {
     fun `maps label, tone, date, rating and the first two platforms`() {
         val model = release.toUIModel()
 
-        assertEquals(UiText.StringResource(R.string.discover_release_translation), model.kindLabel)
+        assertEquals(
+            UiText.StringResource(StringResource.discover_release_translation),
+            model.kindLabel,
+        )
         assertEquals(ReleaseKindTone.Translation, model.kindTone)
         assertEquals(UiText.StringValue("Oct 2024"), model.dateLabel)
         assertEquals(UiText.StringValue("8.12"), model.ratingLabel)
@@ -42,12 +45,13 @@ class TrendingReleaseUIModelMapperTest {
     @Test
     fun `every kind has its own label and tone`() {
         val expected = mapOf(
-            ReleaseKind.NewRelease to (R.string.discover_release_new to ReleaseKindTone.New),
+            ReleaseKind.NewRelease to (StringResource.discover_release_new to ReleaseKindTone.New),
             ReleaseKind.NewTranslation to
-                (R.string.discover_release_translation to ReleaseKindTone.Translation),
-            ReleaseKind.RecentPatch to (R.string.discover_release_patch to ReleaseKindTone.Patch),
+                (StringResource.discover_release_translation to ReleaseKindTone.Translation),
+            ReleaseKind.RecentPatch to
+                (StringResource.discover_release_patch to ReleaseKindTone.Patch),
             ReleaseKind.ReRelease to
-                (R.string.discover_release_rerelease to ReleaseKindTone.Rerelease),
+                (StringResource.discover_release_rerelease to ReleaseKindTone.Rerelease),
         )
         expected.forEach { (kind, labelAndTone) ->
             val model = release.copy(kind = kind).toUIModel()
@@ -63,7 +67,7 @@ class TrendingReleaseUIModelMapperTest {
             ReleaseDate.Month(YearMonth(2021, 3)).toLabel(),
         )
         assertEquals(UiText.StringValue("2021"), ReleaseDate.Year(2021).toLabel())
-        assertEquals(UiText.StringResource(R.string.release_tba), ReleaseDate.Tba.toLabel())
+        assertEquals(UiText.StringResource(StringResource.release_tba), ReleaseDate.Tba.toLabel())
     }
 
     @Test

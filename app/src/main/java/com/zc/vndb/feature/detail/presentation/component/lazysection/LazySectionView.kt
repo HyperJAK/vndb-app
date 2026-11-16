@@ -14,9 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -66,7 +65,7 @@ private fun SectionFailedView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(R.string.detail_section_failed),
+            text = UiText.StringResource(StringResource.detail_section_failed).asString(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -77,7 +76,10 @@ private fun SectionFailedView(
         )
         if (error.isRetryable) {
             TextButton(onClick = onRetry) {
-                Text(text = stringResource(R.string.action_retry), color = VndbTheme.colors.accent)
+                Text(
+                    text = UiText.StringResource(StringResource.action_retry).asString(),
+                    color = VndbTheme.colors.accent,
+                )
             }
         }
     }
@@ -89,7 +91,10 @@ private fun LazySectionViewPreview() {
     VndbTheme {
         LazySectionView<String>(
             state = SectionState.Failed(
-                ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true),
+                ErrorUIModel(
+                    UiText.StringResource(StringResource.error_network),
+                    isRetryable = true,
+                ),
             ),
             onLoad = {},
             onRetry = {},

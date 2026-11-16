@@ -15,11 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -51,7 +50,7 @@ fun ErrorView(model: ErrorUIModel, onRetry: () -> Unit, modifier: Modifier = Mod
         )
         if (model.isRetryable) {
             Button(onClick = onRetry) {
-                Text(text = stringResource(R.string.action_retry))
+                Text(text = UiText.StringResource(StringResource.action_retry).asString())
             }
         }
     }
@@ -64,7 +63,7 @@ private fun ErrorViewPreview() {
         Surface {
             ErrorView(
                 model = ErrorUIModel(
-                    UiText.StringResource(R.string.error_network),
+                    UiText.StringResource(StringResource.error_network),
                     isRetryable = true,
                 ),
                 onRetry = {},

@@ -2,10 +2,10 @@ package com.zc.vndb.feature.character.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.mapper.bbCodeToPlainText
+import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.character.domain.model.CharacterProfile
 import com.zc.vndb.feature.character.domain.usecase.GetCharacterUseCase
@@ -121,7 +121,7 @@ class CharacterViewModel(
                 hiddenAppearancesLabel = hiddenAppearances.takeIf { count -> count > 0 }
                     ?.let { count ->
                         UiText.StringPlural(
-                            R.plurals.detail_hidden_by_spoiler,
+                            PluralResource.detail_hidden_by_spoiler,
                             count,
                             listOf(count),
                         )

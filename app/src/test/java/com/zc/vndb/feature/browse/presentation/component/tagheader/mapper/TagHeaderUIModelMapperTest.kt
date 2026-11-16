@@ -1,7 +1,8 @@
 package com.zc.vndb.feature.browse.presentation.component.tagheader.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.TagInfo
 import kotlin.test.Test
@@ -25,13 +26,19 @@ class TagHeaderUIModelMapperTest {
         val header = tag.toHeaderUIModel()
 
         assertEquals(UiText.StringValue("Corporations"), header.name)
-        assertEquals(UiText.StringResource(R.string.tag_category_content), header.categoryLabel)
         assertEquals(
-            UiText.StringPlural(R.plurals.tag_vn_count, 1136, listOf("%,d".format(1136))),
+            UiText.StringResource(StringResource.tag_category_content),
+            header.categoryLabel,
+        )
+        assertEquals(
+            UiText.StringPlural(PluralResource.tag_vn_count, 1136, listOf("%,d".format(1136))),
             header.countLabel,
         )
         assertEquals(
-            UiText.StringResource(R.string.tag_aliases, listOf("Large Companies, Large Company")),
+            UiText.StringResource(
+                StringResource.tag_aliases,
+                listOf("Large Companies, Large Company"),
+            ),
             header.aliasesLabel,
         )
         assertEquals(UiText.StringValue("A corporation plays a part."), header.description)

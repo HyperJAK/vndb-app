@@ -31,12 +31,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
@@ -47,6 +45,7 @@ import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.linksrow.LinksRowView
 import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -132,13 +131,17 @@ private fun ReleaseTopBar(onIntent: (ReleaseIntent) -> Unit) {
             IconButton(onClick = { onIntent(ReleaseIntent.ShareClicked) }) {
                 Icon(
                     Icons.Outlined.Share,
-                    contentDescription = stringResource(R.string.detail_share),
+                    contentDescription = UiText.StringResource(
+                        StringResource.detail_share,
+                    ).asString(),
                 )
             }
             IconButton(onClick = { onIntent(ReleaseIntent.OpenInBrowserClicked) }) {
                 Icon(
                     Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = stringResource(R.string.detail_open_in_browser),
+                    contentDescription = UiText.StringResource(
+                        StringResource.detail_open_in_browser,
+                    ).asString(),
                 )
             }
         },
@@ -167,7 +170,7 @@ private fun LazyListScope.releaseSections(
     if (state.novels.isNotEmpty()) {
         item(key = "novels", contentType = "novels") {
             SectionCardView(
-                title = UiText.StringResource(R.string.release_visual_novels),
+                title = UiText.StringResource(StringResource.release_visual_novels),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 state.novels.forEach { novel ->
@@ -192,7 +195,7 @@ private fun LazyListScope.releaseSections(
     state.notes?.let { notes ->
         item(key = "notes", contentType = "notes") {
             ExpandableTextView(
-                title = UiText.StringResource(R.string.release_notes),
+                title = UiText.StringResource(StringResource.release_notes),
                 text = notes,
                 isExpanded = state.isNotesExpanded,
                 onToggle = actions.onNotesToggle,
@@ -205,7 +208,7 @@ private fun LazyListScope.releaseSections(
 @Composable
 private fun LanguagesSection(languages: ImmutableList<ReleaseLanguageUIModel>) {
     SectionCardView(
-        title = UiText.StringResource(R.string.release_languages),
+        title = UiText.StringResource(StringResource.release_languages),
         modifier = Modifier.fillMaxWidth(),
     ) {
         languages.forEach { language ->
@@ -229,7 +232,7 @@ private fun LanguagesSection(languages: ImmutableList<ReleaseLanguageUIModel>) {
                 }
                 if (language.isMachineTranslated) {
                     TagChipView(
-                        label = UiText.StringResource(R.string.release_machine_translation),
+                        label = UiText.StringResource(StringResource.release_machine_translation),
                         colors = VndbTheme.colors.spoilerMinor,
                     )
                 }
@@ -242,7 +245,7 @@ private fun LanguagesSection(languages: ImmutableList<ReleaseLanguageUIModel>) {
 @Composable
 private fun ProducersSection(producers: ImmutableList<ReleaseProducerUIModel>) {
     SectionCardView(
-        title = UiText.StringResource(R.string.release_producers),
+        title = UiText.StringResource(StringResource.release_producers),
         modifier = Modifier.fillMaxWidth(),
     ) {
         producers.forEach { producer ->
@@ -264,7 +267,7 @@ private fun ProducersSection(producers: ImmutableList<ReleaseProducerUIModel>) {
 @Composable
 private fun ImagesSection(images: ImmutableList<ReleaseImageUIModel>) {
     SectionCardView(
-        title = UiText.StringResource(R.string.release_images),
+        title = UiText.StringResource(StringResource.release_images),
         modifier = Modifier.fillMaxWidth(),
     ) {
         LazyRow(horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md)) {
@@ -305,7 +308,10 @@ private val previewState = ReleaseState(
             ReleaseFlagUIModel(UiText.StringValue("Official"), ReleaseFlagTone.Accent),
         ),
         facts = persistentListOf(
-            FactUIModel(R.string.release_released, UiText.StringValue("2010-08-26")),
+            FactUIModel(
+                UiText.StringResource(StringResource.release_released),
+                UiText.StringValue("2010-08-26"),
+            ),
         ),
     ),
     links = persistentListOf(
@@ -346,7 +352,7 @@ private class ReleaseStateProvider : PreviewParameterProvider<ReleaseState> {
         ReleaseState(
             releaseId = "r7668",
             error = ErrorUIModel(
-                UiText.StringResource(R.string.error_not_found),
+                UiText.StringResource(StringResource.error_not_found),
                 isRetryable = false,
             ),
         ),

@@ -1,8 +1,8 @@
 package com.zc.vndb.feature.browse.presentation.component.browsenovelcard.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.common.domain.model.ReleaseDate
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.BrowseSamples
 import kotlin.test.Test
@@ -26,7 +26,7 @@ class BrowseNovelCardUIModelMapperTest {
         assertEquals(UiText.StringValue("MAGES."), card.creditsLabel)
         assertEquals(UiText.StringValue("2009"), card.yearLabel)
         assertEquals(UiText.StringValue("9.02"), card.ratingLabel)
-        assertEquals(UiText.StringResource(R.string.length_long), card.lengthLabel)
+        assertEquals(UiText.StringResource(StringResource.length_long), card.lengthLabel)
         assertEquals("thumb", card.coverUrl)
         assertEquals(listOf<UiText>(UiText.StringValue("Time Travel")), card.tags)
     }
@@ -36,7 +36,7 @@ class BrowseNovelCardUIModelMapperTest {
         val card = novel.copy(developerNames = listOf("5pb.", "Nitroplus", "Third")).toCardUIModel()
 
         assertEquals(
-            UiText.StringResource(R.string.credits_separator, listOf("5pb.", "Nitroplus")),
+            UiText.StringResource(StringResource.credits_separator, listOf("5pb.", "Nitroplus")),
             card.creditsLabel,
         )
         assertNull(novel.copy(developerNames = emptyList()).toCardUIModel().creditsLabel)
@@ -55,7 +55,7 @@ class BrowseNovelCardUIModelMapperTest {
             novel.copy(releaseDate = ReleaseDate.Year(2020)).toCardUIModel().yearLabel,
         )
         assertEquals(
-            UiText.StringResource(R.string.release_tba),
+            UiText.StringResource(StringResource.release_tba),
             novel.copy(releaseDate = ReleaseDate.Tba).toCardUIModel().yearLabel,
         )
     }
@@ -65,11 +65,11 @@ class BrowseNovelCardUIModelMapperTest {
         val labels = NovelLength.entries.map { novel.copy(length = it).toCardUIModel().lengthLabel }
         assertEquals(
             listOf(
-                R.string.length_very_short,
-                R.string.length_short,
-                R.string.length_medium,
-                R.string.length_long,
-                R.string.length_very_long,
+                StringResource.length_very_short,
+                StringResource.length_short,
+                StringResource.length_medium,
+                StringResource.length_long,
+                StringResource.length_very_long,
             ).map { UiText.StringResource(it) },
             labels,
         )

@@ -1,6 +1,6 @@
 package com.zc.vndb.feature.release.presentation.component.releasehero.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.release.domain.model.ReleaseImage
 import com.zc.vndb.feature.release.domain.model.ReleaseImageType
@@ -20,25 +20,25 @@ class ReleaseHeroUIModelMapperTest {
 
         assertEquals(
             listOf(
-                R.string.release_released,
-                R.string.release_platforms,
-                R.string.release_media,
-                R.string.release_engine,
-                R.string.release_resolution,
-                R.string.release_voiced,
-                R.string.release_catalog,
-                R.string.release_barcode,
+                StringResource.release_released,
+                StringResource.release_platforms,
+                StringResource.release_media,
+                StringResource.release_engine,
+                StringResource.release_resolution,
+                StringResource.release_voiced,
+                StringResource.release_catalog,
+                StringResource.release_barcode,
             ),
-            facts.map { it.label },
+            facts.map { (it.label as UiText.StringResource).id },
         )
         assertEquals(UiText.StringValue("2010-08-26"), facts[0].value)
         assertEquals(UiText.StringValue("Windows"), facts[1].value)
-        assertEquals(UiText.StringResource(R.string.release_medium_dvd), facts[2].value)
+        assertEquals(UiText.StringResource(StringResource.release_medium_dvd), facts[2].value)
         assertEquals(
-            UiText.StringResource(R.string.release_resolution_value, listOf(1024, 576)),
+            UiText.StringResource(StringResource.release_resolution_value, listOf(1024, 576)),
             facts[4].value,
         )
-        assertEquals(UiText.StringResource(R.string.release_voiced_full), facts[5].value)
+        assertEquals(UiText.StringResource(StringResource.release_voiced_full), facts[5].value)
     }
 
     @Test
@@ -47,8 +47,8 @@ class ReleaseHeroUIModelMapperTest {
 
         assertEquals(
             UiText.StringResource(
-                R.string.release_medium_quantity,
-                listOf(UiText.StringResource(R.string.release_medium_blr), 2),
+                StringResource.release_medium_quantity,
+                listOf(UiText.StringResource(StringResource.release_medium_blr), 2),
             ),
             media,
         )
@@ -77,9 +77,9 @@ class ReleaseHeroUIModelMapperTest {
             ),
             flags.map { it.tone },
         )
-        assertEquals(UiText.StringResource(R.string.release_unofficial), flags.first().label)
+        assertEquals(UiText.StringResource(StringResource.release_unofficial), flags.first().label)
         assertEquals(
-            UiText.StringResource(R.string.detail_age_all),
+            UiText.StringResource(StringResource.detail_age_all),
             release().copy(minAge = 0).toHeroUIModel().flags.last().label,
         )
     }

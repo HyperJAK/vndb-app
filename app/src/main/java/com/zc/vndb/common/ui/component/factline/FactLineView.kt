@@ -7,11 +7,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.factline.model.FactUIModel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -27,7 +26,7 @@ fun FactLineView(
 ) {
     Row(modifier = modifier) {
         Text(
-            text = stringResource(fact.label),
+            text = fact.label.asString(),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.width(labelWidth),
@@ -45,7 +44,10 @@ fun FactLineView(
 private fun FactLineViewPreview() {
     VndbTheme {
         FactLineView(
-            fact = FactUIModel(R.string.character_height, UiText.StringValue("160 cm")),
+            fact = FactUIModel(
+                UiText.StringResource(StringResource.character_height),
+                UiText.StringValue("160 cm"),
+            ),
             modifier = Modifier.padding(VndbTheme.spacing.lg),
         )
     }

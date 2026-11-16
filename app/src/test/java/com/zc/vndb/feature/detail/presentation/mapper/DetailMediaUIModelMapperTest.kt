@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.detail.presentation.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.screenshot
 import com.zc.vndb.feature.detail.presentation.model.ContentFilter
@@ -25,14 +26,14 @@ class DetailMediaUIModelMapperTest {
         assertEquals(1, media.visibleCount)
         assertEquals(listOf("safe"), media.preview.map { it.url })
         assertEquals(
-            UiText.StringPlural(R.plurals.detail_hidden_by_filters, 3, listOf(3)),
+            UiText.StringPlural(PluralResource.detail_hidden_by_filters, 3, listOf(3)),
             media.hiddenLabel,
         )
         assertEquals(
             listOf(
-                UiText.StringResource(R.string.detail_filter_safe, listOf(2)),
-                UiText.StringResource(R.string.detail_filter_suggestive, listOf(1)),
-                UiText.StringResource(R.string.detail_filter_explicit, listOf(1)),
+                UiText.StringResource(StringResource.detail_filter_safe, listOf(2)),
+                UiText.StringResource(StringResource.detail_filter_suggestive, listOf(1)),
+                UiText.StringResource(StringResource.detail_filter_explicit, listOf(1)),
             ),
             media.sexualToggles.map { it.label },
         )

@@ -31,12 +31,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -79,7 +78,9 @@ fun ImageViewerView(
             ) {
                 Icon(
                     Icons.Filled.Close,
-                    contentDescription = stringResource(R.string.detail_close_viewer),
+                    contentDescription = UiText.StringResource(
+                        StringResource.detail_close_viewer,
+                    ).asString(),
                     tint = Color.White,
                 )
             }
@@ -101,11 +102,10 @@ fun ImageViewerView(
                     )
                 }
                 Text(
-                    text = stringResource(
-                        R.string.detail_viewer_position,
-                        pagerState.currentPage + 1,
-                        state.images.size,
-                    ),
+                    text = UiText.StringResource(
+                        StringResource.detail_viewer_position,
+                        listOf(pagerState.currentPage + 1, state.images.size),
+                    ).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.White,
                 )

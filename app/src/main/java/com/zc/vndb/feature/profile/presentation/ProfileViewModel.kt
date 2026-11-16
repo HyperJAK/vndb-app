@@ -2,13 +2,13 @@ package com.zc.vndb.feature.profile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.Session
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.profile.domain.model.ListEntry
 import com.zc.vndb.feature.profile.domain.model.ListLabel
-import com.zc.vndb.feature.profile.domain.model.Session
 import com.zc.vndb.feature.profile.domain.model.UserProfile
 import com.zc.vndb.feature.profile.domain.usecase.GetListEntriesUseCase
 import com.zc.vndb.feature.profile.domain.usecase.GetProfileUseCase
@@ -282,7 +282,9 @@ class ProfileViewModel(
     private fun onUnauthorized(error: Throwable): Boolean {
         if (error != DomainError.Unauthorized) return false
         sendEffect(
-            ProfileEffect.ShowMessage(UiText.StringResource(R.string.profile_session_expired)),
+            ProfileEffect.ShowMessage(
+                UiText.StringResource(StringResource.profile_session_expired),
+            ),
         )
         return true
     }

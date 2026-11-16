@@ -1,9 +1,10 @@
 package com.zc.vndb.feature.browse.presentation
 
 import app.cash.turbine.test
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.browse.domain.model.AgeRating
@@ -49,7 +50,7 @@ class BrowseViewModelTest {
         assertEquals(BrowseFilter(), repository.requests.single().filter)
         assertEquals(20, state.results.size)
         assertEquals(
-            UiText.StringPlural(R.plurals.browse_found_titles, 45, listOf("%,d".format(45))),
+            UiText.StringPlural(PluralResource.browse_found_titles, 45, listOf("%,d".format(45))),
             state.resultCountLabel,
         )
         assertTrue(state.canLoadMore)
@@ -185,7 +186,7 @@ class BrowseViewModelTest {
         advanceUntilIdle()
 
         assertEquals(
-            UiText.StringResource(R.string.error_network),
+            UiText.StringResource(StringResource.error_network),
             viewModel.state.value.error?.message,
         )
         assertTrue(viewModel.state.value.results.isEmpty())

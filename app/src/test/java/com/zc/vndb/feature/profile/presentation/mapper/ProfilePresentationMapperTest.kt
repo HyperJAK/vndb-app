@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.profile.presentation.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.profile.domain.model.EntryLabel
 import com.zc.vndb.feature.profile.domain.model.ListLabel
@@ -39,7 +40,10 @@ class ProfilePresentationMapperTest {
         ).toChips(selectedId = 1)
 
         assertEquals(
-            UiText.StringResource(R.string.profile_label_with_count, listOf("Playing", "1,200")),
+            UiText.StringResource(
+                StringResource.profile_label_with_count,
+                listOf("Playing", "1,200"),
+            ),
             chips.single().label,
         )
         assertEquals(true, chips.single().isSelected)
@@ -55,10 +59,10 @@ class ProfilePresentationMapperTest {
         assertEquals(UiText.StringValue("Y"), header.initial)
         assertEquals(
             UiText.StringResource(
-                R.string.profile_stats_line,
+                StringResource.profile_stats_line,
                 listOf(
-                    UiText.StringPlural(R.plurals.profile_length_votes, 10, listOf("10")),
-                    UiText.StringResource(R.string.profile_hours_logged, listOf("171")),
+                    UiText.StringPlural(PluralResource.profile_length_votes, 10, listOf("10")),
+                    UiText.StringResource(StringResource.profile_hours_logged, listOf("171")),
                 ),
             ),
             header.statsLabel,
@@ -80,9 +84,14 @@ class ProfilePresentationMapperTest {
         ).toCardUIModel(shownLabelId = ListLabel.PLAYING, now = now)
 
         assertEquals(listOf<UiText>(UiText.StringValue("Waiting")), card.labels.toList())
-        assertEquals(UiText.StringResource(R.string.profile_my_vote, listOf("8.5")), card.voteLabel)
         assertEquals(
-            listOf<UiText>(UiText.StringResource(R.string.profile_started, listOf("2026-01-07"))),
+            UiText.StringResource(StringResource.profile_my_vote, listOf("8.5")),
+            card.voteLabel,
+        )
+        assertEquals(
+            listOf<UiText>(
+                UiText.StringResource(StringResource.profile_started, listOf("2026-01-07")),
+            ),
             card.dates.toList(),
         )
     }
@@ -90,23 +99,23 @@ class ProfilePresentationMapperTest {
     @Test
     fun `updated label goes from just now to minutes, hours, days and a date`() {
         assertEquals(
-            UiText.StringResource(R.string.profile_updated_just_now),
+            UiText.StringResource(StringResource.profile_updated_just_now),
             (now - 30.seconds).toUpdatedLabel(now),
         )
         assertEquals(
-            UiText.StringPlural(R.plurals.profile_updated_minutes, 5, listOf(5)),
+            UiText.StringPlural(PluralResource.profile_updated_minutes, 5, listOf(5)),
             (now - 5.minutes).toUpdatedLabel(now),
         )
         assertEquals(
-            UiText.StringPlural(R.plurals.profile_updated_hours, 3, listOf(3)),
+            UiText.StringPlural(PluralResource.profile_updated_hours, 3, listOf(3)),
             (now - 3.hours).toUpdatedLabel(now),
         )
         assertEquals(
-            UiText.StringPlural(R.plurals.profile_updated_days, 2, listOf(2)),
+            UiText.StringPlural(PluralResource.profile_updated_days, 2, listOf(2)),
             (now - 2.days).toUpdatedLabel(now),
         )
         assertEquals(
-            R.string.profile_updated_on,
+            StringResource.profile_updated_on,
             (now - 60.days).toUpdatedLabel(now).let { (it as UiText.StringResource).id },
         )
     }

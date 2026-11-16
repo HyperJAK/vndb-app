@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.release.presentation.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.ExternalLink
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.release.domain.model.ReleaseImage
 import com.zc.vndb.feature.release.domain.model.ReleaseImageType
@@ -52,13 +52,13 @@ class ReleaseSectionsUIModelMapperTest {
 
         assertEquals(
             listOf<UiText>(
-                UiText.StringResource(R.string.release_developer),
-                UiText.StringResource(R.string.release_publisher),
+                UiText.StringResource(StringResource.release_developer),
+                UiText.StringResource(StringResource.release_publisher),
             ),
             detail.toProducerUIModels().single().roles,
         )
         val image = detail.toImageUIModels().single()
-        assertEquals(UiText.StringResource(R.string.release_image_back), image.typeLabel)
+        assertEquals(UiText.StringResource(StringResource.release_image_back), image.typeLabel)
         assertEquals("back-thumb", image.thumbnailUrl)
         assertEquals(UiText.StringValue("Comes with 4 trading cards."), detail.toNotes())
         assertNull(detail.copy(notes = null).toNotes())
