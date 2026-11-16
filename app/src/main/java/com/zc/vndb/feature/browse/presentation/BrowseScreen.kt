@@ -38,12 +38,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
+import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
@@ -131,19 +133,36 @@ fun BrowseScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columns),
-            state = gridState,
+        PullToRefreshView(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { onIntent(BrowseIntent.Refresh) },
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = margin, vertical = VndbTheme.spacing.sm),
-            horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.gutter),
-            verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
         ) {
-            filters(state, actions)
-            results(state, actions)
+            BrowseGrid(state, actions, gridState, columns, margin)
         }
+    }
+}
+
+@Composable
+private fun BrowseGrid(
+    state: BrowseState,
+    actions: BrowseActions,
+    gridState: LazyGridState,
+    columns: Int,
+    margin: Dp,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(columns),
+        state = gridState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = margin, vertical = VndbTheme.spacing.sm),
+        horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.gutter),
+        verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
+    ) {
+        filters(state, actions)
+        results(state, actions)
     }
 }
 

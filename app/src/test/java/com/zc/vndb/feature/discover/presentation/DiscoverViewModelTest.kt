@@ -160,4 +160,42 @@ class DiscoverViewModelTest {
             assertEquals(DiscoverEffect.NavigateToBrowse, awaitItem())
         }
     }
+
+    @Test
+    fun `pull to refresh reloads every section while keeping them on screen`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        repository.releases = listOf(DiscoverSamples.release("r2", novelId = "v100"))
+
+        viewModel.state.test {
+            skipItems(1)
+            viewModel.onIntent(DiscoverIntent.Refresh)
+            val refreshing = awaitItem()
+            assertTrue(refreshing.isRefreshing)
+            assertFalse(refreshing.isLoading)
+            assertEquals(listOf("r1"), refreshing.trending.map { it.releaseId })
+
+            val refreshed = awaitItem()
+            assertFalse(refreshed.isRefreshing)
+            assertEquals(listOf("r2"), refreshed.trending.map { it.releaseId })
+        }
+    }
+
+    @Test
+    fun `a failed refresh keeps the sections and shows an error`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        repository.topRatedError = DomainError.Network
+
+        viewModel.effect.test {
+            viewModel.onIntent(DiscoverIntent.Refresh)
+            val effect = assertIs<DiscoverEffect.ShowError>(awaitItem())
+            assertEquals(UiText.StringResource(R.string.error_network), effect.error.message)
+        }
+        with(viewModel.state.value) {
+            assertFalse(isRefreshing)
+            assertNull(error)
+            assertEquals(10, topRated.size)
+        }
+    }
 }

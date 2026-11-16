@@ -272,4 +272,44 @@ class BrowseViewModelTest {
             assertEquals(BrowseEffect.NavigateBack, awaitItem())
         }
     }
+
+    @Test
+    fun `pull to refresh reloads the first page of the current filter`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.onIntent(BrowseIntent.EndReached)
+        advanceUntilIdle()
+        assertEquals(40, viewModel.state.value.results.size)
+        repository.novels = (100..150).map { BrowseSamples.novel("v$it") }
+
+        viewModel.onIntent(BrowseIntent.Refresh)
+        assertTrue(viewModel.state.value.isRefreshing)
+        assertEquals(40, viewModel.state.value.results.size)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertFalse(state.isRefreshing)
+        assertEquals(1, repository.requests.last().page)
+        assertEquals("v100", state.results.first().id)
+        assertEquals(20, state.results.size)
+
+        viewModel.onIntent(BrowseIntent.EndReached)
+        advanceUntilIdle()
+        assertEquals(2, repository.requests.last().page)
+    }
+
+    @Test
+    fun `a failed refresh keeps the results and shows an error`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        repository.error = DomainError.Timeout
+
+        viewModel.effect.test {
+            viewModel.onIntent(BrowseIntent.Refresh)
+            val effect = awaitItem()
+            assertTrue(effect is BrowseEffect.ShowError)
+        }
+        assertFalse(viewModel.state.value.isRefreshing)
+        assertEquals(20, viewModel.state.value.results.size)
+    }
 }

@@ -56,6 +56,8 @@ class BrowseViewModel(
             BrowseIntent.Retry,
             -> reload()
 
+            BrowseIntent.Refresh -> refresh()
+
             is BrowseIntent.QueryChanged -> onQueryChanged(intent.query)
 
             BrowseIntent.SearchSubmitted -> applyFilter(filter.withQuery(_state.value.query))
@@ -137,6 +139,7 @@ class BrowseViewModel(
                 results = persistentListOf(),
                 resultCountLabel = null,
                 isLoading = true,
+                isRefreshing = false,
                 isLoadingMore = false,
                 canLoadMore = false,
                 loadMoreFailed = false,
@@ -169,9 +172,48 @@ class BrowseViewModel(
         }
     }
 
+    /**
+     * Reloads the first page of the current filter (and the tag header) behind the pull-to-refresh
+     * indicator. With no results to keep it is a plain reload; a failed refresh keeps them.
+     */
+    private fun refresh() {
+        val current = _state.value
+        if (current.isRefreshing || current.isLoading) return
+        if (current.results.isEmpty()) return reload()
+        loadJob?.cancel()
+        loadTag()
+        _state.update {
+            it.copy(
+                isRefreshing = true,
+                isLoadingMore = false,
+                loadMoreFailed = false,
+            )
+        }
+        loadJob = viewModelScope.launch {
+            searchNovels(filter, SearchNovelsUseCase.FIRST_PAGE)
+                .onSuccess { page ->
+                    nextPage = SearchNovelsUseCase.FIRST_PAGE + 1
+                    _state.update {
+                        it.copy(
+                            isRefreshing = false,
+                            results = page.novels.map { novel ->
+                                novel.toCardUIModel()
+                            }.toImmutableList(),
+                            resultCountLabel = page.totalCount?.toResultCountLabel(),
+                            canLoadMore = page.hasMore,
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    _state.update { it.copy(isRefreshing = false) }
+                    sendEffect(BrowseEffect.ShowError(error.toErrorUIModel()))
+                }
+        }
+    }
+
     private fun loadNextPage() {
         val current = _state.value
-        if (current.isLoading || current.isLoadingMore || !current.canLoadMore) return
+        if (current.isBusy || !current.canLoadMore) return
         _state.update { it.copy(isLoadingMore = true, loadMoreFailed = false) }
         loadJob = viewModelScope.launch {
             searchNovels(filter, nextPage)

@@ -28,6 +28,8 @@ data class BrowseState(
     val resultCountLabel: UiText? = null,
     /** First page in flight; results are replaced when it lands. */
     val isLoading: Boolean = false,
+    /** Pull to refresh in flight; the current results stay on screen. */
+    val isRefreshing: Boolean = false,
     val isLoadingMore: Boolean = false,
     val canLoadMore: Boolean = false,
     val loadMoreFailed: Boolean = false,
@@ -35,4 +37,7 @@ data class BrowseState(
     val error: ErrorUIModel? = null,
 ) {
     val showEmpty: Boolean get() = !isLoading && error == null && results.isEmpty()
+
+    /** A page request is in flight, so no other one should start. */
+    val isBusy: Boolean get() = isLoading || isRefreshing || isLoadingMore
 }
