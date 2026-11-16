@@ -95,6 +95,9 @@ Compose:
       - LocalVndbShapes
       - LocalVndbSpacing
       - LocalVndbDimens
+  PreviewAnnotationNaming:
+    # The skills name the shared multi-preview `@AdaptivePreviews` (best-practices skill §5.1).
+    active: false
   Material2:
     # Material 3 only (tech-stack skill §4).
     active: true

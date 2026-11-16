@@ -1,0 +1,64 @@
+{
+    "more": true,
+    "results": [
+        {
+            "developers": [
+                {
+                    "id": "p120",
+                    "name": "Alice Soft"
+                }
+            ],
+            "id": "v20802",
+            "image": {
+                "sexual": 0,
+                "thumbnail": "https://t.vndb.org/cv.t/91/88391.jpg",
+                "url": "https://t.vndb.org/cv/91/88391.jpg",
+                "violence": 0
+            },
+            "rating": 90.7,
+            "title": "Rance X -Kessen-"
+        },
+        {
+            "developers": [
+                {
+                    "id": "p42",
+                    "name": "NITRO PLUS"
+                }
+            ],
+            "id": "v2016",
+            "image": {
+                "sexual": 0,
+                "thumbnail": "https://t.vndb.org/cv.t/25/77925.jpg",
+                "url": "https://t.vndb.org/cv/25/77925.jpg",
+                "violence": 0
+            },
+            "rating": 90.2,
+            "title": "Soukou Akki Muramasa"
+        },
+        {
+            "developers": [
+                {
+                    "id": "p21",
+                    "name": "Leaf"
+                },
+                {
+                    "id": "p87",
+                    "name": "AQUAPLUS"
+                },
+                {
+                    "id": "p4153",
+                    "name": "STING CO., LTD."
+                }
+            ],
+            "id": "v7771",
+            "image": {
+                "sexual": 0,
+                "thumbnail": "https://t.vndb.org/cv.t/62/88962.jpg",
+                "url": "https://t.vndb.org/cv/62/88962.jpg",
+                "violence": 0
+            },
+            "rating": 90.2,
+            "title": "WHITE ALBUM2"
+        }
+    ]
+}

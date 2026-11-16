@@ -1,0 +1,170 @@
+{
+    "more": true,
+    "results": [
+        {
+            "id": "r151820",
+            "languages": [
+                {
+                    "lang": "en",
+                    "mtl": false
+                },
+                {
+                    "lang": "ja",
+                    "mtl": false
+                },
+                {
+                    "lang": "zh-Hans",
+                    "mtl": false
+                },
+                {
+                    "lang": "zh-Hant",
+                    "mtl": false
+                }
+            ],
+            "patch": false,
+            "platforms": [
+                "win"
+            ],
+            "released": "2026-11-16",
+            "vns": [
+                {
+                    "id": "v63472",
+                    "image": {
+                        "sexual": 0,
+                        "thumbnail": "https://t.vndb.org/cv.t/10/129010.jpg",
+                        "url": "https://t.vndb.org/cv/10/129010.jpg",
+                        "violence": 0
+                    },
+                    "olang": "ja",
+                    "rating": null,
+                    "released": "2026-11-16",
+                    "title": "Obey Me! Sinner's Choice: Lucifer"
+                }
+            ]
+        },
+        {
+            "id": "r166161",
+            "languages": [
+                {
+                    "lang": "de",
+                    "mtl": false
+                },
+                {
+                    "lang": "en",
+                    "mtl": false
+                },
+                {
+                    "lang": "ru",
+                    "mtl": false
+                },
+                {
+                    "lang": "zh-Hans",
+                    "mtl": false
+                },
+                {
+                    "lang": "zh-Hant",
+                    "mtl": false
+                }
+            ],
+            "patch": false,
+            "platforms": [
+                "win",
+                "lin",
+                "mac"
+            ],
+            "released": "2026-11-16",
+            "vns": [
+                {
+                    "id": "v69263",
+                    "image": {
+                        "sexual": 0,
+                        "thumbnail": "https://t.vndb.org/cv.t/57/146857.jpg",
+                        "url": "https://t.vndb.org/cv/57/146857.jpg",
+                        "violence": 0
+                    },
+                    "olang": "en",
+                    "rating": null,
+                    "released": "2026-11-16",
+                    "title": "Boardroom Wars: Fight for Kashistan"
+                }
+            ]
+        },
+        {
+            "id": "r170050",
+            "languages": [
+                {
+                    "lang": "cs",
+                    "mtl": false
+                },
+                {
+                    "lang": "de",
+                    "mtl": false
+                },
+                {
+                    "lang": "en",
+                    "mtl": false
+                },
+                {
+                    "lang": "fr",
+                    "mtl": false
+                },
+                {
+                    "lang": "it",
+                    "mtl": false
+                },
+                {
+                    "lang": "ja",
+                    "mtl": false
+                },
+                {
+                    "lang": "ko",
+                    "mtl": false
+                },
+                {
+                    "lang": "pl",
+                    "mtl": false
+                },
+                {
+                    "lang": "pt-br",
+                    "mtl": false
+                },
+                {
+                    "lang": "ru",
+                    "mtl": false
+                },
+                {
+                    "lang": "tr",
+                    "mtl": false
+                },
+                {
+                    "lang": "zh-Hans",
+                    "mtl": false
+                },
+                {
+                    "lang": "zh-Hant",
+                    "mtl": false
+                }
+            ],
+            "patch": false,
+            "platforms": [
+                "win"
+            ],
+            "released": "2026-11-16",
+            "vns": [
+                {
+                    "id": "v70617",
+                    "image": {
+                        "sexual": 1,
+                        "thumbnail": "https://t.vndb.org/cv.t/91/152991.jpg",
+                        "url": "https://t.vndb.org/cv/91/152991.jpg",
+                        "violence": 0
+                    },
+                    "olang": "en",
+                    "rating": null,
+                    "released": "2026-11-16",
+                    "title": "EmyLiveShow Origins: Nia The Gamer Queen"
+                }
+            ]
+        }
+    ]
+}

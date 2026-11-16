@@ -1,0 +1,85 @@
+{
+    "more": false,
+    "results": [
+        {
+            "description": "[b]-Decide The Fate Of All Mankind-[/b]\nCAN YOU CHANGE THE COURSE OF FATE?\nAND SAVE THE ONES CLOSEST TO YOU?\n\nSteins;Gate follows a rag-tag band of tech-savvy y",
+            "developers": [
+                {
+                    "id": "p42",
+                    "name": "NITRO PLUS"
+                },
+                {
+                    "id": "p146",
+                    "name": "MAGES."
+                },
+                {
+                    "id": "p6307",
+                    "name": "MAGES. Inc."
+                }
+            ],
+            "id": "v2002",
+            "image": {
+                "sexual": 0,
+                "thumbnail": "https://t.vndb.org/cv.t/19/77819.jpg",
+                "url": "https://t.vndb.org/cv/19/77819.jpg",
+                "violence": 0
+            },
+            "rating": 90.2,
+            "staff": [
+                {
+                    "id": "s552",
+                    "name": "Abo Takeshi",
+                    "role": "music"
+                },
+                {
+                    "id": "s2095",
+                    "name": "Tanizaki Ouka",
+                    "role": "scenario"
+                },
+                {
+                    "id": "s27511",
+                    "name": "H. Anthony Israel",
+                    "role": "translator"
+                }
+            ],
+            "tags": [
+                {
+                    "category": "tech",
+                    "id": "g32",
+                    "name": "ADV",
+                    "rating": 2.61074185371399,
+                    "spoiler": 0
+                },
+                {
+                    "category": "cont",
+                    "id": "g1628",
+                    "name": "Chuunibyou Protagonist",
+                    "rating": 2.92000007629395,
+                    "spoiler": 0
+                },
+                {
+                    "category": "cont",
+                    "id": "g324",
+                    "name": "Suspense",
+                    "rating": 2.86111116409302,
+                    "spoiler": 0
+                },
+                {
+                    "category": "cont",
+                    "id": "g717",
+                    "name": "Modern Day Akihabara",
+                    "rating": 2.80392146110535,
+                    "spoiler": 0
+                },
+                {
+                    "category": "cont",
+                    "id": "g44",
+                    "name": "Pistol Combat",
+                    "rating": 0.555555582046509,
+                    "spoiler": 2
+                }
+            ],
+            "title": "STEINS;GATE"
+        }
+    ]
+}
