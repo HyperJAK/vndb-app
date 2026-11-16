@@ -12,7 +12,6 @@
 
     <!-- Shared labels -->
     <string name="app_wordmark">MyVNDB</string>
-    <string name="app_version_badge">v%1$s</string>
     <string name="rating_out_of_ten">%1$s / 10</string>
     <string name="release_tba">TBA</string>
     <string name="separator_dot">·</string>
@@ -87,7 +86,6 @@
     <string name="detail_dev">Dev:</string>
     <string name="detail_released">Released:</string>
     <string name="detail_length">Length:</string>
-    <string name="detail_average_hours">%1$sh avg</string>
     <string name="detail_age_all">All Ages</string>
     <string name="detail_age_min">%1$d+</string>
     <string name="detail_age_range_from_all">All Ages / %1$d+</string>
@@ -151,7 +149,14 @@
     <string name="detail_tab_releases">Releases</string>
     <string name="detail_tab_quotes">Quotes</string>
     <string name="detail_tab_with_count">%1$s %2$s</string>
-    <string name="detail_average_hours_votes">%1$sh avg (%2$s votes)</string>
+    <string name="detail_length_value">(%1$s)</string>
+    <string name="detail_hours">%1$sh</string>
+    <string name="detail_length_votes">%1$s votes</string>
+    <string name="length_name_very_short">Very Short</string>
+    <string name="length_name_short">Short</string>
+    <string name="length_name_medium">Medium</string>
+    <string name="length_name_long">Long</string>
+    <string name="length_name_very_long">Very Long</string>
     <string name="detail_also_known_as">Also known as</string>
     <string name="detail_screenshots">Screenshots</string>
     <string name="detail_see_all_count">See all %1$d</string>

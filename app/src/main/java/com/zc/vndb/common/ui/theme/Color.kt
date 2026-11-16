@@ -106,6 +106,9 @@ data class VndbColors(
         border = BorderSubtle,
     ),
 
+    // Length category pill on Title Detail
+    val chipLength: TintedColors = tinted(SkyBlue),
+
     // Release labels (Discover "New & Trending")
     val releaseNew: TintedColors = tinted(Tertiary),
     val releaseTranslation: TintedColors = tinted(SkyBlue),

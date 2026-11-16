@@ -119,26 +119,33 @@ private fun MetaLine(label: StringResource, value: UiText?) {
     }
 }
 
+/** "Length:  [Very Long] (73h) · 90 votes". */
 @Composable
 private fun LengthLine(model: DetailHeroUIModel) {
-    val length = model.lengthLabel ?: return
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    if (model.lengthName == null && model.lengthValueLabel == null) return
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Text(
             text = stringResource(R.string.detail_length),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(MetaLabelWidth),
+            modifier = Modifier.width(MetaLabelWidth - VndbTheme.spacing.sm),
         )
-        Text(
-            text = length.asString(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        model.averagePlayLabel?.let { average ->
+        model.lengthName?.let { TagChipView(label = it, colors = VndbTheme.colors.chipLength) }
+        model.lengthValueLabel?.let { value ->
             Text(
-                text = " ${stringResource(R.string.separator_dot)} ${average.asString()}",
+                text = value.asString(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+        model.lengthVotesLabel?.let { votes ->
+            Text(
+                text = "${stringResource(R.string.separator_dot)} ${votes.asString()}",
                 style = MaterialTheme.typography.labelMedium,
-                color = VndbTheme.colors.accent,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -157,8 +164,9 @@ private fun DetailHeroViewPreview() {
                 ratingLabel = UiText.StringValue("9.02"),
                 developerLabel = UiText.StringValue("5pb. / Nitroplus"),
                 releasedLabel = UiText.StringValue("2009-10-15"),
-                lengthLabel = UiText.StringValue("30-50h"),
-                averagePlayLabel = UiText.StringValue("44h avg"),
+                lengthName = UiText.StringValue("Long"),
+                lengthValueLabel = UiText.StringValue("(44h)"),
+                lengthVotesLabel = UiText.StringValue("1,021 votes"),
                 ageLabel = UiText.StringValue("All Ages / 15+"),
                 tags = persistentListOf(
                     UiText.StringValue("Sci-Fi"),

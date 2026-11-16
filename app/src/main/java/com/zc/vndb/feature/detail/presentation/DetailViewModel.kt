@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.CoverArt
 import com.zc.vndb.feature.detail.domain.model.NovelCast
@@ -450,7 +451,7 @@ class DetailViewModel(
         viewModelScope.launch { _effect.send(effect) }
     }
 
-    private fun DetailTab.labelRes(): Int = when (this) {
+    private fun DetailTab.labelRes(): StringResource = when (this) {
         DetailTab.Overview -> R.string.detail_tab_overview
         DetailTab.Media -> R.string.detail_tab_media
         DetailTab.Cast -> R.string.detail_tab_cast

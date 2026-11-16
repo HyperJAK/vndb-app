@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource as StringResourceId
 
 /**
@@ -27,7 +28,7 @@ sealed interface UiText {
 
     /** A `R.plurals.*` resource picked by [quantity], formatted with [args]. */
     data class StringPlural(
-        @PluralsRes val id: Int,
+        @PluralsRes val id: PluralResource,
         val quantity: Int,
         val args: List<Any> = emptyList(),
     ) : UiText

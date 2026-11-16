@@ -26,10 +26,17 @@ class DetailHeroUIModelMapperTest {
         assertEquals(UiText.StringValue("9.02"), hero.ratingLabel)
         assertEquals(UiText.StringValue("NITRO PLUS / MAGES."), hero.developerLabel)
         assertEquals(UiText.StringValue("2009-10-15"), hero.releasedLabel)
-        assertEquals(UiText.StringResource(R.string.length_long), hero.lengthLabel)
+        assertEquals(UiText.StringResource(R.string.length_name_long), hero.lengthName)
         assertEquals(
-            UiText.StringResource(R.string.detail_average_hours_votes, listOf("44", "1,021")),
-            hero.averagePlayLabel,
+            UiText.StringResource(
+                R.string.detail_length_value,
+                listOf(UiText.StringResource(R.string.detail_hours, listOf("44"))),
+            ),
+            hero.lengthValueLabel,
+        )
+        assertEquals(
+            UiText.StringResource(R.string.detail_length_votes, listOf("1,021")),
+            hero.lengthVotesLabel,
         )
         assertEquals(listOf<UiText>(UiText.StringValue("B"), UiText.StringValue("C")), hero.tags)
         assertEquals(
@@ -50,5 +57,19 @@ class DetailHeroUIModelMapperTest {
             AgeRange(12, 18).toLabel(),
         )
         assertNull(novel().toHeroUIModel(ageRange = null).ageLabel)
+    }
+
+    @Test
+    fun `without votes the length falls back to the category range`() {
+        val hero = novel().copy(averagePlayMinutes = null).toHeroUIModel(null)
+
+        assertEquals(
+            UiText.StringResource(
+                R.string.detail_length_value,
+                listOf(UiText.StringResource(R.string.length_long)),
+            ),
+            hero.lengthValueLabel,
+        )
+        assertNull(hero.lengthVotesLabel)
     }
 }

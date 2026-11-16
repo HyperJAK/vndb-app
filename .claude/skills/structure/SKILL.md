@@ -162,7 +162,7 @@ Rules are in `library-management`.
 | `ObserveAsEvents`, `@AdaptivePreviews` and other non-visual Compose helpers | `common/ui/util/` |
 | Presentation mapper for a `common/domain` type used by 2+ features (not tied to one component) | `common/ui/mapper/[Name]UIModelMapper.kt` |
 | `UiText` (all user-visible text in `presentation`) | `common/ui/text/UiText.kt` |
-| `StringResource` / `DrawableResource` typealiases for `R.string` / `R.drawable` ids | `common/ui/resource/ResourceTypes.kt` |
+| `StringResource` / `PluralResource` / `DrawableResource` typealiases for `R.string` / `R.plurals` / `R.drawable` ids | `common/ui/resource/ResourceTypes.kt` |
 | `ErrorUIModel`, `ErrorUIModelMapper`, `ErrorView` | `common/ui/component/error/{model,mapper}/`, `ErrorView.kt` |
 | Composable used by 2+ features | `common/ui/component/[name]/[Name]View.kt` |
 | Ktor API calls for one feature | `feature/[name]/data/remote/[Name]Service.kt` |

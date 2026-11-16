@@ -232,13 +232,14 @@ Everything the presentation layer shows as text is a `UiText` (`common/ui/text/U
 sealed interface UiText {
     data class StringValue(val value: String) : UiText                                   // hardcoded / API data
     data class StringResource(val id: StringResource, val args: List<Any> = emptyList()) : UiText   // R.string.*
-    data class StringPlural(val id: Int, val quantity: Int, val args: List<Any> = emptyList()) : UiText // R.plurals.*
+    data class StringPlural(val id: PluralResource, val quantity: Int, val args: List<Any> = emptyList()) : UiText // R.plurals.*
     @Composable fun asString(): String
     fun asString(context: Context): String
 }
 
 // common/ui/resource/ResourceTypes.kt
 typealias StringResource = Int     // R.string.*
+typealias PluralResource = Int     // R.plurals.*
 typealias DrawableResource = Int   // R.drawable.*
 ```
 
@@ -247,20 +248,21 @@ typealias DrawableResource = Int   // R.drawable.*
 - Every user-visible text in a `UIModel`, `UIState`, screen `State`, `Effect` and `common/ui/component` View parameter is typed `UiText` (or `UiText?`), never `String`, `Int` or `@StringRes Int`. That includes API data, which the mapper wraps in `UiText.StringValue(...)`.
 - Strings are built **only** in mappers and ViewModels: `UiText.StringResource(R.string.x)`, `UiText.StringResource(R.string.x, listOf(arg))`, `UiText.StringPlural(R.plurals.x, count, listOf(count))`.
 - Composables resolve text at the last moment with `text.asString()`. Code outside composition (snackbar in a Route effect, notifications) uses `text.asString(context)`.
-- Any property or parameter holding a resource id is typed `StringResource` or `DrawableResource` (from `ResourceTypes.kt`), never `Int`, `@StringRes Int` or `@DrawableRes Int`. `R.string.*` / `R.drawable.*` appear only as the **values** assigned to them.
+- Any property or parameter holding a resource id is typed `StringResource`, `PluralResource` or `DrawableResource` (from `ResourceTypes.kt`), never `Int`, `@StringRes Int`, `@PluralsRes Int` or `@DrawableRes Int` — including the return type of `labelRes()`-style mapping functions. `R.string.*` / `R.plurals.*` / `R.drawable.*` appear only as the **values** assigned to them.
 - Non-display strings (ids, URLs, query keys) stay `String`.
 
 **NEVER**:
 
 - `context.getString(...)`, `stringResource(...)` or `pluralStringResource(...)` in a ViewModel, mapper or UI model. ViewModels never hold a `Context`.
 - `String.format` / string templates on localized text in a composable — put the args in `UiText.StringResource(id, args)`.
-- `UiText`, `StringResource` or `DrawableResource` in `domain` or `data`.
+- `UiText`, `StringResource`, `PluralResource` or `DrawableResource` in `domain` or `data`.
 
 | ❌ Don't | ✅ Do |
 |---|---|
 | `val title: String` in a UIModel | `val title: UiText` + `UiText.StringValue(title)` in the mapper |
 | `@StringRes val messageRes: Int` | `val message: UiText` |
 | `@DrawableRes val iconRes: Int` | `val icon: DrawableResource` |
+| `private fun Tab.labelRes(): Int = when (this) { … R.string.x }` | `private fun Tab.labelRes(): StringResource = …` |
 | `Text(stringResource(model.labelRes))` | `Text(model.label.asString())` |
 | `context.getString(R.string.x)` in a ViewModel | `UiText.StringResource(R.string.x)` |
 | `"$count novels"` in a mapper | `UiText.StringPlural(R.plurals.novel_count, count, listOf(count))` |

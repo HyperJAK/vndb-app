@@ -3,13 +3,14 @@ package com.zc.vndb.common.ui.component.error.mapper
 import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ErrorUIModelMapperTest {
 
-    private fun expected(id: Int, isRetryable: Boolean) = ErrorUIModel(
+    private fun expected(id: StringResource, isRetryable: Boolean) = ErrorUIModel(
         UiText.StringResource(id),
         isRetryable,
     )

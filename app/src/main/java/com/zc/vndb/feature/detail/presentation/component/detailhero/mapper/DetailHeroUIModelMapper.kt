@@ -5,6 +5,7 @@ import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
 import com.zc.vndb.common.ui.mapper.toIsoLabel
 import com.zc.vndb.common.ui.mapper.toLabel
+import com.zc.vndb.common.ui.mapper.toNameLabel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.AgeRange
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
@@ -26,18 +27,11 @@ fun NovelDetail.toHeroUIModel(ageRange: AgeRange?): DetailHeroUIModel = DetailHe
     developerLabel = developerNames.takeIf { it.isNotEmpty() }
         ?.let { UiText.StringValue(it.take(MAX_DEVELOPERS).joinToString(" / ")) },
     releasedLabel = releaseDate.toIsoLabel(),
-    lengthLabel = length?.toLabel(),
-    averagePlayLabel = averagePlayMinutes?.let { minutes ->
-        val hours = (minutes / MINUTES_PER_HOUR).roundToInt().toString()
-        if (lengthVotes > 0) {
-            UiText.StringResource(
-                R.string.detail_average_hours_votes,
-                listOf(hours, "%,d".format(lengthVotes)),
-            )
-        } else {
-            UiText.StringResource(R.string.detail_average_hours, listOf(hours))
-        }
-    },
+    lengthName = length?.toNameLabel(),
+    lengthValueLabel = (averageHoursLabel() ?: length?.toLabel())
+        ?.let { UiText.StringResource(R.string.detail_length_value, listOf(it)) },
+    lengthVotesLabel = lengthVotes.takeIf { it > 0 && averagePlayMinutes != null }
+        ?.let { UiText.StringResource(R.string.detail_length_votes, listOf("%,d".format(it))) },
     ageLabel = ageRange?.toLabel(),
     tags = tags
         .filter { it.category == TagCategory.Content && it.spoilerLevel == 0 }
@@ -46,6 +40,13 @@ fun NovelDetail.toHeroUIModel(ageRange: AgeRange?): DetailHeroUIModel = DetailHe
         .map { UiText.StringValue(it.name) }
         .toImmutableList(),
 )
+
+private fun NovelDetail.averageHoursLabel(): UiText? = averagePlayMinutes?.let { minutes ->
+    UiText.StringResource(
+        R.string.detail_hours,
+        listOf((minutes / MINUTES_PER_HOUR).roundToInt().toString()),
+    )
+}
 
 /** "All Ages", "18+", "All Ages / 15+" or "12+ / 18+". */
 fun AgeRange.toLabel(): UiText = when {

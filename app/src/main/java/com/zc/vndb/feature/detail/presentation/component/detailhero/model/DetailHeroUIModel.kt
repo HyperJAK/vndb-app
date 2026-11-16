@@ -14,8 +14,12 @@ data class DetailHeroUIModel(
     val ratingLabel: UiText?,
     val developerLabel: UiText?,
     val releasedLabel: UiText,
-    val lengthLabel: UiText?,
-    val averagePlayLabel: UiText?,
+    /** Length category, shown as a pill: "Very Long". */
+    val lengthName: UiText?,
+    /** Average play time from votes, else the category's range: "(73h)", "(>50h)". */
+    val lengthValueLabel: UiText?,
+    /** "90 votes", when the play time comes from votes. */
+    val lengthVotesLabel: UiText? = null,
     val ageLabel: UiText? = null,
     val tags: ImmutableList<UiText> = persistentListOf(),
 )

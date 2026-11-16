@@ -670,6 +670,6 @@ The last `grep` must print nothing for Screens and Views.
 - [ ] Routes use `collectAsStateWithLifecycle()` and `ObserveAsEvents`.
 - [ ] No hardcoded dispatchers (only `DispatcherProvider`); `CancellationException` is never swallowed; Flows reach the ViewModel through `stateIn(WhileSubscribed(5_000))`.
 - [ ] Network failures go through `safeApiCall` → `DomainError` → `ErrorUIModel`; DataStore reads `.catch` `IOException`.
-- [ ] User-visible text in State/UIModel/UIState/Effect is `UiText`, resolved with `asString()`; resource ids are typed `StringResource` / `DrawableResource`, never `Int` / `@StringRes Int`.
+- [ ] User-visible text in State/UIModel/UIState/Effect is `UiText`, resolved with `asString()`; resource ids are typed `StringResource` / `PluralResource` / `DrawableResource`, never `Int` / `@StringRes Int`.
 - [ ] Screens and Views are stateless, with `@AdaptivePreviews`; theme tokens only; 48.dp touch targets; meaningful `contentDescription`s.
 - [ ] Tests exist for every new use case, service, mapper and ViewModel, and they pass.

@@ -14,3 +14,14 @@ fun NovelLength.toLabel(): UiText = UiText.StringResource(
         NovelLength.VeryLong -> R.string.length_very_long
     },
 )
+
+/** "Very Short", "Short", "Medium", "Long", "Very Long". */
+fun NovelLength.toNameLabel(): UiText = UiText.StringResource(
+    when (this) {
+        NovelLength.VeryShort -> R.string.length_name_very_short
+        NovelLength.Short -> R.string.length_name_short
+        NovelLength.Medium -> R.string.length_name_medium
+        NovelLength.Long -> R.string.length_name_long
+        NovelLength.VeryLong -> R.string.length_name_very_long
+    },
+)
