@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.release.presentation.component.releasehero.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.mapper.platformName
 import com.zc.vndb.common.ui.mapper.toIsoLabel
@@ -35,86 +34,133 @@ fun ReleaseDetail.toHeroUIModel(): ReleaseHeroUIModel {
 private fun ReleaseDetail.flags(): List<ReleaseFlagUIModel> = listOfNotNull(
     if (isOfficial) {
         flag(
-            R.string.release_official,
+            UiText.StringResource(StringResource.release_official),
             ReleaseFlagTone.Accent,
         )
     } else {
-        flag(R.string.release_unofficial, ReleaseFlagTone.Caution)
+        flag(UiText.StringResource(StringResource.release_unofficial), ReleaseFlagTone.Caution)
     },
-    flag(R.string.release_patch, ReleaseFlagTone.Caution).takeIf { isPatch },
-    flag(R.string.release_freeware, ReleaseFlagTone.Safe).takeIf { isFreeware },
-    flag(R.string.release_uncensored, ReleaseFlagTone.Neutral).takeIf { isUncensored == true },
-    flag(R.string.release_adult_content, ReleaseFlagTone.Adult).takeIf { hasAdultContent },
+    flag(
+        UiText.StringResource(StringResource.release_patch),
+        ReleaseFlagTone.Caution,
+    ).takeIf { isPatch },
+    flag(
+        UiText.StringResource(StringResource.release_freeware),
+        ReleaseFlagTone.Safe,
+    ).takeIf { isFreeware },
+    flag(
+        UiText.StringResource(StringResource.release_uncensored),
+        ReleaseFlagTone.Neutral,
+    ).takeIf { isUncensored == true },
+    flag(
+        UiText.StringResource(StringResource.release_adult_content),
+        ReleaseFlagTone.Adult,
+    ).takeIf { hasAdultContent },
     minAge?.let { age ->
         if (age == ALL_AGES) {
-            ReleaseFlagUIModel(UiText.StringResource(R.string.detail_age_all), ReleaseFlagTone.Safe)
+            ReleaseFlagUIModel(
+                UiText.StringResource(StringResource.detail_age_all),
+                ReleaseFlagTone.Safe,
+            )
         } else {
             ReleaseFlagUIModel(
-                UiText.StringResource(R.string.detail_age_min, listOf(age)),
+                UiText.StringResource(StringResource.detail_age_min, listOf(age)),
                 ReleaseFlagTone.Neutral,
             )
         }
     },
 )
 
-private fun flag(label: StringResource, tone: ReleaseFlagTone) = ReleaseFlagUIModel(
-    UiText.StringResource(label),
+private fun flag(label: UiText, tone: ReleaseFlagTone) = ReleaseFlagUIModel(
+    label,
     tone,
 )
 
 private fun ReleaseDetail.facts(): List<FactUIModel> = listOfNotNull(
-    FactUIModel(R.string.release_released, releaseDate.toIsoLabel()),
+    FactUIModel(UiText.StringResource(StringResource.release_released), releaseDate.toIsoLabel()),
     platforms.takeIf { it.isNotEmpty() }?.let { codes ->
         FactUIModel(
-            R.string.release_platforms,
+            UiText.StringResource(StringResource.release_platforms),
             UiText.StringValue(codes.joinToString(", ") { platformName(it) }),
         )
     },
-    media.firstOrNull()?.let { FactUIModel(R.string.release_media, it.toLabel()) },
-    engine?.let { FactUIModel(R.string.release_engine, UiText.StringValue(it)) },
-    resolution?.let {
+    media.firstOrNull()?.let {
         FactUIModel(
-            R.string.release_resolution,
-            UiText.StringResource(R.string.release_resolution_value, listOf(it.width, it.height)),
+            UiText.StringResource(StringResource.release_media),
+            it.toLabel(),
         )
     },
-    voicing?.let { FactUIModel(R.string.release_voiced, UiText.StringResource(it.labelRes())) },
-    catalog?.let { FactUIModel(R.string.release_catalog, UiText.StringValue(it)) },
-    gtin?.let { FactUIModel(R.string.release_barcode, UiText.StringValue(it)) },
+    engine?.let {
+        FactUIModel(
+            UiText.StringResource(StringResource.release_engine),
+            UiText.StringValue(it),
+        )
+    },
+    resolution?.let {
+        FactUIModel(
+            UiText.StringResource(StringResource.release_resolution),
+            UiText.StringResource(
+                StringResource.release_resolution_value,
+                listOf(it.width, it.height),
+            ),
+        )
+    },
+    voicing?.let {
+        FactUIModel(
+            UiText.StringResource(StringResource.release_voiced),
+            it.toLabel(),
+        )
+    },
+    catalog?.let {
+        FactUIModel(
+            UiText.StringResource(StringResource.release_catalog),
+            UiText.StringValue(it),
+        )
+    },
+    gtin?.let {
+        FactUIModel(
+            UiText.StringResource(StringResource.release_barcode),
+            UiText.StringValue(it),
+        )
+    },
 )
 
 /** "DVD", "Blu-ray disc × 2", "Internet download". */
 private fun ReleaseMedium.toLabel(): UiText {
-    val name = UiText.StringResource(mediumRes())
+    val name = toMediumLabel()
     return if (quantity <= 1) {
         name
     } else {
         UiText.StringResource(
-            R.string.release_medium_quantity,
+            StringResource.release_medium_quantity,
             listOf(name, quantity),
         )
     }
 }
 
-private fun ReleaseMedium.mediumRes(): StringResource = when (code) {
-    "blr" -> R.string.release_medium_blr
-    "mrt" -> R.string.release_medium_mrt
-    "cas" -> R.string.release_medium_cas
-    "cd" -> R.string.release_medium_cd
-    "dc" -> R.string.release_medium_dc
-    "dvd" -> R.string.release_medium_dvd
-    "flp" -> R.string.release_medium_flp
-    "gdr" -> R.string.release_medium_gdr
-    "in" -> R.string.release_medium_in
-    "mem" -> R.string.release_medium_mem
-    "nod" -> R.string.release_medium_nod
-    "umd" -> R.string.release_medium_umd
-    else -> R.string.release_medium_other
-}
+private fun ReleaseMedium.toMediumLabel(): UiText = UiText.StringResource(
+    when (code) {
+        "blr" -> StringResource.release_medium_blr
+        "mrt" -> StringResource.release_medium_mrt
+        "cas" -> StringResource.release_medium_cas
+        "cd" -> StringResource.release_medium_cd
+        "dc" -> StringResource.release_medium_dc
+        "dvd" -> StringResource.release_medium_dvd
+        "flp" -> StringResource.release_medium_flp
+        "gdr" -> StringResource.release_medium_gdr
+        "in" -> StringResource.release_medium_in
+        "mem" -> StringResource.release_medium_mem
+        "nod" -> StringResource.release_medium_nod
+        "umd" -> StringResource.release_medium_umd
+        else -> StringResource.release_medium_other
+    },
+)
 
-private fun Voicing.labelRes(): StringResource = when (this) {
-    Voicing.NotVoiced -> R.string.release_voiced_none
-    Voicing.EroScenesOnly -> R.string.release_voiced_ero
-    Voicing.Partial -> R.string.release_voiced_partial
-    Voicing.Full -> R.string.release_voiced_full
-}
+private fun Voicing.toLabel(): UiText = UiText.StringResource(
+    when (this) {
+        Voicing.NotVoiced -> StringResource.release_voiced_none
+        Voicing.EroScenesOnly -> StringResource.release_voiced_ero
+        Voicing.Partial -> StringResource.release_voiced_partial
+        Voicing.Full -> StringResource.release_voiced_full
+    },
+)

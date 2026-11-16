@@ -1,9 +1,10 @@
 package com.zc.vndb.feature.discover.presentation
 
 import app.cash.turbine.test
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.common.domain.util.FixedClock
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.discover.domain.model.DatabaseStats
@@ -67,7 +68,7 @@ class DiscoverViewModelTest {
             assertEquals(listOf("r1"), loaded.trending.map { it.releaseId })
             assertEquals(
                 UiText.StringPlural(
-                    R.plurals.discover_stats_novels,
+                    PluralResource.discover_stats_novels,
                     68053,
                     listOf("%,d".format(68053)),
                 ),
@@ -84,7 +85,7 @@ class DiscoverViewModelTest {
 
         val state = viewModel.state.value
         assertFalse(state.isLoading)
-        assertEquals(UiText.StringResource(R.string.error_network), state.error?.message)
+        assertEquals(UiText.StringResource(StringResource.error_network), state.error?.message)
         assertNull(state.featured)
         assertTrue(state.topRated.isEmpty() && state.trending.isEmpty())
         assertNull(state.statsLabel)
@@ -141,7 +142,10 @@ class DiscoverViewModelTest {
         viewModel.effect.test {
             viewModel.onIntent(DiscoverIntent.RandomRollClicked)
             val effect = assertIs<DiscoverEffect.ShowError>(awaitItem())
-            assertEquals(UiText.StringResource(R.string.error_rate_limited), effect.error.message)
+            assertEquals(
+                UiText.StringResource(StringResource.error_rate_limited),
+                effect.error.message,
+            )
         }
         assertFalse(viewModel.state.value.isRolling)
     }
@@ -190,7 +194,7 @@ class DiscoverViewModelTest {
         viewModel.effect.test {
             viewModel.onIntent(DiscoverIntent.Refresh)
             val effect = assertIs<DiscoverEffect.ShowError>(awaitItem())
-            assertEquals(UiText.StringResource(R.string.error_network), effect.error.message)
+            assertEquals(UiText.StringResource(StringResource.error_network), effect.error.message)
         }
         with(viewModel.state.value) {
             assertFalse(isRefreshing)

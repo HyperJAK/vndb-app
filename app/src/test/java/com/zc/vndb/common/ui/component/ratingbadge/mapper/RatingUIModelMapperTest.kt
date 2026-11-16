@@ -1,6 +1,6 @@
 package com.zc.vndb.common.ui.component.ratingbadge.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,7 +19,7 @@ class RatingUIModelMapperTest {
     @Test
     fun `featured rating uses the out-of-ten resource`() {
         assertEquals(
-            UiText.StringResource(R.string.rating_out_of_ten, listOf("8.92")),
+            UiText.StringResource(StringResource.rating_out_of_ten, listOf("8.92")),
             89.2.toRatingOutOfTenLabel(),
         )
     }

@@ -25,11 +25,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.error.ErrorView
@@ -39,6 +37,7 @@ import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.component.spoilerfilter.SpoilerFilterView
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -120,13 +119,17 @@ private fun CharacterTopBar(onIntent: (CharacterIntent) -> Unit) {
             IconButton(onClick = { onIntent(CharacterIntent.ShareClicked) }) {
                 Icon(
                     Icons.Outlined.Share,
-                    contentDescription = stringResource(R.string.detail_share),
+                    contentDescription = UiText.StringResource(
+                        StringResource.detail_share,
+                    ).asString(),
                 )
             }
             IconButton(onClick = { onIntent(CharacterIntent.OpenInBrowserClicked) }) {
                 Icon(
                     Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = stringResource(R.string.detail_open_in_browser),
+                    contentDescription = UiText.StringResource(
+                        StringResource.detail_open_in_browser,
+                    ).asString(),
                 )
             }
         },
@@ -159,7 +162,7 @@ private fun LazyListScope.characterSections(
     state.description?.let { description ->
         item(key = "description", contentType = "description") {
             ExpandableTextView(
-                title = UiText.StringResource(R.string.character_description),
+                title = UiText.StringResource(StringResource.character_description),
                 text = description,
                 isExpanded = state.isDescriptionExpanded,
                 onToggle = actions.onDescriptionToggle,
@@ -183,7 +186,7 @@ private fun LazyListScope.characterSections(
 @Composable
 private fun AliasesSection(aliases: ImmutableList<UiText>) {
     SectionCardView(
-        title = UiText.StringResource(R.string.character_aliases),
+        title = UiText.StringResource(StringResource.character_aliases),
         modifier = Modifier.fillMaxWidth(),
     ) {
         FlowRow(
@@ -199,7 +202,7 @@ private fun LazyListScope.appearancesSection(state: CharacterState, actions: Cha
     if (state.appearances.isEmpty() && state.hiddenAppearancesLabel == null) return
     item(key = "appearances", contentType = "appearances") {
         SectionCardView(
-            title = UiText.StringResource(R.string.character_appears_in),
+            title = UiText.StringResource(StringResource.character_appears_in),
             modifier = Modifier.fillMaxWidth(),
         ) {
             state.appearances.forEach { appearance ->
@@ -229,7 +232,10 @@ private val previewState = CharacterState(
         isImageSensitive = false,
         identity = persistentListOf(UiText.StringValue("Female")),
         facts = persistentListOf(
-            FactUIModel(R.string.character_age, UiText.StringValue("18")),
+            FactUIModel(
+                UiText.StringResource(StringResource.character_age),
+                UiText.StringValue("18"),
+            ),
         ),
     ),
     aliases = persistentListOf(UiText.StringValue("Assistant"), UiText.StringValue("Christina")),
@@ -265,7 +271,7 @@ private class CharacterStateProvider : PreviewParameterProvider<CharacterState> 
         CharacterState(
             characterId = "c6487",
             error = ErrorUIModel(
-                UiText.StringResource(R.string.error_not_found),
+                UiText.StringResource(StringResource.error_not_found),
                 isRetryable = false,
             ),
         ),

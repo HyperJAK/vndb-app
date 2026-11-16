@@ -1,9 +1,9 @@
 package com.zc.vndb.feature.character.presentation
 
 import app.cash.turbine.test
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.character.domain.model.CharacterSamples
@@ -62,7 +62,7 @@ class CharacterViewModelTest {
             assertTrue(hero?.spoilerIdentity.orEmpty().isEmpty())
             assertEquals(listOf("v2002"), appearances.map { it.novelId })
             assertEquals(
-                UiText.StringResource(R.string.detail_cv, listOf("Imai Asami")),
+                UiText.StringResource(StringResource.detail_cv, listOf("Imai Asami")),
                 appearances.single().voiceActorLabel,
             )
             assertNotNull(hiddenTraitsLabel)
@@ -92,7 +92,7 @@ class CharacterViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
         assertEquals(
-            UiText.StringResource(R.string.error_not_found),
+            UiText.StringResource(StringResource.error_not_found),
             viewModel.state.value.error?.message,
         )
 

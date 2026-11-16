@@ -26,13 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
 import com.zc.vndb.common.ui.component.ratingbadge.RatingBadgeView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -105,7 +104,7 @@ private fun HeroArt(model: FeaturedNovelUIModel) {
                 ),
         )
         Text(
-            text = stringResource(R.string.discover_vn_of_the_week),
+            text = UiText.StringResource(StringResource.discover_vn_of_the_week).asString(),
             style = MaterialTheme.typography.labelSmall,
             color = VndbTheme.colors.onAccent,
             modifier = Modifier
@@ -182,7 +181,7 @@ private fun ViewDetailsButton(onClick: () -> Unit) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
-            text = stringResource(R.string.discover_view_details),
+            text = UiText.StringResource(StringResource.discover_view_details).asString(),
             style = MaterialTheme.typography.labelLarge,
         )
         Spacer(Modifier.size(VndbTheme.spacing.xs))

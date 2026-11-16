@@ -1,7 +1,8 @@
 package com.zc.vndb.feature.character.presentation.component.traitgroups.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.character.domain.model.CharacterTrait
 import com.zc.vndb.feature.character.presentation.component.traitgroups.model.TraitGroupUIModel
@@ -27,7 +28,10 @@ fun List<CharacterTrait>.toTraitGroups(level: SpoilerLevel): ImmutableList<Trait
                 title = UiText.StringValue(group.uppercase()),
                 traits = traits.map { trait ->
                     if (trait.isLie) {
-                        UiText.StringResource(R.string.character_trait_lie, listOf(trait.name))
+                        UiText.StringResource(
+                            StringResource.character_trait_lie,
+                            listOf(trait.name),
+                        )
                     } else {
                         UiText.StringValue(trait.name)
                     }
@@ -43,7 +47,7 @@ fun List<CharacterTrait>.toHiddenTraitsLabel(level: SpoilerLevel): UiText? {
         null
     } else {
         UiText.StringPlural(
-            R.plurals.detail_hidden_by_spoiler,
+            PluralResource.detail_hidden_by_spoiler,
             hidden,
             listOf(hidden),
         )

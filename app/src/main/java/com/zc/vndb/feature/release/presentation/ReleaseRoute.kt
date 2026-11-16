@@ -7,7 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.util.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -39,7 +40,12 @@ fun ReleaseRoute(
                     putExtra(Intent.EXTRA_TEXT, effect.url)
                 }
                 context.startActivity(
-                    Intent.createChooser(send, context.getString(R.string.release_share_chooser)),
+                    Intent.createChooser(
+                        send,
+                        UiText.StringResource(
+                            StringResource.release_share_chooser,
+                        ).asString(context),
+                    ),
                 )
             }
         }

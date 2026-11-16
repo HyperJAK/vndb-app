@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.detail.presentation.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
 import kotlinx.collections.immutable.ImmutableList
@@ -14,7 +14,7 @@ fun vndbUrl(id: String): String = "https://vndb.org/$id"
 fun NovelDetail.toLinks(): ImmutableList<LinkUIModel> = buildList {
     add(
         LinkUIModel(
-            UiText.StringResource(R.string.detail_vndb_link, listOf(id)),
+            UiText.StringResource(StringResource.detail_vndb_link, listOf(id)),
             vndbUrl(id),
             isVndb = true,
         ),

@@ -1,8 +1,8 @@
 package com.zc.vndb.feature.detail.presentation.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.character
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.staff
@@ -45,8 +45,8 @@ class DetailCastUIModelMapperTest {
         assertEquals(listOf("c1"), model.preview.map { it.id })
         assertEquals(
             listOf<UiText>(
-                UiText.StringResource(R.string.detail_characters_main),
-                UiText.StringResource(R.string.detail_characters_side),
+                UiText.StringResource(StringResource.detail_characters_main),
+                UiText.StringResource(StringResource.detail_characters_side),
             ),
             model.characterGroups.map { it.title },
         )
@@ -62,7 +62,7 @@ class DetailCastUIModelMapperTest {
 
         assertEquals(
             listOf<UiText>(
-                UiText.StringResource(R.string.detail_staff_original),
+                UiText.StringResource(StringResource.detail_staff_original),
                 UiText.StringValue("English translation"),
             ),
             groups.map { it.title },

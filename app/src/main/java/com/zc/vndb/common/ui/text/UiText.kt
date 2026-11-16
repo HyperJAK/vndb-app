@@ -5,14 +5,13 @@ import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
-import com.zc.vndb.common.ui.resource.PluralResource
-import com.zc.vndb.common.ui.resource.StringResource as StringResourceId
 
 /**
  * Text shown in the UI layer. Lets ViewModels and UI models expose strings without
  * resolving resources themselves; resolve with [asString] at the edge (Composable or [Context]).
+ *
+ * This is the only place that resolves resources (`stringResource`, `getString`, …), which is why
+ * they are called by their full names here: Detekt forbids importing them anywhere else.
  */
 @Immutable
 sealed interface UiText {
@@ -20,15 +19,12 @@ sealed interface UiText {
     /** Hardcoded or already-resolved text (e.g. data coming from the API). */
     data class StringValue(val value: String) : UiText
 
-    /** A `R.string.*` resource, optionally formatted with [args]. */
-    data class StringResource(
-        @StringRes val id: StringResourceId,
-        val args: List<Any> = emptyList(),
-    ) : UiText
+    /** A `StringResource.*` resource, optionally formatted with [args]. */
+    data class StringResource(@StringRes val id: Int, val args: List<Any> = emptyList()) : UiText
 
-    /** A `R.plurals.*` resource picked by [quantity], formatted with [args]. */
+    /** A `PluralResource.*` resource picked by [quantity], formatted with [args]. */
     data class StringPlural(
-        @PluralsRes val id: PluralResource,
+        @PluralsRes val id: Int,
         val quantity: Int,
         val args: List<Any> = emptyList(),
     ) : UiText
@@ -38,13 +34,13 @@ sealed interface UiText {
     fun asString(): String = when (this) {
         is StringValue -> value
 
-        is StringResource -> stringResource(
+        is StringResource -> androidx.compose.ui.res.stringResource(
             id,
             *args.map { if (it is UiText) it.asString() else it }.toTypedArray(),
         )
 
         is StringPlural ->
-            pluralStringResource(
+            androidx.compose.ui.res.pluralStringResource(
                 id,
                 quantity,
                 *args.map { if (it is UiText) it.asString() else it }.toTypedArray(),

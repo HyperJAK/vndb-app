@@ -33,12 +33,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
@@ -51,6 +49,7 @@ import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.component.spoilerfilter.SpoilerFilterView
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -209,13 +208,17 @@ private fun DetailTopBar(onIntent: (DetailIntent) -> Unit) {
             IconButton(onClick = { onIntent(DetailIntent.ShareClicked) }) {
                 Icon(
                     Icons.Outlined.Share,
-                    contentDescription = stringResource(R.string.detail_share),
+                    contentDescription = UiText.StringResource(
+                        StringResource.detail_share,
+                    ).asString(),
                 )
             }
             IconButton(onClick = { onIntent(DetailIntent.OpenInBrowserClicked) }) {
                 Icon(
                     Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = stringResource(R.string.detail_open_in_browser),
+                    contentDescription = UiText.StringResource(
+                        StringResource.detail_open_in_browser,
+                    ).asString(),
                 )
             }
         },
@@ -249,7 +252,7 @@ private fun LazyListScope.overviewTab(state: DetailState, actions: DetailActions
     state.synopsis?.let { synopsis ->
         item(key = "synopsis", contentType = "synopsis") {
             ExpandableTextView(
-                title = UiText.StringResource(R.string.detail_synopsis),
+                title = UiText.StringResource(StringResource.detail_synopsis),
                 text = synopsis,
                 isExpanded = state.isSynopsisExpanded,
                 onToggle = { actions.onIntent(DetailIntent.SynopsisToggled) },
@@ -288,7 +291,7 @@ private fun LazyListScope.relationsSection(state: DetailState, actions: DetailAc
     if (state.relations.isNotEmpty()) {
         item(key = "relations", contentType = "relations") {
             SectionCardView(
-                title = UiText.StringResource(R.string.detail_relations),
+                title = UiText.StringResource(StringResource.detail_relations),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm)) {
@@ -320,11 +323,14 @@ private fun MediaPreview(state: DetailState, actions: DetailActions, columns: In
     val media = (state.screenshots as? SectionState.Loaded)?.data
     if (media != null && media.totalCount == 0) return
     SectionCardView(
-        title = UiText.StringResource(R.string.detail_screenshots),
+        title = UiText.StringResource(StringResource.detail_screenshots),
         trailing = media?.takeIf { it.visibleCount > 0 }?.let {
             {
                 SeeAllButton(
-                    UiText.StringResource(R.string.detail_see_all_count, listOf(it.visibleCount)),
+                    UiText.StringResource(
+                        StringResource.detail_see_all_count,
+                        listOf(it.visibleCount),
+                    ),
                 ) { actions.onTabSelect(DetailTab.Media) }
             }
         },
@@ -351,7 +357,7 @@ private fun CharactersPreview(state: DetailState, actions: DetailActions) {
     val cast = (state.cast as? SectionState.Loaded)?.data
     if (cast != null && cast.characterCount == 0) return
     SectionCardView(
-        title = UiText.StringResource(R.string.detail_characters),
+        title = UiText.StringResource(StringResource.detail_characters),
         trailing = cast?.mainCountLabel?.let { label ->
             { SeeAllButton(label) { actions.onTabSelect(DetailTab.Cast) } }
         },
@@ -381,11 +387,11 @@ private fun EditionsPreview(state: DetailState, actions: DetailActions) {
     val editions = (state.editions as? SectionState.Loaded)?.data
     if (editions != null && editions.isEmpty()) return
     SectionCardView(
-        title = UiText.StringResource(R.string.detail_releases),
+        title = UiText.StringResource(StringResource.detail_releases),
         trailing = editions?.let {
             {
                 SeeAllButton(
-                    UiText.StringResource(R.string.discover_see_all),
+                    UiText.StringResource(StringResource.discover_see_all),
                 ) { actions.onTabSelect(DetailTab.Releases) }
             }
         },
@@ -419,11 +425,11 @@ private fun LazyListScope.mediaTab(state: DetailState, actions: DetailActions, c
             onRetry = { actions.retry(DetailSection.Screenshots) },
         ) { media ->
             SectionCardView(
-                title = UiText.StringResource(R.string.detail_screenshots),
+                title = UiText.StringResource(StringResource.detail_screenshots),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 if (media.totalCount == 0) {
-                    MutedNote(UiText.StringResource(R.string.detail_no_screenshots))
+                    MutedNote(UiText.StringResource(StringResource.detail_no_screenshots))
                 } else {
                     ContentTogglesView(
                         sexual = media.sexualToggles,
@@ -452,7 +458,7 @@ private fun LazyListScope.mediaTab(state: DetailState, actions: DetailActions, c
     }
     item(key = "covers", contentType = "covers") {
         SectionCardView(
-            title = UiText.StringResource(R.string.detail_covers),
+            title = UiText.StringResource(StringResource.detail_covers),
             modifier = Modifier.fillMaxWidth(),
         ) {
             LazySectionView(
@@ -502,10 +508,10 @@ private fun CastContent(cast: CastUIModel, actions: DetailActions) {
     Column(verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md)) {
         if (cast.characterGroups.isEmpty()) {
             SectionCardView(
-                title = UiText.StringResource(R.string.detail_characters),
+                title = UiText.StringResource(StringResource.detail_characters),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                MutedNote(UiText.StringResource(R.string.detail_no_characters))
+                MutedNote(UiText.StringResource(StringResource.detail_no_characters))
             }
         }
         cast.characterGroups.forEach { group ->
@@ -557,7 +563,7 @@ private fun LazyListScope.releasesTab(state: DetailState, actions: DetailActions
         item(
             key = "releases-empty",
             contentType = "empty",
-        ) { MutedNote(UiText.StringResource(R.string.detail_no_releases)) }
+        ) { MutedNote(UiText.StringResource(StringResource.detail_no_releases)) }
     }
     releases.items.forEach { group ->
         item(key = "releases-${group.languageCode}", contentType = "release-group") {
@@ -590,7 +596,7 @@ private fun LazyListScope.quotesTab(state: DetailState, actions: DetailActions) 
             item(
                 key = "quotes-empty",
                 contentType = "empty",
-            ) { MutedNote(UiText.StringResource(R.string.detail_no_quotes)) }
+            ) { MutedNote(UiText.StringResource(StringResource.detail_no_quotes)) }
         }
         items(items = quotes.items, key = { it.id }, contentType = { "quote" }) { quote ->
             QuoteCardView(
@@ -603,13 +609,13 @@ private fun LazyListScope.quotesTab(state: DetailState, actions: DetailActions) 
     }
     item(key = "reviews", contentType = "reviews") {
         SectionCardView(
-            title = UiText.StringResource(R.string.detail_reviews_link),
+            title = UiText.StringResource(StringResource.detail_reviews_link),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            MutedNote(UiText.StringResource(R.string.detail_reviews_hint))
+            MutedNote(UiText.StringResource(StringResource.detail_reviews_hint))
             TextButton(onClick = { actions.onIntent(DetailIntent.ReviewsClicked) }) {
                 Text(
-                    text = stringResource(R.string.detail_open_in_browser),
+                    text = UiText.StringResource(StringResource.detail_open_in_browser).asString(),
                     color = VndbTheme.colors.accent,
                 )
             }
@@ -630,9 +636,9 @@ private fun <T> LazyListScope.loadMore(
             } else {
                 TextButton(onClick = { actions.loadMore(section) }) {
                     Text(
-                        text = stringResource(
-                            if (list.loadMoreFailed) R.string.action_retry else R.string.detail_load_more,
-                        ),
+                        text = UiText.StringResource(
+                            if (list.loadMoreFailed) StringResource.action_retry else StringResource.detail_load_more,
+                        ).asString(),
                         color = VndbTheme.colors.accent,
                     )
                 }
@@ -706,7 +712,7 @@ private class DetailStateProvider : PreviewParameterProvider<DetailState> {
         DetailState(
             novelId = "v2002",
             error = ErrorUIModel(
-                UiText.StringResource(R.string.error_not_found),
+                UiText.StringResource(StringResource.error_not_found),
                 isRetryable = false,
             ),
         ),

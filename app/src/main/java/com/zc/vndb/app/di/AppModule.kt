@@ -5,6 +5,8 @@ import com.zc.vndb.feature.browse.di.browseModule
 import com.zc.vndb.feature.character.di.characterModule
 import com.zc.vndb.feature.detail.di.detailModule
 import com.zc.vndb.feature.discover.di.discoverModule
+import com.zc.vndb.feature.login.di.loginModule
+import com.zc.vndb.feature.profile.di.profileModule
 import com.zc.vndb.feature.release.di.releaseModule
 import org.koin.dsl.module
 
@@ -17,5 +19,7 @@ val appModule = module {
         detailModule,
         characterModule,
         releaseModule,
+        profileModule,
+        loginModule,
     )
 }

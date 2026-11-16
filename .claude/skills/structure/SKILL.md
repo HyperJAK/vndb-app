@@ -28,11 +28,13 @@ com.zc.vndb/
 │   │   ├── network/                 # Shared Ktor HttpClient factory, Json config, plugins
 │   │   ├── dto/                     # Wire-format DTOs used by 2+ features (QueryDTO, ImageDTO, TagDTO)
 │   │   ├── mapper/                  # DTO -> common/domain mappers for those DTOs
-│   │   ├── local/                   # Shared Jetpack DataStore helpers
+│   │   ├── local/                   # Shared Jetpack DataStore sources (e.g. the signed-in session + token cipher)
+│   │   ├── repository/              # Implementations of common/domain repositories (e.g. SessionRepositoryImpl)
 │   │   └── util/
 │   │       └── SafeApiCall.kt       # safeApiCall { } — Ktor/serialization exceptions -> DomainError
 │   ├── domain/
-│   │   ├── model/                   # Shared pure Kotlin domain primitives, DomainError.kt, result types
+│   │   ├── model/                   # Shared pure Kotlin domain primitives, DomainError.kt, result types, Session
+│   │   ├── repository/              # Interfaces used by 2+ features (e.g. SessionRepository)
 │   │   └── util/
 │   │       └── DispatcherProvider.kt  # DispatcherProvider interface + DefaultDispatcherProvider
 │   ├── di/
@@ -162,7 +164,7 @@ Rules are in `library-management`.
 | `ObserveAsEvents`, `@AdaptivePreviews` and other non-visual Compose helpers | `common/ui/util/` |
 | Presentation mapper for a `common/domain` type used by 2+ features (not tied to one component) | `common/ui/mapper/[Name]UIModelMapper.kt` |
 | `UiText` (all user-visible text in `presentation`) | `common/ui/text/UiText.kt` |
-| `StringResource` / `PluralResource` / `DrawableResource` typealiases for `R.string` / `R.plurals` / `R.drawable` ids | `common/ui/resource/ResourceTypes.kt` |
+| `StringResource` / `PluralResource` typealiases for `R.string` / `R.plurals` (the only way code names a string resource) | `common/ui/resource/ResourceTypes.kt` |
 | `ErrorUIModel`, `ErrorUIModelMapper`, `ErrorView` | `common/ui/component/error/{model,mapper}/`, `ErrorView.kt` |
 | Composable used by 2+ features | `common/ui/component/[name]/[Name]View.kt` |
 | Ktor API calls for one feature | `feature/[name]/data/remote/[Name]Service.kt` |

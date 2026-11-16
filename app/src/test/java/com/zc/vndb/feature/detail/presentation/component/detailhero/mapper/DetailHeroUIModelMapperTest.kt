@@ -1,6 +1,6 @@
 package com.zc.vndb.feature.detail.presentation.component.detailhero.mapper
 
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.AgeRange
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.novel
@@ -26,34 +26,34 @@ class DetailHeroUIModelMapperTest {
         assertEquals(UiText.StringValue("9.02"), hero.ratingLabel)
         assertEquals(UiText.StringValue("NITRO PLUS / MAGES."), hero.developerLabel)
         assertEquals(UiText.StringValue("2009-10-15"), hero.releasedLabel)
-        assertEquals(UiText.StringResource(R.string.length_name_long), hero.lengthName)
+        assertEquals(UiText.StringResource(StringResource.length_name_long), hero.lengthName)
         assertEquals(
             UiText.StringResource(
-                R.string.detail_length_value,
-                listOf(UiText.StringResource(R.string.detail_hours, listOf("44"))),
+                StringResource.detail_length_value,
+                listOf(UiText.StringResource(StringResource.detail_hours, listOf("44"))),
             ),
             hero.lengthValueLabel,
         )
         assertEquals(
-            UiText.StringResource(R.string.detail_length_votes, listOf("1,021")),
+            UiText.StringResource(StringResource.detail_length_votes, listOf("1,021")),
             hero.lengthVotesLabel,
         )
         assertEquals(listOf<UiText>(UiText.StringValue("B"), UiText.StringValue("C")), hero.tags)
         assertEquals(
-            UiText.StringResource(R.string.detail_age_range_from_all, listOf(15)),
+            UiText.StringResource(StringResource.detail_age_range_from_all, listOf(15)),
             hero.ageLabel,
         )
     }
 
     @Test
     fun `age labels`() {
-        assertEquals(UiText.StringResource(R.string.detail_age_all), AgeRange(0, 0).toLabel())
+        assertEquals(UiText.StringResource(StringResource.detail_age_all), AgeRange(0, 0).toLabel())
         assertEquals(
-            UiText.StringResource(R.string.detail_age_min, listOf(18)),
+            UiText.StringResource(StringResource.detail_age_min, listOf(18)),
             AgeRange(18, 18).toLabel(),
         )
         assertEquals(
-            UiText.StringResource(R.string.detail_age_range, listOf(12, 18)),
+            UiText.StringResource(StringResource.detail_age_range, listOf(12, 18)),
             AgeRange(12, 18).toLabel(),
         )
         assertNull(novel().toHeroUIModel(ageRange = null).ageLabel)
@@ -65,8 +65,8 @@ class DetailHeroUIModelMapperTest {
 
         assertEquals(
             UiText.StringResource(
-                R.string.detail_length_value,
-                listOf(UiText.StringResource(R.string.length_long)),
+                StringResource.detail_length_value,
+                listOf(UiText.StringResource(StringResource.length_long)),
             ),
             hero.lengthValueLabel,
         )

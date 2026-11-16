@@ -1,9 +1,10 @@
 package com.zc.vndb.feature.detail.presentation.component.taggroups.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.NovelTag
 import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
+import com.zc.vndb.common.ui.resource.PluralResource
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteTone
@@ -23,9 +24,9 @@ fun NovelDetail.toTagGroups(level: SpoilerLevel): ImmutableList<TagGroupUIModel>
         TagCategory.Content,
         level,
         MAX_THEME_TAGS,
-    )?.let { TagGroupUIModel(UiText.StringResource(R.string.detail_tags_themes), it) },
+    )?.let { TagGroupUIModel(UiText.StringResource(StringResource.detail_tags_themes), it) },
     tags.group(TagCategory.Technical, level, MAX_TECHNICAL_TAGS)?.let {
-        TagGroupUIModel(UiText.StringResource(R.string.detail_tags_technical), it)
+        TagGroupUIModel(UiText.StringResource(StringResource.detail_tags_technical), it)
     },
 ).toImmutableList()
 
@@ -37,7 +38,7 @@ fun NovelDetail.toHiddenTagsLabel(level: SpoilerLevel): UiText? {
         null
     } else {
         UiText.StringPlural(
-            R.plurals.detail_hidden_by_spoiler,
+            PluralResource.detail_hidden_by_spoiler,
             hidden,
             listOf(hidden),
         )
@@ -48,18 +49,18 @@ fun NovelDetail.toHiddenTagsLabel(level: SpoilerLevel): UiText? {
 fun NovelDetail.toContentNotes(): ImmutableList<ContentNoteUIModel> = listOfNotNull(
     if (tags.any { it.category == TagCategory.Sexual }) {
         ContentNoteUIModel(
-            UiText.StringResource(R.string.detail_note_sexual),
+            UiText.StringResource(StringResource.detail_note_sexual),
             ContentNoteTone.Adult,
         )
     } else {
         ContentNoteUIModel(
-            UiText.StringResource(R.string.detail_note_no_sexual),
+            UiText.StringResource(StringResource.detail_note_no_sexual),
             ContentNoteTone.Safe,
         )
     },
     if ((cover?.violence ?: 0.0) >= VIOLENT_COVER) {
         ContentNoteUIModel(
-            UiText.StringResource(R.string.detail_note_violent_cover),
+            UiText.StringResource(StringResource.detail_note_violent_cover),
             ContentNoteTone.Caution,
         )
     } else {

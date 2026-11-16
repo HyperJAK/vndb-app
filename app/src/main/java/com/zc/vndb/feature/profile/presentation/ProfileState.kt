@@ -1,0 +1,30 @@
+package com.zc.vndb.feature.profile.presentation
+
+import androidx.compose.runtime.Immutable
+import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.feature.profile.presentation.component.profileheader.model.ProfileHeaderUIModel
+import com.zc.vndb.feature.profile.presentation.model.EntriesUIState
+import com.zc.vndb.feature.profile.presentation.model.LabelChipUIModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
+@Immutable
+data class ProfileState(
+    /** False until the stored session has been read. */
+    val isSessionKnown: Boolean = false,
+    /** Null for a guest. */
+    val header: ProfileHeaderUIModel? = null,
+    /** Labels and profile in flight. */
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    /** Labels failed to load. */
+    val error: ErrorUIModel? = null,
+    val labels: ImmutableList<LabelChipUIModel> = persistentListOf(),
+    val entries: EntriesUIState = EntriesUIState(),
+    val isLogOutDialogVisible: Boolean = false,
+) {
+    val isSignedIn: Boolean get() = header != null
+
+    /** Signed in, labels loaded, and none has entries. */
+    val isListEmpty: Boolean get() = isSignedIn && !isLoading && error == null && labels.isEmpty()
+}

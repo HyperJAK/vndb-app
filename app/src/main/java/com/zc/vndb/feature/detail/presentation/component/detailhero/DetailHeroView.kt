@@ -15,10 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
 import com.zc.vndb.common.ui.component.ratingbadge.RatingBadgeView
@@ -77,8 +75,8 @@ fun DetailHeroView(model: DetailHeroUIModel, modifier: Modifier = Modifier) {
                 HeroChips(model)
             }
         }
-        MetaLine(R.string.detail_dev, model.developerLabel)
-        MetaLine(R.string.detail_released, model.releasedLabel)
+        MetaLine(UiText.StringResource(StringResource.detail_dev), model.developerLabel)
+        MetaLine(UiText.StringResource(StringResource.detail_released), model.releasedLabel)
         LengthLine(model)
     }
 }
@@ -102,11 +100,11 @@ private fun HeroChips(model: DetailHeroUIModel) {
 }
 
 @Composable
-private fun MetaLine(label: StringResource, value: UiText?) {
+private fun MetaLine(label: UiText, value: UiText?) {
     if (value == null) return
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
-            text = stringResource(label),
+            text = label.asString(),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.width(MetaLabelWidth),
@@ -128,7 +126,7 @@ private fun LengthLine(model: DetailHeroUIModel) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.detail_length),
+            text = UiText.StringResource(StringResource.detail_length).asString(),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.width(MetaLabelWidth - VndbTheme.spacing.sm),
@@ -143,7 +141,9 @@ private fun LengthLine(model: DetailHeroUIModel) {
         }
         model.lengthVotesLabel?.let { votes ->
             Text(
-                text = "${stringResource(R.string.separator_dot)} ${votes.asString()}",
+                text = "${UiText.StringResource(
+                    StringResource.separator_dot,
+                ).asString()} ${votes.asString()}",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

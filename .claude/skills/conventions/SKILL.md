@@ -162,8 +162,8 @@ Pick the suffix by **whether the user can change it**:
 | `[Name]UIModel` | Static, display-ready, read-only data mapped from domain | `VisualNovelUIModel` (formatted date, rating text), list rows, cards, chips |
 | `[Name]UIState` | Dynamic/interactive sub-models whose values change through interaction or lifecycle | `SearchFieldUIState` (text, error, isFocused), `ScreenshotUIState` (isSelected), `SectionUIState` (isExpanded) |
 
-- UI models hold **display-ready** values: `UiText` for every user-visible text (§2.5), `DrawableResource` ids, resolved booleans, `ImmutableList`s. A Composable should never format, parse, or compute business rules.
-- They **may** reference Android/Compose types where useful (`StringResource`, `DrawableResource`, `ImageVector`) — they live in `presentation`.
+- UI models hold **display-ready** values: `UiText` for every user-visible text (§2.5), `ImageVector` icons, resolved booleans, `ImmutableList`s. A Composable should never format, parse, or compute business rules.
+- They **may** reference Android/Compose types where useful (`UiText`, `ImageVector`) — they live in `presentation`.
 
 ### 2.4 Maximum immutability (UIModel, UIState, screen State)
 
@@ -195,7 +195,7 @@ data class NovelListState(
 data class VisualNovelUIModel(
     val id: String,
     val title: UiText,
-    val releaseLabel: UiText,          // "Mar 2021" or R.string.release_tba
+    val releaseLabel: UiText,          // "Mar 2021" or StringResource.release_tba
     val ratingLabel: UiText?,          // "8.42"
     val coverUrl: String?,             // not user-visible text → String
     val blurCover: Boolean,
@@ -223,51 +223,66 @@ _state.update { state ->
 }
 ```
 
-### 2.5 UI text & resource ids (`UiText`, `ResourceTypes.kt`)
+### 2.5 UI text & string resources (`UiText`, `ResourceTypes.kt`)
 
-Everything the presentation layer shows as text is a `UiText` (`common/ui/text/UiText.kt`). Resource ids are typed with the aliases in `common/ui/resource/ResourceTypes.kt`.
+Everything the app shows as text is a `UiText` (`common/ui/text/UiText.kt`), and `UiText` is the **only** code that resolves resources. String resources are referenced through the aliases in `common/ui/resource/ResourceTypes.kt`, never through `R`.
 
 ```kotlin
+// common/ui/resource/ResourceTypes.kt
+typealias StringResource = com.zc.vndb.R.string    // StringResource.app_wordmark
+typealias PluralResource = com.zc.vndb.R.plurals   // PluralResource.detail_votes
+
 // common/ui/text/UiText.kt
 sealed interface UiText {
-    data class StringValue(val value: String) : UiText                                   // hardcoded / API data
-    data class StringResource(val id: StringResource, val args: List<Any> = emptyList()) : UiText   // R.string.*
-    data class StringPlural(val id: PluralResource, val quantity: Int, val args: List<Any> = emptyList()) : UiText // R.plurals.*
+    data class StringValue(val value: String) : UiText                                              // hardcoded / API data
+    data class StringResource(@StringRes val id: Int, val args: List<Any> = emptyList()) : UiText     // StringResource.*
+    data class StringPlural(@PluralsRes val id: Int, val quantity: Int, val args: List<Any> = emptyList()) : UiText // PluralResource.*
     @Composable fun asString(): String
     fun asString(context: Context): String
 }
+```
 
-// common/ui/resource/ResourceTypes.kt
-typealias StringResource = Int     // R.string.*
-typealias PluralResource = Int     // R.plurals.*
-typealias DrawableResource = Int   // R.drawable.*
+```kotlin
+// ✅ every string, everywhere (composables included)
+Text(UiText.StringResource(StringResource.login_connect).asString())
+Icon(icon, contentDescription = UiText.StringResource(StringResource.cd_log_out).asString())
+label = UiText.StringResource(StringResource.detail_tab_with_count, listOf(name, count))   // in a mapper
+UiText.StringPlural(PluralResource.detail_votes, count, listOf(count))
+snackbarHostState.showSnackbar(effect.message.asString(context))                           // outside composition
 ```
 
 **MUST**:
 
-- Every user-visible text in a `UIModel`, `UIState`, screen `State`, `Effect` and `common/ui/component` View parameter is typed `UiText` (or `UiText?`), never `String`, `Int` or `@StringRes Int`. That includes API data, which the mapper wraps in `UiText.StringValue(...)`.
-- Strings are built **only** in mappers and ViewModels: `UiText.StringResource(R.string.x)`, `UiText.StringResource(R.string.x, listOf(arg))`, `UiText.StringPlural(R.plurals.x, count, listOf(count))`.
-- Composables resolve text at the last moment with `text.asString()`. Code outside composition (snackbar in a Route effect, notifications) uses `text.asString(context)`.
-- Any property or parameter holding a resource id is typed `StringResource`, `PluralResource` or `DrawableResource` (from `ResourceTypes.kt`), never `Int`, `@StringRes Int`, `@PluralsRes Int` or `@DrawableRes Int` — including the return type of `labelRes()`-style mapping functions. `R.string.*` / `R.plurals.*` / `R.drawable.*` appear only as the **values** assigned to them.
+- Every user-visible text in a `UIModel`, `UIState`, screen `State`, `Effect` and View parameter is typed `UiText` (or `UiText?`), never `String`, `Int` or `@StringRes Int`. That includes API data, which the mapper wraps in `UiText.StringValue(...)`.
+- Reference strings as `StringResource.x` / `PluralResource.x`, wrapped in `UiText.StringResource(...)` / `UiText.StringPlural(...)`.
+- Composables resolve text at the last moment with `.asString()`; code outside composition (snackbars in a Route effect, share choosers) uses `.asString(context)`. This applies to static labels and `contentDescription`s too.
+- A label chosen by a `when` is a function returning `UiText`: `private fun Genre.toLabel(): UiText = UiText.StringResource(when (this) { … StringResource.genre_romance … })`. Properties and parameters hold that `UiText`, not a resource id.
 - Non-display strings (ids, URLs, query keys) stay `String`.
 
-**NEVER**:
+**NEVER** (Detekt `ForbiddenImport` fails the build on the first three):
 
-- `context.getString(...)`, `stringResource(...)` or `pluralStringResource(...)` in a ViewModel, mapper or UI model. ViewModels never hold a `Context`.
+- `import com.zc.vndb.R` / `R.string.*` / `R.plurals.*` — use `StringResource.*` / `PluralResource.*`.
+- `stringResource(...)` / `pluralStringResource(...)` — use `UiText…asString()`. Only `UiText.kt` calls them, by their full names.
+- `context.getString(...)` / `resources.getQuantityString(...)` — use `UiText…asString(context)`.
+- Typealiases for resource ids (`typealias StringResourceId = Int`, …) or properties/parameters/return types that carry a raw resource id outside `UiText`.
 - `String.format` / string templates on localized text in a composable — put the args in `UiText.StringResource(id, args)`.
-- `UiText`, `StringResource`, `PluralResource` or `DrawableResource` in `domain` or `data`.
+- `UiText`, `StringResource` or `PluralResource` in `domain` or `data`.
 
 | ❌ Don't | ✅ Do |
 |---|---|
+| `Text(stringResource(R.string.login_connect))` | `Text(UiText.StringResource(StringResource.login_connect).asString())` |
+| `UiText.StringResource(R.string.x)` | `UiText.StringResource(StringResource.x)` |
 | `val title: String` in a UIModel | `val title: UiText` + `UiText.StringValue(title)` in the mapper |
-| `@StringRes val messageRes: Int` | `val message: UiText` |
-| `@DrawableRes val iconRes: Int` | `val icon: DrawableResource` |
-| `private fun Tab.labelRes(): Int = when (this) { … R.string.x }` | `private fun Tab.labelRes(): StringResource = …` |
-| `Text(stringResource(model.labelRes))` | `Text(model.label.asString())` |
-| `context.getString(R.string.x)` in a ViewModel | `UiText.StringResource(R.string.x)` |
-| `"$count novels"` in a mapper | `UiText.StringPlural(R.plurals.novel_count, count, listOf(count))` |
+| `@StringRes val messageRes: Int` / `val label: Int` | `val message: UiText` / `val label: UiText` |
+| `private fun Tab.labelRes(): Int = when (this) { … }` | `private fun Tab.toLabel(): UiText = UiText.StringResource(when (this) { … })` |
+| `context.getString(R.string.share_chooser)` in a Route | `UiText.StringResource(StringResource.share_chooser).asString(context)` |
+| `"$count novels"` in a mapper | `UiText.StringPlural(PluralResource.novel_count, count, listOf(count))` |
 
-A static label that lives only inside one composable (e.g. a `contentDescription` constant) may call `stringResource(R.string.x)` directly. Once that text comes from State, a UIModel or a parameter, it **MUST** be `UiText`.
+Check (must print nothing):
+
+```bash
+grep -rnE "R\.(string|plurals)\.|import com\.zc\.vndb\.R$|[^.]stringResource\(|pluralStringResource\(|getString\(|getQuantityString\(" app/src --include=*.kt | grep -v "common/ui/text/UiText.kt"
+```
 
 ---
 
@@ -329,7 +344,7 @@ fun VisualNovel.toUIModel(): VisualNovelUIModel = VisualNovelUIModel(
     id = id,
     title = UiText.StringValue(title),
     releaseLabel = releaseDate?.let { UiText.StringValue(releaseFormat.format(it)) }
-        ?: UiText.StringResource(R.string.release_tba),
+        ?: UiText.StringResource(StringResource.release_tba),
     ratingLabel = rating?.let { UiText.StringValue("%.2f".format(it / 10)) },
     coverUrl = coverUrl,
     blurCover = isNsfwCover,
@@ -565,7 +580,7 @@ fun NovelDetailScreen(
                     IconButton(onClick = { onIntent(NovelDetailIntent.BackClicked) }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.cd_navigate_back),
+                            contentDescription = UiText.StringResource(StringResource.cd_navigate_back).asString(),
                         )
                     }
                 },
@@ -636,9 +651,9 @@ fun NovelHeaderView(
         IconToggleButton(checked = isFavorite, onCheckedChange = { onFavoriteClick() }) {
             Icon(
                 if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                contentDescription = stringResource(
-                    if (isFavorite) R.string.cd_remove_favorite else R.string.cd_add_favorite,
-                ),
+                contentDescription = UiText.StringResource(
+                    if (isFavorite) StringResource.cd_remove_favorite else StringResource.cd_add_favorite,
+                ).asString(),
             )
         }
     }

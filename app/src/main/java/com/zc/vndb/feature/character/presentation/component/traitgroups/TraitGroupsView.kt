@@ -8,9 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -26,7 +26,10 @@ fun TraitGroupsView(
     hiddenLabel: UiText?,
     modifier: Modifier = Modifier,
 ) {
-    SectionCardView(modifier = modifier, title = UiText.StringResource(R.string.character_traits)) {
+    SectionCardView(
+        modifier = modifier,
+        title = UiText.StringResource(StringResource.character_traits),
+    ) {
         groups.forEach { group ->
             Text(
                 text = group.title.asString(),

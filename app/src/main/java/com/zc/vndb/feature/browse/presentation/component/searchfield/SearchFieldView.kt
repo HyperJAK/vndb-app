@@ -16,9 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import com.zc.vndb.R
+import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
@@ -38,7 +38,11 @@ fun SearchFieldView(
         modifier = modifier,
         singleLine = true,
         textStyle = MaterialTheme.typography.bodyLarge,
-        placeholder = { Text(text = stringResource(R.string.browse_search_hint)) },
+        placeholder = {
+            Text(
+                text = UiText.StringResource(StringResource.browse_search_hint).asString(),
+            )
+        },
         leadingIcon = {
             Icon(
                 Icons.Outlined.Search,
@@ -51,7 +55,9 @@ fun SearchFieldView(
                 IconButton(onClick = onClear) {
                     Icon(
                         Icons.Filled.Close,
-                        contentDescription = stringResource(R.string.browse_clear_search),
+                        contentDescription = UiText.StringResource(
+                            StringResource.browse_clear_search,
+                        ).asString(),
                     )
                 }
             }

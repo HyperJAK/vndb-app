@@ -28,13 +28,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.TintedColors
 import com.zc.vndb.common.ui.theme.VndbTheme
@@ -68,13 +67,13 @@ fun FilterBarView(
             border = VndbTheme.colors.accent,
         )
         SelectableChipView(
-            label = UiText.StringResource(R.string.browse_age_all),
+            label = UiText.StringResource(StringResource.browse_age_all),
             isSelected = ageRating == AgeRating.AllAges,
             onClick = { onAgeRatingSelect(AgeRating.AllAges) },
             selectedColors = ageSelected,
         )
         SelectableChipView(
-            label = UiText.StringResource(R.string.browse_age_adult),
+            label = UiText.StringResource(StringResource.browse_age_adult),
             isSelected = ageRating == AgeRating.Adult,
             onClick = { onAgeRatingSelect(AgeRating.Adult) },
             selectedColors = ageSelected,
@@ -133,7 +132,7 @@ private fun SortMenu(
 /** The pill that shows the current sort and opens the menu. */
 @Composable
 private fun SortMenuAnchor(label: UiText?, onClick: () -> Unit) {
-    val menuDescription = stringResource(R.string.browse_sort_menu)
+    val menuDescription = UiText.StringResource(StringResource.browse_sort_menu).asString()
     val shape = VndbTheme.shapes.pill
     Row(
         modifier = Modifier

@@ -8,12 +8,11 @@ import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.zc.vndb.R
 
 private val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs,
+    certificates = com.zc.vndb.R.array.com_google_android_gms_fonts_certs,
 )
 
 private fun googleFontFamily(name: String, vararg weights: FontWeight): FontFamily {

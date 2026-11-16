@@ -35,17 +35,16 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -220,13 +219,15 @@ private fun LazyListScope.topRatedSection(
     item(key = "top-rated", contentType = "top-rated") {
         Column(verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm)) {
             SectionHeaderView(
-                title = UiText.StringResource(R.string.discover_top_rated),
+                title = UiText.StringResource(StringResource.discover_top_rated),
                 icon = Icons.Outlined.EmojiEvents,
                 modifier = Modifier.padding(top = VndbTheme.spacing.md),
                 action = {
                     TextButton(onClick = actions.onSeeAllClick) {
                         Text(
-                            text = stringResource(R.string.discover_see_all),
+                            text = UiText.StringResource(
+                                StringResource.discover_see_all,
+                            ).asString(),
                             style = MaterialTheme.typography.labelLarge,
                             color = VndbTheme.colors.accent,
                         )
@@ -245,10 +246,14 @@ private fun LazyListScope.topRatedSection(
 @Composable
 private fun TrendingHeader() {
     SectionHeaderView(
-        title = UiText.StringResource(R.string.discover_new_and_trending),
+        title = UiText.StringResource(StringResource.discover_new_and_trending),
         icon = Icons.Outlined.Bolt,
         modifier = Modifier.padding(top = VndbTheme.spacing.md),
-        action = { TagChipView(label = UiText.StringResource(R.string.discover_language_filter)) },
+        action = {
+            TagChipView(
+                label = UiText.StringResource(StringResource.discover_language_filter),
+            )
+        },
     )
 }
 
@@ -257,12 +262,12 @@ private fun DiscoverHeader(isRolling: Boolean, onRollClick: () -> Unit) {
     Row(verticalAlignment = Alignment.Bottom) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(R.string.discover_overline),
+                text = UiText.StringResource(StringResource.discover_overline).asString(),
                 style = MaterialTheme.typography.labelSmall,
                 color = VndbTheme.colors.accent,
             )
             Text(
-                text = stringResource(R.string.discover_title),
+                text = UiText.StringResource(StringResource.discover_title).asString(),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -292,7 +297,7 @@ private fun DiscoverHeader(isRolling: Boolean, onRollClick: () -> Unit) {
             }
             Spacer(Modifier.size(VndbTheme.spacing.sm))
             Text(
-                text = stringResource(R.string.discover_random_roll),
+                text = UiText.StringResource(StringResource.discover_random_roll).asString(),
                 style = MaterialTheme.typography.labelLarge,
             )
         }
@@ -354,7 +359,10 @@ private class DiscoverStateProvider : PreviewParameterProvider<DiscoverState> {
         ),
         DiscoverState(isLoading = true),
         DiscoverState(
-            error = ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true),
+            error = ErrorUIModel(
+                UiText.StringResource(StringResource.error_network),
+                isRetryable = true,
+            ),
         ),
     )
 }

@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.character.presentation.component.appearancerow.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
 import com.zc.vndb.common.ui.mapper.toYearLabel
@@ -13,17 +12,24 @@ fun CharacterAppearance.toRowUIModel(): AppearanceRowUIModel = AppearanceRowUIMo
     novelId = novelId,
     title = UiText.StringValue(novelTitle),
     yearLabel = releaseDate.toYearLabel(),
-    roleLabel = UiText.StringResource(role.labelRes()),
+    roleLabel = role.toLabel(),
     isMajorRole = role == CharacterRole.Main || role == CharacterRole.Primary,
-    voiceActorLabel = voiceActor?.let { UiText.StringResource(R.string.detail_cv, listOf(it)) },
+    voiceActorLabel = voiceActor?.let {
+        UiText.StringResource(
+            StringResource.detail_cv,
+            listOf(it),
+        )
+    },
     ratingLabel = rating?.toRatingLabel(),
     thumbnailUrl = cover?.thumbnailUrl ?: cover?.url,
     isCoverSensitive = cover?.isSensitive ?: false,
 )
 
-private fun CharacterRole.labelRes(): StringResource = when (this) {
-    CharacterRole.Main -> R.string.character_role_main
-    CharacterRole.Primary -> R.string.character_role_primary
-    CharacterRole.Side -> R.string.character_role_side
-    CharacterRole.Appears -> R.string.character_role_appears
-}
+private fun CharacterRole.toLabel(): UiText = UiText.StringResource(
+    when (this) {
+        CharacterRole.Main -> StringResource.character_role_main
+        CharacterRole.Primary -> StringResource.character_role_primary
+        CharacterRole.Side -> StringResource.character_role_side
+        CharacterRole.Appears -> StringResource.character_role_appears
+    },
+)

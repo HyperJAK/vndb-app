@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.release.presentation.component.releasenovelrow.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.mapper.toYearLabel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.release.domain.model.ReleaseNovel
 import com.zc.vndb.feature.release.domain.model.ReleaseType
@@ -13,9 +13,9 @@ fun ReleaseNovel.toRowUIModel(): ReleaseNovelRowUIModel = ReleaseNovelRowUIModel
     yearLabel = releaseDate.toYearLabel(),
     typeLabel = UiText.StringResource(
         when (type) {
-            ReleaseType.Complete -> R.string.release_type_complete
-            ReleaseType.Partial -> R.string.release_type_partial
-            ReleaseType.Trial -> R.string.release_type_trial
+            ReleaseType.Complete -> StringResource.release_type_complete
+            ReleaseType.Partial -> StringResource.release_type_partial
+            ReleaseType.Trial -> StringResource.release_type_trial
         },
     ),
     isComplete = type == ReleaseType.Complete,

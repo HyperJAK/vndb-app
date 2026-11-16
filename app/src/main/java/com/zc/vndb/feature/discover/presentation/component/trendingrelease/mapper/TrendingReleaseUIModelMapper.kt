@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.discover.presentation.component.trendingrelease.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
 import com.zc.vndb.common.ui.mapper.platformLabel
@@ -30,7 +29,7 @@ fun TrendingRelease.toUIModel(): TrendingReleaseUIModel = TrendingReleaseUIModel
     releaseId = releaseId,
     novelId = novelId,
     title = UiText.StringValue(title),
-    kindLabel = UiText.StringResource(kind.labelRes()),
+    kindLabel = kind.toLabel(),
     kindTone = kind.toTone(),
     dateLabel = releaseDate.toLabel(),
     ratingLabel = rating?.toRatingLabel(),
@@ -44,17 +43,19 @@ fun ReleaseDate.toLabel(): UiText = when (this) {
     is ReleaseDate.Full -> UiText.StringValue(monthYearFormat.format(date.yearMonth))
     is ReleaseDate.Month -> UiText.StringValue(monthYearFormat.format(yearMonth))
     is ReleaseDate.Year -> UiText.StringValue(year.toString())
-    ReleaseDate.Tba -> UiText.StringResource(R.string.release_tba)
+    ReleaseDate.Tba -> UiText.StringResource(StringResource.release_tba)
 }
 
 private fun Platform.toLabel(): UiText = platformLabel(code)
 
-private fun ReleaseKind.labelRes(): StringResource = when (this) {
-    ReleaseKind.NewRelease -> R.string.discover_release_new
-    ReleaseKind.NewTranslation -> R.string.discover_release_translation
-    ReleaseKind.RecentPatch -> R.string.discover_release_patch
-    ReleaseKind.ReRelease -> R.string.discover_release_rerelease
-}
+private fun ReleaseKind.toLabel(): UiText = UiText.StringResource(
+    when (this) {
+        ReleaseKind.NewRelease -> StringResource.discover_release_new
+        ReleaseKind.NewTranslation -> StringResource.discover_release_translation
+        ReleaseKind.RecentPatch -> StringResource.discover_release_patch
+        ReleaseKind.ReRelease -> StringResource.discover_release_rerelease
+    },
+)
 
 private fun ReleaseKind.toTone(): ReleaseKindTone = when (this) {
     ReleaseKind.NewRelease -> ReleaseKindTone.New

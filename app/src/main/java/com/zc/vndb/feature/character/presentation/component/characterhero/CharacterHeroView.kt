@@ -13,12 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
 import com.zc.vndb.common.ui.component.factline.FactLineView
 import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -94,9 +94,18 @@ private fun CharacterHeroViewPreview() {
                 isImageSensitive = false,
                 identity = persistentListOf(UiText.StringValue("Female")),
                 facts = persistentListOf(
-                    FactUIModel(R.string.character_age, UiText.StringValue("18")),
-                    FactUIModel(R.string.character_birthday, UiText.StringValue("Jul 25")),
-                    FactUIModel(R.string.character_height, UiText.StringValue("160 cm")),
+                    FactUIModel(
+                        UiText.StringResource(StringResource.character_age),
+                        UiText.StringValue("18"),
+                    ),
+                    FactUIModel(
+                        UiText.StringResource(StringResource.character_birthday),
+                        UiText.StringValue("Jul 25"),
+                    ),
+                    FactUIModel(
+                        UiText.StringResource(StringResource.character_height),
+                        UiText.StringValue("160 cm"),
+                    ),
                 ),
             ),
             modifier = Modifier.padding(VndbTheme.spacing.lg),

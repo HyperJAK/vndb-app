@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.character.presentation.component.characterhero.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
@@ -26,13 +25,13 @@ fun CharacterProfile.toHeroUIModel(level: SpoilerLevel): CharacterHeroUIModel =
         imageUrl = image?.url,
         isImageSensitive = image?.isSensitive ?: false,
         identity = listOfNotNull(
-            sex?.let { UiText.StringResource(it.labelRes()) },
-            gender?.takeUnless { it.matches(sex) }?.let { UiText.StringResource(it.labelRes()) },
+            sex?.let { it.toLabel() },
+            gender?.takeUnless { it.matches(sex) }?.let { it.toLabel() },
         ).toImmutableList(),
         spoilerIdentity = if (level == SpoilerLevel.Major) {
             listOfNotNull(
-                spoilerSex?.let { UiText.StringResource(it.actuallyRes()) },
-                spoilerGender?.let { UiText.StringResource(it.labelRes()) },
+                spoilerSex?.let { it.toActuallyLabel() },
+                spoilerGender?.let { it.toLabel() },
             ).toImmutableList()
         } else {
             persistentListOf()
@@ -41,25 +40,45 @@ fun CharacterProfile.toHeroUIModel(level: SpoilerLevel): CharacterHeroUIModel =
     )
 
 private fun CharacterProfile.facts(): List<FactUIModel> = listOfNotNull(
-    age?.let { fact(R.string.character_age, UiText.StringValue(it.toString())) },
-    birthday?.let { fact(R.string.character_birthday, UiText.StringValue(it.format())) },
-    bloodType?.let { fact(R.string.character_blood_type, UiText.StringValue(it.uppercase())) },
+    age?.let {
+        fact(
+            UiText.StringResource(StringResource.character_age),
+            UiText.StringValue(it.toString()),
+        )
+    },
+    birthday?.let {
+        fact(
+            UiText.StringResource(StringResource.character_birthday),
+            UiText.StringValue(it.format()),
+        )
+    },
+    bloodType?.let {
+        fact(
+            UiText.StringResource(StringResource.character_blood_type),
+            UiText.StringValue(it.uppercase()),
+        )
+    },
     heightCm?.let {
         fact(
-            R.string.character_height,
-            UiText.StringResource(R.string.character_height_value, listOf(it)),
+            UiText.StringResource(StringResource.character_height),
+            UiText.StringResource(StringResource.character_height_value, listOf(it)),
         )
     },
     weightKg?.let {
         fact(
-            R.string.character_weight,
-            UiText.StringResource(R.string.character_weight_value, listOf(it)),
+            UiText.StringResource(StringResource.character_weight),
+            UiText.StringResource(StringResource.character_weight_value, listOf(it)),
         )
     },
-    measurements?.let { fact(R.string.character_measurements, it.toLabel()) },
+    measurements?.let {
+        fact(
+            UiText.StringResource(StringResource.character_measurements),
+            it.toLabel(),
+        )
+    },
 )
 
-private fun fact(label: StringResource, value: UiText) = FactUIModel(
+private fun fact(label: UiText, value: UiText) = FactUIModel(
     label = label,
     value = value,
 )
@@ -76,32 +95,38 @@ private fun Birthday.format(): String {
 private fun Measurements.toLabel(): UiText {
     val parts = listOf(bust, waist, hips).map { it?.toString() ?: UNKNOWN }
     return if (cup == null) {
-        UiText.StringResource(R.string.character_measurements_value, parts)
+        UiText.StringResource(StringResource.character_measurements_value, parts)
     } else {
-        UiText.StringResource(R.string.character_measurements_with_cup, parts + cup)
+        UiText.StringResource(StringResource.character_measurements_with_cup, parts + cup)
     }
 }
 
 private fun Gender.matches(sex: Sex?): Boolean =
     (this == Gender.Male && sex == Sex.Male) || (this == Gender.Female && sex == Sex.Female)
 
-private fun Sex.labelRes(): StringResource = when (this) {
-    Sex.Male -> R.string.character_sex_male
-    Sex.Female -> R.string.character_sex_female
-    Sex.Both -> R.string.character_sex_both
-    Sex.Sexless -> R.string.character_sex_sexless
-}
+private fun Sex.toLabel(): UiText = UiText.StringResource(
+    when (this) {
+        Sex.Male -> StringResource.character_sex_male
+        Sex.Female -> StringResource.character_sex_female
+        Sex.Both -> StringResource.character_sex_both
+        Sex.Sexless -> StringResource.character_sex_sexless
+    },
+)
 
-private fun Sex.actuallyRes(): StringResource = when (this) {
-    Sex.Male -> R.string.character_sex_actually_male
-    Sex.Female -> R.string.character_sex_actually_female
-    Sex.Both -> R.string.character_sex_actually_both
-    Sex.Sexless -> R.string.character_sex_actually_sexless
-}
+private fun Sex.toActuallyLabel(): UiText = UiText.StringResource(
+    when (this) {
+        Sex.Male -> StringResource.character_sex_actually_male
+        Sex.Female -> StringResource.character_sex_actually_female
+        Sex.Both -> StringResource.character_sex_actually_both
+        Sex.Sexless -> StringResource.character_sex_actually_sexless
+    },
+)
 
-private fun Gender.labelRes(): StringResource = when (this) {
-    Gender.Male -> R.string.character_gender_male
-    Gender.Female -> R.string.character_gender_female
-    Gender.NonBinary -> R.string.character_gender_non_binary
-    Gender.Ambiguous -> R.string.character_gender_ambiguous
-}
+private fun Gender.toLabel(): UiText = UiText.StringResource(
+    when (this) {
+        Gender.Male -> StringResource.character_gender_male
+        Gender.Female -> StringResource.character_gender_female
+        Gender.NonBinary -> StringResource.character_gender_non_binary
+        Gender.Ambiguous -> StringResource.character_gender_ambiguous
+    },
+)

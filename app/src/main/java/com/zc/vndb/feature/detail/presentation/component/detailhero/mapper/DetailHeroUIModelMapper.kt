@@ -1,11 +1,11 @@
 package com.zc.vndb.feature.detail.presentation.component.detailhero.mapper
 
-import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
 import com.zc.vndb.common.ui.mapper.toIsoLabel
 import com.zc.vndb.common.ui.mapper.toLabel
 import com.zc.vndb.common.ui.mapper.toNameLabel
+import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.AgeRange
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
@@ -29,9 +29,14 @@ fun NovelDetail.toHeroUIModel(ageRange: AgeRange?): DetailHeroUIModel = DetailHe
     releasedLabel = releaseDate.toIsoLabel(),
     lengthName = length?.toNameLabel(),
     lengthValueLabel = (averageHoursLabel() ?: length?.toLabel())
-        ?.let { UiText.StringResource(R.string.detail_length_value, listOf(it)) },
+        ?.let { UiText.StringResource(StringResource.detail_length_value, listOf(it)) },
     lengthVotesLabel = lengthVotes.takeIf { it > 0 && averagePlayMinutes != null }
-        ?.let { UiText.StringResource(R.string.detail_length_votes, listOf("%,d".format(it))) },
+        ?.let {
+            UiText.StringResource(
+                StringResource.detail_length_votes,
+                listOf("%,d".format(it)),
+            )
+        },
     ageLabel = ageRange?.toLabel(),
     tags = tags
         .filter { it.category == TagCategory.Content && it.spoilerLevel == 0 }
@@ -43,15 +48,15 @@ fun NovelDetail.toHeroUIModel(ageRange: AgeRange?): DetailHeroUIModel = DetailHe
 
 private fun NovelDetail.averageHoursLabel(): UiText? = averagePlayMinutes?.let { minutes ->
     UiText.StringResource(
-        R.string.detail_hours,
+        StringResource.detail_hours,
         listOf((minutes / MINUTES_PER_HOUR).roundToInt().toString()),
     )
 }
 
 /** "All Ages", "18+", "All Ages / 15+" or "12+ / 18+". */
 fun AgeRange.toLabel(): UiText = when {
-    max == ALL_AGES -> UiText.StringResource(R.string.detail_age_all)
-    min == max -> UiText.StringResource(R.string.detail_age_min, listOf(max))
-    min == ALL_AGES -> UiText.StringResource(R.string.detail_age_range_from_all, listOf(max))
-    else -> UiText.StringResource(R.string.detail_age_range, listOf(min, max))
+    max == ALL_AGES -> UiText.StringResource(StringResource.detail_age_all)
+    min == max -> UiText.StringResource(StringResource.detail_age_min, listOf(max))
+    min == ALL_AGES -> UiText.StringResource(StringResource.detail_age_range_from_all, listOf(max))
+    else -> UiText.StringResource(StringResource.detail_age_range, listOf(min, max))
 }
