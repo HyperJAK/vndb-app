@@ -1,0 +1,100 @@
+# MyVNDB Detekt rules.
+# Built on top of Detekt's default config (buildUponDefaultConfig = true), so this file only lists
+# overrides. Rule sets: Detekt core, ktlint (detekt-rules-ktlint-wrapper), Compose (io.nlopez.compose.rules).
+# `./gradlew detekt` must pass with zero findings and no baseline (best-practices skill §2).
+
+config:
+  validation: true
+  warningsAsErrors: true
+
+complexity:
+  LongMethod:
+    allowedLines: 60
+  LongParameterList:
+    # Composables take state + event lambdas; only count parameters without defaults.
+    ignoreDefaultParameters: true
+    ignoreAnnotated: ['Composable']
+  TooManyFunctions:
+    ignorePrivate: true
+    ignoreOverridden: true
+    ignoreAnnotatedFunctions: ['Preview']
+
+naming:
+  FunctionNaming:
+    # Composables are PascalCase.
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    # Compose-style constants (e.g. `val SkyBlue = Color(...)`) are PascalCase.
+    constantPattern: '[A-Z][A-Za-z0-9_]*'
+
+style:
+  MagicNumber:
+    ignoreAnnotated: ['Preview']
+  UnusedPrivateFunction:
+    # @Preview functions are private and only referenced by tooling.
+    ignoreAnnotated: ['Preview']
+  ForbiddenImport:
+    # Libraries/APIs disallowed by the tech-stack skill.
+    active: true
+    forbiddenImports:
+      - value: 'retrofit2.*'
+        reason: 'Use Ktor Client.'
+      - value: 'okhttp3.*'
+        reason: 'Use Ktor Client; OkHttp is only the Ktor engine.'
+      - value: 'com.google.gson.*'
+        reason: 'Use kotlinx.serialization.'
+      - value: 'com.squareup.moshi.*'
+        reason: 'Use kotlinx.serialization.'
+      - value: 'dagger.*'
+        reason: 'Use Koin.'
+      - value: 'javax.inject.*'
+        reason: 'Use Koin.'
+      - value: 'io.reactivex.*'
+        reason: 'Use coroutines and Flow.'
+      - value: 'androidx.lifecycle.LiveData'
+        reason: 'Use StateFlow.'
+      - value: 'androidx.lifecycle.MutableLiveData'
+        reason: 'Use MutableStateFlow.'
+      - value: 'com.bumptech.glide.*'
+        reason: 'Use Coil.'
+      - value: 'com.squareup.picasso.*'
+        reason: 'Use Coil.'
+      - value: 'android.content.SharedPreferences'
+        reason: 'Use DataStore.'
+      - value: 'androidx.fragment.*'
+        reason: '100% Compose.'
+      - value: 'androidx.navigation.compose.*'
+        reason: 'Use Navigation 3.'
+      - value: 'androidx.navigation.NavController'
+        reason: 'Use Navigation 3.'
+      - value: 'android.text.Html'
+        reason: 'Use Compose RichText.'
+      - value: 'java.util.Date'
+        reason: 'Use kotlinx-datetime.'
+      - value: 'java.util.Calendar'
+        reason: 'Use kotlinx-datetime.'
+      - value: 'java.text.SimpleDateFormat'
+        reason: 'Use kotlinx-datetime.'
+      - value: 'java.time.*'
+        reason: 'Use kotlinx-datetime.'
+
+ktlint:
+  code_style: 'android_studio'
+  MaximumLineLength:
+    maxLineLength: 120
+  TrailingCommaOnCallSite:
+    useTrailingCommaOnCallSite: true
+  TrailingCommaOnDeclarationSite:
+    useTrailingCommaOnDeclarationSite: true
+
+Compose:
+  CompositionLocalAllowlist:
+    # Theme token locals are the only CompositionLocals allowed.
+    allowedCompositionLocals:
+      - LocalVndbColors
+      - LocalVndbShapes
+      - LocalVndbSpacing
+      - LocalVndbDimens
+  Material2:
+    # Material 3 only (tech-stack skill §4).
+    active: true

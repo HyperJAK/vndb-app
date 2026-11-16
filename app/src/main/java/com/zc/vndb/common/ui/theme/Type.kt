@@ -25,7 +25,12 @@ private fun googleFontFamily(name: String, vararg weights: FontWeight): FontFami
 val SpaceGrotesk = googleFontFamily("Space Grotesk", FontWeight.SemiBold, FontWeight.Bold)
 
 /** Narrative & metadata. */
-val HankenGrotesk = googleFontFamily("Hanken Grotesk", FontWeight.Normal, FontWeight.SemiBold, FontWeight.Bold)
+val HankenGrotesk = googleFontFamily(
+    "Hanken Grotesk",
+    FontWeight.Normal,
+    FontWeight.SemiBold,
+    FontWeight.Bold,
+)
 
 /** Data, IDs, tags, scores. */
 val JetBrainsMono = googleFontFamily("JetBrains Mono", FontWeight.Medium, FontWeight.SemiBold)
@@ -106,9 +111,18 @@ private val labelSm = TextStyle(
 private val defaults = Typography()
 
 val VndbTypography = Typography(
-    displayLarge = defaults.displayLarge.copy(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Bold),
-    displayMedium = defaults.displayMedium.copy(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Bold),
-    displaySmall = defaults.displaySmall.copy(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Bold),
+    displayLarge = defaults.displayLarge.copy(
+        fontFamily = SpaceGrotesk,
+        fontWeight = FontWeight.Bold,
+    ),
+    displayMedium = defaults.displayMedium.copy(
+        fontFamily = SpaceGrotesk,
+        fontWeight = FontWeight.Bold,
+    ),
+    displaySmall = defaults.displaySmall.copy(
+        fontFamily = SpaceGrotesk,
+        fontWeight = FontWeight.Bold,
+    ),
     headlineLarge = headlineLg,
     headlineMedium = headlineLgMobile,
     headlineSmall = headlineMd,

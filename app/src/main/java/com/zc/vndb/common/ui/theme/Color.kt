@@ -61,11 +61,7 @@ internal val Slate = Color(0xFF64748B)
 
 /** A pill/badge treatment: tinted fill, text and hairline border. */
 @Immutable
-data class TintedColors(
-    val container: Color,
-    val content: Color,
-    val border: Color,
-)
+data class TintedColors(val container: Color, val content: Color, val border: Color)
 
 private fun tinted(base: Color, containerAlpha: Float = 0.12f, borderAlpha: Float = 0.25f) =
     TintedColors(

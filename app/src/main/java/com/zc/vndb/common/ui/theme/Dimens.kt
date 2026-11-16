@@ -23,6 +23,9 @@ data class VndbSpacing(
     val marginDesktop: Dp = 32.dp,
 )
 
+/** Portrait cover cards use a 3:4 ratio (width / height). */
+private const val COVER_ASPECT_RATIO = 0.75f
+
 /** Fixed sizes and elevation effects from DESIGN.md. Read through [VndbTheme.dimens]. */
 @Immutable
 data class VndbDimens(
@@ -36,8 +39,8 @@ data class VndbDimens(
     val glassBlur: Dp = 16.dp,
     /** Major-spoiler text mask. */
     val spoilerBlur: Dp = 4.dp,
-    /** Cover cards use a 3:4 portrait ratio. */
-    val coverAspectRatio: Float = 3f / 4f,
+    /** Cover card width / height. */
+    val coverAspectRatio: Float = COVER_ASPECT_RATIO,
 )
 
 internal val LocalVndbSpacing = staticCompositionLocalOf { VndbSpacing() }
