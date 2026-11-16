@@ -20,18 +20,15 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaul
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.zc.vndb.R
 import com.zc.vndb.common.ui.resource.StringResource
@@ -81,8 +78,11 @@ private enum class TopLevelDestination(
 /** App root: adaptive navigation suite (bar / rail / drawer) around the Navigation 3 back stack. */
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
-    val backStack = rememberNavBackStack(DiscoverNavKey)
-    val root = backStack.firstOrNull()
+    val navigationState = rememberNavigationState(
+        startRoute = DiscoverNavKey,
+        topLevelRoutes = remember { TopLevelDestination.entries.map { it.key }.toSet() },
+    )
+    val navigator = remember(navigationState) { Navigator(navigationState) }
     val itemColors = navigationItemColors()
 
     NavigationSuiteScaffold(
@@ -94,12 +94,16 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         ),
         navigationSuiteItems = {
             TopLevelDestination.entries.forEach { destination ->
+                val selected = navigationState.topLevelRoute == destination.key
                 item(
-                    selected = root == destination.key,
+                    selected = selected,
                     onClick = {
-                        if (backStack.size != 1 || root != destination.key) {
-                            backStack.clear()
-                            backStack.add(destination.key)
+                        if (selected) {
+                            navigator.reselect(
+                                destination.key,
+                            )
+                        } else {
+                            navigator.navigate(destination.key)
                         }
                     },
                     icon = { Icon(destination.icon, contentDescription = null) },
@@ -109,7 +113,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             }
         },
     ) {
-        AppNavDisplay(backStack)
+        AppNavDisplay(navigationState, navigator)
     }
 }
 
@@ -137,65 +141,59 @@ private fun navigationItemColors(): NavigationSuiteItemColors {
 }
 
 @Composable
-private fun AppNavDisplay(backStack: NavBackStack<NavKey>) {
+private fun AppNavDisplay(navigationState: NavigationState, navigator: Navigator) {
     NavDisplay(
-        backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator(),
-        ),
-        entryProvider = entryProvider {
-            entry<DiscoverNavKey> {
-                DiscoverRoute(
-                    onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
-                    onOpenBrowse = {
-                        backStack.clear()
-                        backStack.add(BrowseNavKey)
-                    },
-                )
-            }
-            entry<BrowseNavKey> {
-                BrowseRoute(onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) })
-            }
-            entry<ProfileNavKey> {
-                PlaceholderScreen(
-                    text = stringResource(R.string.placeholder_coming_soon),
-                )
-            }
-            entry<NovelDetailNavKey> { key ->
-                DetailRoute(
-                    novelId = key.id,
-                    onNavigateBack = { backStack.removeLastOrNull() },
-                    onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
-                    onOpenCharacter = { id -> backStack.add(CharacterNavKey(id)) },
-                    onOpenTag = { id -> backStack.add(TagNavKey(id)) },
-                    onOpenRelease = { id -> backStack.add(ReleaseNavKey(id)) },
-                )
-            }
-            entry<ReleaseNavKey> { key ->
-                ReleaseRoute(
-                    releaseId = key.id,
-                    onNavigateBack = { backStack.removeLastOrNull() },
-                    onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
-                )
-            }
-            entry<TagNavKey> { key ->
-                BrowseRoute(
-                    tagId = key.id,
-                    onNavigateBack = { backStack.removeLastOrNull() },
-                    onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
-                )
-            }
-            entry<CharacterNavKey> { key ->
-                CharacterRoute(
-                    characterId = key.id,
-                    onNavigateBack = { backStack.removeLastOrNull() },
-                    onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
-                )
-            }
-        },
+        entries = navigationState.toDecoratedEntries(appEntryProvider(navigator)),
+        onBack = navigator::goBack,
     )
+}
+
+private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
+    entry<DiscoverNavKey> {
+        DiscoverRoute(
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+            onOpenBrowse = { navigator.navigate(BrowseNavKey) },
+        )
+    }
+    entry<BrowseNavKey> {
+        BrowseRoute(onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) })
+    }
+    entry<ProfileNavKey> {
+        PlaceholderScreen(
+            text = stringResource(R.string.placeholder_coming_soon),
+        )
+    }
+    entry<NovelDetailNavKey> { key ->
+        DetailRoute(
+            novelId = key.id,
+            onNavigateBack = { navigator.goBack() },
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+            onOpenCharacter = { id -> navigator.navigate(CharacterNavKey(id)) },
+            onOpenTag = { id -> navigator.navigate(TagNavKey(id)) },
+            onOpenRelease = { id -> navigator.navigate(ReleaseNavKey(id)) },
+        )
+    }
+    entry<ReleaseNavKey> { key ->
+        ReleaseRoute(
+            releaseId = key.id,
+            onNavigateBack = { navigator.goBack() },
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+        )
+    }
+    entry<TagNavKey> { key ->
+        BrowseRoute(
+            tagId = key.id,
+            onNavigateBack = { navigator.goBack() },
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+        )
+    }
+    entry<CharacterNavKey> { key ->
+        CharacterRoute(
+            characterId = key.id,
+            onNavigateBack = { navigator.goBack() },
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+        )
+    }
 }
 
 /** Empty screen for destinations whose features have not landed yet. */
