@@ -14,4 +14,6 @@ data class FeaturedNovel(
     val tags: List<String>,
     /** Guessed from the cover flags and tags; VNDB only has age ratings per release. */
     val isAllAges: Boolean,
+    /** Title in the original script, when VNDB has one. */
+    val originalTitle: String? = null,
 )

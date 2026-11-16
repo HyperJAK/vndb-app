@@ -1,6 +1,8 @@
 package com.zc.vndb.feature.release.presentation
 
 import app.cash.turbine.test
+import com.zc.vndb.common.domain.repository.FakeSettingsRepository
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.util.MainDispatcherRule
@@ -27,9 +29,12 @@ class ReleaseViewModelTest {
             ReleaseSamples.release()
     }
 
+    private val settings = FakeSettingsRepository()
+
     private fun createViewModel() = ReleaseViewModel(
         releaseId = "r7668",
         getRelease = GetReleaseUseCase(repository),
+        observeSettings = ObserveSettingsUseCase(settings),
     )
 
     @Test

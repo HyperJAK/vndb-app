@@ -2,7 +2,10 @@ package com.zc.vndb.feature.character.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
+import com.zc.vndb.common.ui.component.spoilerfilter.mapper.toSpoilerLevel
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.mapper.bbCodeToPlainText
 import com.zc.vndb.common.ui.resource.PluralResource
@@ -30,6 +33,7 @@ import org.koin.core.annotation.KoinViewModel
 class CharacterViewModel(
     @InjectedParam private val characterId: String,
     private val getCharacter: GetCharacterUseCase,
+    private val observeSettings: ObserveSettingsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CharacterState(characterId = characterId))
@@ -41,6 +45,10 @@ class CharacterViewModel(
     /** Kept to re-map when the spoiler level changes. */
     private var profile: CharacterProfile? = null
     private var loadJob: Job? = null
+    private var titleLanguage = TitleLanguage.Romanized
+
+    /** The starting spoiler level (Settings) is applied on the first successful load only. */
+    private var isStartApplied = false
 
     init {
         onIntent(CharacterIntent.Load)
@@ -78,9 +86,19 @@ class CharacterViewModel(
         loadJob?.cancel()
         _state.update { it.copy(isLoading = true, error = null) }
         loadJob = viewModelScope.launch {
+            val settings = observeSettings.current()
+            titleLanguage = settings.titleLanguage
             getCharacter(characterId)
                 .onSuccess { loaded ->
                     profile = loaded
+                    if (!isStartApplied) {
+                        isStartApplied = true
+                        _state.update {
+                            it.copy(
+                                spoilerLevel = settings.defaultSpoilerLevel.toSpoilerLevel(),
+                            )
+                        }
+                    }
                     _state.update {
                         it.copy(
                             aliases = loaded.aliases.map(UiText::StringValue).toImmutableList(),
@@ -119,7 +137,7 @@ class CharacterViewModel(
                 traitGroups = current.traits.toTraitGroups(level),
                 hiddenTraitsLabel = current.traits.toHiddenTraitsLabel(level),
                 appearances = visible.map { appearance ->
-                    appearance.toRowUIModel()
+                    appearance.toRowUIModel(titleLanguage)
                 }.toImmutableList(),
                 hiddenAppearancesLabel = hiddenAppearances.takeIf { count -> count > 0 }
                     ?.let { count ->

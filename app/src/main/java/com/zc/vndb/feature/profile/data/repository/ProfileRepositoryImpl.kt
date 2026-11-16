@@ -4,6 +4,7 @@ import com.zc.vndb.common.data.local.SessionLocalDataSource
 import com.zc.vndb.common.data.util.safeApiCall
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.feature.profile.data.mapper.entriesQuery
+import com.zc.vndb.feature.profile.data.mapper.entryLabelsQuery
 import com.zc.vndb.feature.profile.data.mapper.toDomain
 import com.zc.vndb.feature.profile.data.remote.ProfileService
 import com.zc.vndb.feature.profile.domain.model.EntryPage
@@ -35,6 +36,12 @@ class ProfileRepositoryImpl(
         val result = service.entries(entriesQuery(userId, labelId, page, pageSize), token)
         EntryPage(entries = result.results.map { it.toDomain() }, hasMore = result.more)
     }
+
+    override suspend fun getEntryLabelIds(userId: String, novelId: String): Result<List<Int>> =
+        authorized { token ->
+            service.entryLabels(entryLabelsQuery(userId, novelId), token).results
+                .firstOrNull()?.labels.orEmpty().map { it.id }
+        }
 
     /** Runs [block] with the stored token; a rejected token signs the user out. */
     private suspend fun <T> authorized(block: suspend (token: String?) -> T): Result<T> {

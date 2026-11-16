@@ -8,13 +8,13 @@ import com.zc.vndb.feature.discover.domain.repository.DiscoverRepository
 import org.koin.core.annotation.Factory
 
 /**
- * "New & Trending": the newest releases in English or Japanese, one row per visual novel,
+ * "New & Trending": the newest releases in the user's [languages], one row per visual novel,
  * each labelled with why it is new. Machine-translation-only releases are left out.
  */
 @Factory
 class GetTrendingReleasesUseCase(private val repository: DiscoverRepository) {
-    suspend operator fun invoke(): Result<List<TrendingRelease>> =
-        repository.getRecentReleases(LANGUAGE_CODES, FETCH_LIMIT).map { releases ->
+    suspend operator fun invoke(languages: List<String>): Result<List<TrendingRelease>> =
+        repository.getRecentReleases(languages, FETCH_LIMIT).map { releases ->
             releases
                 .filterNot { it.isMachineTranslatedOnly }
                 .mapNotNull { it.toTrendingOrNull() }
@@ -31,6 +31,7 @@ class GetTrendingReleasesUseCase(private val repository: DiscoverRepository) {
             releaseId = id,
             novelId = novel.id,
             title = novel.title,
+            originalTitle = novel.originalTitle,
             kind = kindFor(novel),
             releaseDate = releaseDate,
             platforms = platforms,
@@ -52,7 +53,6 @@ class GetTrendingReleasesUseCase(private val repository: DiscoverRepository) {
     }
 
     companion object {
-        val LANGUAGE_CODES = listOf("en", "ja")
         const val RESULT_LIMIT = 10
 
         // Over-fetch so de-duplicating by visual novel still leaves RESULT_LIMIT rows.

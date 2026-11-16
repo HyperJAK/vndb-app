@@ -10,4 +10,6 @@ data class DiscoverNovel(
     val rating: Double?,
     val cover: Cover?,
     val developerName: String?,
+    /** Title in the original script, when VNDB has one. */
+    val originalTitle: String? = null,
 )

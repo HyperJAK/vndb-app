@@ -25,6 +25,7 @@ fun ReleaseLanguageDTO.toDomain(): ReleaseLanguage =
 fun ReleaseVisualNovelDTO.toDomain(): ReleaseNovel = ReleaseNovel(
     id = id,
     title = title.orEmpty(),
+    originalTitle = altTitle,
     originalLanguage = olang.orEmpty(),
     releaseDate = released.toReleaseDate(),
     rating = rating,

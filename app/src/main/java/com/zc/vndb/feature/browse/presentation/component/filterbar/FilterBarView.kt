@@ -46,7 +46,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 private val SortIconSize = 16.dp
 
-/** All Ages / 18+ chips on the left, sort menu on the right. */
+/** All Ages / 18+ / Both chips on the left, sort menu on the right. */
 @Composable
 fun FilterBarView(
     ageRating: AgeRating,
@@ -76,6 +76,12 @@ fun FilterBarView(
             label = UiText.StringResource(StringResource.browse_age_adult),
             isSelected = ageRating == AgeRating.Adult,
             onClick = { onAgeRatingSelect(AgeRating.Adult) },
+            selectedColors = ageSelected,
+        )
+        SelectableChipView(
+            label = UiText.StringResource(StringResource.browse_age_any),
+            isSelected = ageRating == AgeRating.Any,
+            onClick = { onAgeRatingSelect(AgeRating.Any) },
             selectedColors = ageSelected,
         )
         Spacer(Modifier.weight(1f))

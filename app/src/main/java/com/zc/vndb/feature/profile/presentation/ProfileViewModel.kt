@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.common.domain.model.Session
+import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -47,6 +49,7 @@ class ProfileViewModel(
     private val getListEntries: GetListEntriesUseCase,
     private val logOut: LogOutUseCase,
     private val clock: Clock,
+    private val observeSettings: ObserveSettingsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -70,12 +73,16 @@ class ProfileViewModel(
     private var labels: List<ListLabel> = emptyList()
     private var selectedLabelId: Int? = null
     private val entriesByLabel = mutableMapOf<Int, LabelEntries>()
+    private var titleLanguage = TitleLanguage.Romanized
     private var overviewJob: Job? = null
     private var entriesJob: Job? = null
 
+    @Suppress("CyclomaticComplexMethod") // A flat dispatch over the screen's intents.
     fun onIntent(intent: ProfileIntent) {
         when (intent) {
             ProfileIntent.LogInClicked -> sendEffect(ProfileEffect.NavigateToLogin)
+
+            ProfileIntent.SettingsClicked -> sendEffect(ProfileEffect.NavigateToSettings)
 
             ProfileIntent.Retry -> loadOverview(isRefresh = false)
 
@@ -139,6 +146,7 @@ class ProfileViewModel(
         entriesJob?.cancel()
         _state.update { it.copy(isLoading = !isRefresh, isRefreshing = isRefresh, error = null) }
         overviewJob = viewModelScope.launch {
+            titleLanguage = observeSettings.current().titleLanguage
             getProfile(current.userId)
                 .onSuccess { overview ->
                     user = overview.user
@@ -272,6 +280,7 @@ class ProfileViewModel(
                         entry.toCardUIModel(
                             labelId,
                             now,
+                            titleLanguage,
                         )
                     }.toImmutableList(),
                     hasMore = loaded.hasMore,

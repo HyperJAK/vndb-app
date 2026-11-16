@@ -1,6 +1,8 @@
 package com.zc.vndb.feature.detail.presentation.component.relationcard.mapper
 
+import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
+import com.zc.vndb.common.ui.mapper.primaryTitle
 import com.zc.vndb.common.ui.mapper.toYearLabel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -8,9 +10,11 @@ import com.zc.vndb.feature.detail.domain.model.RelatedNovel
 import com.zc.vndb.feature.detail.domain.model.RelationType
 import com.zc.vndb.feature.detail.presentation.component.relationcard.model.RelationCardUIModel
 
-fun RelatedNovel.toCardUIModel(): RelationCardUIModel = RelationCardUIModel(
+fun RelatedNovel.toCardUIModel(
+    titleLanguage: TitleLanguage = TitleLanguage.Romanized,
+): RelationCardUIModel = RelationCardUIModel(
     id = id,
-    title = UiText.StringValue(title),
+    title = primaryTitle(title, originalTitle, titleLanguage),
     relationLabel = relation.toLabel(),
     isOfficial = isOfficial,
     yearLabel = releaseDate.toYearLabel(),

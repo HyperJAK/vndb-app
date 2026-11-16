@@ -11,4 +11,5 @@ data class RelationDTO(
     @SerialName("relation_official") val relationOfficial: Boolean?,
     @SerialName("released") val released: String?,
     @SerialName("rating") val rating: Double?,
+    @SerialName("alttitle") val altTitle: String? = null,
 )

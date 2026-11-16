@@ -5,15 +5,20 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import coil3.disk.DiskCache
 import com.zc.vndb.BuildConfig
+import com.zc.vndb.common.data.local.SessionLocalDataSource
+import com.zc.vndb.common.data.local.SettingsLocalDataSource
 import com.zc.vndb.common.data.network.LogcatHttpLogger
 import com.zc.vndb.common.data.network.appJson
 import com.zc.vndb.common.data.network.createHttpClient
 import io.ktor.client.HttpClient
 import kotlin.time.Clock
 import kotlinx.serialization.json.Json
+import okio.Path.Companion.toOkioPath
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 @Module
@@ -31,6 +36,31 @@ class CommonModule {
 
     // Signed-in VNDB account, shared by the login and profile features.
     @Single
+    @Named(SessionLocalDataSource.SESSION_DATASTORE)
     fun sessionDataStore(context: Context): DataStore<Preferences> =
-        PreferenceDataStoreFactory.create { context.preferencesDataStoreFile("session") }
+        PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile(
+                SessionLocalDataSource.SESSION_DATASTORE,
+            )
+        }
+
+    // User preferences from the Settings screen, read by most features.
+    @Single
+    @Named(SettingsLocalDataSource.SETTINGS_DATASTORE)
+    fun settingsDataStore(context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile(
+                SettingsLocalDataSource.SETTINGS_DATASTORE,
+            )
+        }
+
+    // Coil's disk cache, shared with the image loader so Settings can show its size and clear it.
+    @Single
+    fun imageDiskCache(context: Context): DiskCache = DiskCache.Builder()
+        .directory(context.cacheDir.resolve(IMAGE_CACHE_DIRECTORY).toOkioPath())
+        .build()
+
+    private companion object {
+        const val IMAGE_CACHE_DIRECTORY = "image_cache"
+    }
 }

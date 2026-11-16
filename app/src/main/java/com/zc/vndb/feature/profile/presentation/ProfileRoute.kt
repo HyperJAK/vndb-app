@@ -13,6 +13,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ProfileRoute(
     onOpenLogin: () -> Unit,
+    onOpenSettings: () -> Unit,
     onOpenNovel: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = koinViewModel(),
@@ -24,6 +25,8 @@ fun ProfileRoute(
     ObserveAsEvents(viewModel.effect) { effect ->
         when (effect) {
             ProfileEffect.NavigateToLogin -> onOpenLogin()
+
+            ProfileEffect.NavigateToSettings -> onOpenSettings()
 
             is ProfileEffect.NavigateToNovel -> onOpenNovel(effect.id)
 

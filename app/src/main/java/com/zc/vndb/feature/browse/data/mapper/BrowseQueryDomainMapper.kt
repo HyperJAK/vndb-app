@@ -30,12 +30,11 @@ fun BrowseFilter.toQueryDTO(page: Int, pageSize: Int, withCount: Boolean): Query
 private fun BrowseFilter.toFilters(): JsonElement {
     val adultRelease = predicate("minage", ">=", JsonPrimitive(ADULT_MIN_AGE))
     val predicates = buildList {
-        add(
-            when (ageRating) {
-                AgeRating.AllAges -> predicate("release", "!=", adultRelease)
-                AgeRating.Adult -> predicate("release", "=", adultRelease)
-            },
-        )
+        when (ageRating) {
+            AgeRating.AllAges -> add(predicate("release", "!=", adultRelease))
+            AgeRating.Adult -> add(predicate("release", "=", adultRelease))
+            AgeRating.Any -> Unit
+        }
         if (query.isNotEmpty()) add(predicate("search", "=", JsonPrimitive(query)))
         // VNDB sorts unknown (TBA) dates last-is-newest; "Newest" should mean already released.
         if (sort == BrowseSort.Newest) add(predicate("released", "<=", JsonPrimitive("today")))
@@ -46,9 +45,16 @@ private fun BrowseFilter.toFilters(): JsonElement {
         }
         tagId?.let { add(predicate("tag", "=", JsonPrimitive(it))) }
     }
-    return predicates.singleOrNull() ?: buildJsonArray {
-        add("and")
-        predicates.forEach { add(it) }
+    // No condition at all ("Both" ages, nothing else) is an empty list: VNDB rejects ["and"].
+    return when (predicates.size) {
+        0 -> JsonArray(emptyList())
+
+        1 -> predicates.single()
+
+        else -> buildJsonArray {
+            add("and")
+            predicates.forEach { add(it) }
+        }
     }
 }
 

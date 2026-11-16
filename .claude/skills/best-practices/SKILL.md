@@ -652,7 +652,7 @@ class VisualNovelUIModelMapperTest {
 ```
 
 ```bash
-./gradlew testDebugUnitTest
+./gradlew testDevelopmentDebugUnitTest
 ```
 
 ```bash

@@ -2,6 +2,7 @@ package com.zc.vndb.feature.release.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.feature.release.domain.usecase.GetReleaseUseCase
 import com.zc.vndb.feature.release.presentation.component.releasehero.mapper.toHeroUIModel
@@ -29,6 +30,7 @@ import org.koin.core.annotation.KoinViewModel
 class ReleaseViewModel(
     @InjectedParam private val releaseId: String,
     private val getRelease: GetReleaseUseCase,
+    private val observeSettings: ObserveSettingsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ReleaseState(releaseId = releaseId))
@@ -76,6 +78,7 @@ class ReleaseViewModel(
         loadJob?.cancel()
         _state.update { it.copy(isLoading = true, error = null) }
         loadJob = viewModelScope.launch {
+            val titleLanguage = observeSettings.current().titleLanguage
             getRelease(releaseId)
                 .onSuccess { release ->
                     title = release.title
@@ -85,7 +88,7 @@ class ReleaseViewModel(
                             hero = release.toHeroUIModel(),
                             links = release.toLinks(),
                             novels = release.novels.map { novel ->
-                                novel.toRowUIModel()
+                                novel.toRowUIModel(titleLanguage)
                             }.toImmutableList(),
                             languages = release.toLanguageUIModels(),
                             producers = release.toProducerUIModels(),

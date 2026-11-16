@@ -1,8 +1,15 @@
 package com.zc.vndb.feature.detail.presentation
 
 import app.cash.turbine.test
+import com.zc.vndb.common.domain.model.AppSettings
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.Session
+import com.zc.vndb.common.domain.model.SpoilerPreference
+import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.domain.repository.FakeSessionRepository
+import com.zc.vndb.common.domain.repository.FakeSettingsRepository
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -21,6 +28,8 @@ import com.zc.vndb.feature.detail.presentation.model.DetailSection
 import com.zc.vndb.feature.detail.presentation.model.DetailTab
 import com.zc.vndb.feature.detail.presentation.model.SectionState
 import com.zc.vndb.feature.detail.presentation.model.dataOrNull
+import com.zc.vndb.feature.profile.domain.repository.FakeProfileRepository
+import com.zc.vndb.feature.profile.domain.usecase.IsNovelFinishedUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -56,6 +65,10 @@ class DetailViewModelTest {
         quotes = (1..30).map { DetailSamples.quote("q$it") }
     }
 
+    private val settings = FakeSettingsRepository()
+    private val sessions = FakeSessionRepository()
+    private val profileRepository = FakeProfileRepository()
+
     private fun createViewModel() = DetailViewModel(
         novelId = "v2002",
         getNovelDetail = GetNovelDetailUseCase(repository),
@@ -65,6 +78,8 @@ class DetailViewModelTest {
         getNovelCovers = GetNovelCoversUseCase(repository),
         getNovelReleases = GetNovelReleasesUseCase(repository),
         getNovelQuotes = GetNovelQuotesUseCase(repository),
+        observeSettings = ObserveSettingsUseCase(settings),
+        isNovelFinished = IsNovelFinishedUseCase(sessions, profileRepository),
     )
 
     private fun DetailViewModel.need(section: DetailSection) = onIntent(
@@ -273,5 +288,63 @@ class DetailViewModelTest {
             viewModel.onIntent(DetailIntent.ReviewsClicked)
             assertEquals(DetailEffect.OpenUrl("https://vndb.org/v2002/reviews"), awaitItem())
         }
+    }
+
+    @Test
+    fun `the page starts at the spoiler level from settings`() = runTest {
+        settings.current.value = AppSettings(defaultSpoilerLevel = SpoilerPreference.Major)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(SpoilerLevel.Major, viewModel.state.value.spoilerLevel)
+        assertEquals(UiText.StringValue("Intro. Twist"), viewModel.state.value.synopsis)
+    }
+
+    @Test
+    fun `a finished VN shows every spoiler when spoil me if finished is on`() = runTest {
+        settings.current.value = AppSettings(spoilIfFinished = true)
+        sessions.current.value = Session("u2", "Yorhel", canReadPrivateList = true)
+        profileRepository.entryLabels["v2002"] = listOf(2, 7)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(SpoilerLevel.Major, viewModel.state.value.spoilerLevel)
+        assertTrue("entryLabels:v2002" in profileRepository.calls)
+    }
+
+    @Test
+    fun `an unfinished VN, or a guest, keeps the default level`() = runTest {
+        settings.current.value = AppSettings(spoilIfFinished = true)
+        val guest = createViewModel()
+        advanceUntilIdle()
+        assertEquals(SpoilerLevel.None, guest.state.value.spoilerLevel)
+        assertTrue(profileRepository.calls.isEmpty())
+
+        sessions.current.value = Session("u2", "Yorhel", canReadPrivateList = true)
+        profileRepository.entryLabels["v2002"] = listOf(1)
+        val playing = createViewModel()
+        advanceUntilIdle()
+        assertEquals(SpoilerLevel.None, playing.state.value.spoilerLevel)
+    }
+
+    @Test
+    fun `sensitive content starts with every screenshot level and lists sexual tags`() = runTest {
+        settings.current.value = AppSettings(showSensitiveContent = true)
+        repository.novels["v2002"] = DetailSamples.novel(
+            tags = listOf(
+                DetailSamples.tag("Visible"),
+                DetailSamples.tag("Nukige", category = TagCategory.Sexual),
+            ),
+        )
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.onIntent(DetailIntent.SectionNeeded(DetailSection.Screenshots))
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.state.value.screenshots.dataOrNull?.visibleCount)
+        assertEquals(
+            UiText.StringResource(StringResource.detail_tags_sexual),
+            viewModel.state.value.tagGroups.last().title,
+        )
     }
 }

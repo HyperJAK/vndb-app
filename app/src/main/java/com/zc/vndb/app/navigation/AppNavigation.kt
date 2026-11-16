@@ -12,7 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +32,7 @@ import com.zc.vndb.feature.discover.presentation.DiscoverRoute
 import com.zc.vndb.feature.login.presentation.LoginRoute
 import com.zc.vndb.feature.profile.presentation.ProfileRoute
 import com.zc.vndb.feature.release.presentation.ReleaseRoute
+import com.zc.vndb.feature.settings.presentation.SettingsRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -40,6 +43,13 @@ data object BrowseNavKey : NavKey
 
 @Serializable
 data object ProfileNavKey : NavKey
+
+/** A destination shown full screen: the navigation bar (or rail) is hidden while it is on top. */
+interface FullScreenNavKey : NavKey
+
+/** Preferences and app info (pushed on the Profile tab). */
+@Serializable
+data object SettingsNavKey : FullScreenNavKey
 
 /** Log in with a VNDB API token (pushed on the Profile tab). */
 @Serializable
@@ -59,7 +69,7 @@ data class CharacterNavKey(val id: String) : NavKey
 
 /** A visual novel's detail page. */
 @Serializable
-data class NovelDetailNavKey(val id: String) : NavKey
+data class NovelDetailNavKey(val id: String) : FullScreenNavKey
 
 private enum class TopLevelDestination(val key: NavKey, val icon: ImageVector, val label: UiText) {
     Discover(
@@ -85,8 +95,17 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     val navigator = remember(navigationState) { Navigator(navigationState) }
     val itemColors = navigationItemColors()
 
+    // Full-screen pages slide the navigation bar (or rail) away while they are on top.
+    val currentKey = navigationState.backStacks[navigationState.topLevelRoute]?.lastOrNull()
+    val isNavigationHidden = currentKey is FullScreenNavKey
+    val scaffoldState = rememberNavigationSuiteScaffoldState()
+    LaunchedEffect(isNavigationHidden) {
+        if (isNavigationHidden) scaffoldState.hide() else scaffoldState.show()
+    }
+
     NavigationSuiteScaffold(
         modifier = modifier,
+        state = scaffoldState,
         navigationSuiteColors = NavigationSuiteDefaults.colors(
             navigationBarContainerColor = VndbTheme.colors.surfaceInset,
             navigationRailContainerColor = VndbTheme.colors.surfaceInset,
@@ -161,8 +180,12 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
     entry<ProfileNavKey> {
         ProfileRoute(
             onOpenLogin = { navigator.navigate(LoginNavKey) },
+            onOpenSettings = { navigator.navigate(SettingsNavKey) },
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
         )
+    }
+    entry<SettingsNavKey> {
+        SettingsRoute(onNavigateBack = navigator::goBack)
     }
     entry<LoginNavKey> {
         LoginRoute(onNavigateBack = navigator::goBack)

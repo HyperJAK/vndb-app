@@ -14,4 +14,6 @@ data class CharacterAppearance(
     val role: CharacterRole,
     val spoilerLevel: Int,
     val voiceActor: String?,
+    /** The VN's title in the original script, when VNDB has one. */
+    val novelOriginalTitle: String? = null,
 )

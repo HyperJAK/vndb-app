@@ -73,6 +73,7 @@ private fun CharacterTraitDTO.toDomain() = CharacterTrait(
 private fun CharacterAppearanceDTO.toDomain() = CharacterAppearance(
     novelId = id,
     novelTitle = title.orEmpty(),
+    novelOriginalTitle = altTitle,
     releaseDate = released.toReleaseDate(),
     rating = rating,
     cover = image?.toCover(),

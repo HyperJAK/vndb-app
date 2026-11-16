@@ -2,7 +2,12 @@ package com.zc.vndb.feature.detail.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zc.vndb.common.domain.model.AppSettings
+import com.zc.vndb.common.domain.model.SpoilerPreference
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
+import com.zc.vndb.common.ui.component.spoilerfilter.mapper.toSpoilerLevel
+import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.CoverArt
@@ -45,6 +50,7 @@ import com.zc.vndb.feature.detail.presentation.model.DetailTabUIModel
 import com.zc.vndb.feature.detail.presentation.model.PagedListUIState
 import com.zc.vndb.feature.detail.presentation.model.SectionState
 import com.zc.vndb.feature.detail.presentation.model.dataOrNull
+import com.zc.vndb.feature.profile.domain.usecase.IsNovelFinishedUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -74,6 +80,8 @@ class DetailViewModel(
     private val getNovelCovers: GetNovelCoversUseCase,
     private val getNovelReleases: GetNovelReleasesUseCase,
     private val getNovelQuotes: GetNovelQuotesUseCase,
+    private val observeSettings: ObserveSettingsUseCase,
+    private val isNovelFinished: IsNovelFinishedUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -93,6 +101,13 @@ class DetailViewModel(
     private var releases: List<ReleaseSummary> = emptyList()
     private var quotes: List<Quote> = emptyList()
     private var contentFilters: Set<ContentFilter> = ContentFilter.Default
+    private var settings = AppSettings()
+
+    /** The page's starting state from Settings is applied once, on the first successful load. */
+    private var isStartApplied = false
+
+    /** The reader picked a spoiler level here, so "Spoil me if finished" must not override it. */
+    private var hasChosenSpoilerLevel = false
 
     private var novelJob: Job? = null
     private val sectionJobs = mutableMapOf<DetailSection, Job>()
@@ -123,6 +138,7 @@ class DetailViewModel(
             is DetailIntent.LinkClicked -> sendEffect(DetailEffect.OpenUrl(intent.url))
 
             is DetailIntent.SpoilerLevelSelected -> {
+                hasChosenSpoilerLevel = true
                 _state.update { it.copy(spoilerLevel = intent.level) }
                 renderSpoilerSections()
             }
@@ -181,19 +197,21 @@ class DetailViewModel(
         novelJob?.cancel()
         _state.update { it.copy(isLoading = true, error = null) }
         novelJob = viewModelScope.launch {
+            settings = observeSettings.current()
             getNovelDetail(novelId)
                 .onSuccess { loaded ->
                     novel = loaded
+                    applyStartSettings()
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            hero = loaded.toHeroUIModel(editions?.ageRange),
+                            hero = loaded.toHeroUIModel(editions?.ageRange, settings.titleLanguage),
                             score = loaded.toScoreUIModel(),
                             links = loaded.toLinks(),
                             alsoKnownAs = loaded.toAlsoKnownAs(),
                             contentNotes = loaded.toContentNotes(),
                             relations = loaded.relations.map { relation ->
-                                relation.toCardUIModel()
+                                relation.toCardUIModel(settings.titleLanguage)
                             }.toImmutableList(),
                         )
                     }
@@ -207,6 +225,26 @@ class DetailViewModel(
                         )
                     }
                 }
+        }
+    }
+
+    /**
+     * Starting spoiler level and screenshot levels from Settings; then, if "Spoil me if finished"
+     * is on and the VN is on the user's Finished list, every spoiler is shown.
+     */
+    private fun applyStartSettings() {
+        if (isStartApplied) return
+        isStartApplied = true
+        contentFilters =
+            if (settings.showSensitiveContent) ContentFilter.entries.toSet() else ContentFilter.Default
+        _state.update { it.copy(spoilerLevel = settings.defaultSpoilerLevel.toSpoilerLevel()) }
+        if (settings.spoilIfFinished && settings.defaultSpoilerLevel != SpoilerPreference.Major) {
+            viewModelScope.launch {
+                if (isNovelFinished(novelId) && !hasChosenSpoilerLevel) {
+                    _state.update { it.copy(spoilerLevel = SpoilerLevel.Major) }
+                    renderSpoilerSections()
+                }
+            }
         }
     }
 
@@ -255,7 +293,7 @@ class DetailViewModel(
         _state.update { state ->
             state.copy(
                 // The age chip pops in once the releases are known.
-                hero = novel?.toHeroUIModel(loaded.ageRange) ?: state.hero,
+                hero = novel?.toHeroUIModel(loaded.ageRange, settings.titleLanguage) ?: state.hero,
                 editions = SectionState.Loaded(
                     loaded.editions.map { it.toRowUIModel() }.toImmutableList(),
                 ),
@@ -355,8 +393,11 @@ class DetailViewModel(
             val current = novel
             state.copy(
                 synopsis = current?.toSynopsis(level),
-                tagGroups = current?.toTagGroups(level) ?: state.tagGroups,
-                hiddenTagsLabel = current?.toHiddenTagsLabel(level),
+                tagGroups = current?.toTagGroups(
+                    level,
+                    settings.showSensitiveContent,
+                ) ?: state.tagGroups,
+                hiddenTagsLabel = current?.toHiddenTagsLabel(level, settings.showSensitiveContent),
                 cast = cast?.let { SectionState.Loaded(it.toCastUIModel(level)) } ?: state.cast,
             )
         }

@@ -14,6 +14,9 @@ class FakeProfileRepository : ProfileRepository {
     var labelsError: DomainError? = null
     var entriesError: DomainError? = null
 
+    /** Label ids per novel on the user's list. */
+    val entryLabels = mutableMapOf<String, List<Int>>()
+
     /** "labels", "user", "entries:<label>:<page>". */
     val calls = mutableListOf<String>()
 
@@ -42,5 +45,10 @@ class FakeProfileRepository : ProfileRepository {
                 hasMore = page * pageSize < all.size,
             ),
         )
+    }
+
+    override suspend fun getEntryLabelIds(userId: String, novelId: String): Result<List<Int>> {
+        calls += "entryLabels:$novelId"
+        return Result.success(entryLabels[novelId].orEmpty())
     }
 }

@@ -14,4 +14,5 @@ data class CharacterAppearanceDTO(
     @SerialName("image") val image: ImageDTO?,
     @SerialName("role") val role: String?,
     @SerialName("spoiler") val spoiler: Int?,
+    @SerialName("alttitle") val altTitle: String? = null,
 )

@@ -31,6 +31,7 @@ import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
+import com.zc.vndb.common.ui.util.LocalShowSensitiveContent
 
 private val SensitiveBlur = 24.dp
 private val OverlayIconSize = 24.dp
@@ -48,8 +49,10 @@ fun CoverImageView(
     modifier: Modifier = Modifier,
     contentDescription: UiText? = null,
 ) {
+    // Settings → "Show sensitive content" turns the blur off everywhere.
+    val isBlurred = isSensitive && !LocalShowSensitiveContent.current
     val canBlur = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val loads = !url.isNullOrBlank() && (!isSensitive || canBlur)
+    val loads = !url.isNullOrBlank() && (!isBlurred || canBlur)
     var loadFailed by remember(url) { mutableStateOf(false) }
     val showUnavailable = url.isNullOrBlank() || loadFailed
     Box(
@@ -69,7 +72,7 @@ fun CoverImageView(
                 onError = { loadFailed = true },
                 modifier = Modifier
                     .fillMaxSize()
-                    .then(if (isSensitive) Modifier.blur(SensitiveBlur) else Modifier),
+                    .then(if (isBlurred) Modifier.blur(SensitiveBlur) else Modifier),
             )
         }
         when {
@@ -80,7 +83,7 @@ fun CoverImageView(
                 modifier = Modifier.size(OverlayIconSize),
             )
 
-            isSensitive -> Icon(
+            isBlurred -> Icon(
                 imageVector = Icons.Outlined.VisibilityOff,
                 contentDescription = UiText.StringResource(
                     StringResource.cd_sensitive_cover,

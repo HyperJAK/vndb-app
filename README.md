@@ -28,12 +28,25 @@ Browse and search visual novels, then dig into the details: tags, releases, scre
 
 ## Build
 
+Two flavors, each with debug and release builds:
+
+| Flavor | Application id | App name | Release signing |
+|---|---|---|---|
+| `development` | `com.zc.vndb.dev` (version `…-dev`) | MyVNDB Dev | `debug.keystore` in the repo |
+| `production` | `com.zc.vndb` | MyVNDB | not configured (unsigned) |
+
+Both flavors can be installed side by side.
+
 ```bash
-./gradlew assembleDebug
+./gradlew installDevelopmentDebug
 ```
 
 ```bash
-./gradlew testDebugUnitTest
+./gradlew assembleDevelopmentRelease
+```
+
+```bash
+./gradlew testDevelopmentDebugUnitTest
 ```
 
 ## Disclaimer

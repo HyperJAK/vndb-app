@@ -16,9 +16,33 @@ android {
         minSdk = 27
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        // The public Android debug keystore committed at the repo root, so every machine
+        // (and CI) signs development release builds with the same key.
+        create("development") {
+            storeFile = rootProject.file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
+    flavorDimensions += "environment"
+    productFlavors {
+        // Installs next to production: its own application id, version suffix and app name.
+        create("development") {
+            dimension = "environment"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+        }
+        create("production") {
+            dimension = "environment"
+        }
     }
 
     buildTypes {
@@ -29,6 +53,7 @@ android {
             }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -36,6 +61,14 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+}
+
+// Only developmentRelease uses the repo keystore; debug builds keep Android's default debug
+// signing, and productionRelease is left unsigned until a real release key is set up.
+androidComponents {
+    onVariants(selector().withFlavor("environment" to "development").withBuildType("release")) { variant ->
+        variant.signingConfig.setConfig(android.signingConfigs.getByName("development"))
     }
 }
 

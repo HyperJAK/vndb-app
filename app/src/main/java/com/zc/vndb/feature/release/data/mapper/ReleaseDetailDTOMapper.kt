@@ -65,6 +65,7 @@ private fun ReleaseProducerDTO.toDomain() =
 private fun ReleaseNovelDTO.toDomain() = ReleaseNovel(
     id = id,
     title = title.orEmpty(),
+    originalTitle = altTitle,
     releaseDate = released.toReleaseDate(),
     cover = image?.toCover(),
     type = when (rtype) {

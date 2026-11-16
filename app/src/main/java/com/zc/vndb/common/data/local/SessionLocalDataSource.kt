@@ -14,12 +14,13 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 /** The signed-in account in the `session` DataStore, with the token encrypted by [cipher]. */
 @Single
 class SessionLocalDataSource(
-    private val dataStore: DataStore<Preferences>,
+    @Named(SESSION_DATASTORE) private val dataStore: DataStore<Preferences>,
     private val cipher: TokenCipher,
     private val dispatchers: DispatcherProvider,
 ) {
@@ -57,10 +58,11 @@ class SessionLocalDataSource(
         }
     }
 
-    private companion object {
-        val TOKEN = stringPreferencesKey("token")
-        val USER_ID = stringPreferencesKey("user_id")
-        val USERNAME = stringPreferencesKey("username")
-        val PERMISSIONS = stringSetPreferencesKey("permissions")
+    companion object {
+        const val SESSION_DATASTORE = "session"
+        private val TOKEN = stringPreferencesKey("token")
+        private val USER_ID = stringPreferencesKey("user_id")
+        private val USERNAME = stringPreferencesKey("username")
+        private val PERMISSIONS = stringSetPreferencesKey("permissions")
     }
 }

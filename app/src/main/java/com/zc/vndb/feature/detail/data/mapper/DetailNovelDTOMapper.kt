@@ -44,6 +44,7 @@ fun DetailNovelDTO.toDomain(): NovelDetail = NovelDetail(
 fun RelationDTO.toDomain(): RelatedNovel = RelatedNovel(
     id = id,
     title = title.orEmpty(),
+    originalTitle = altTitle,
     relation = relation.toRelationType(),
     isOfficial = relationOfficial ?: false,
     releaseDate = released.toReleaseDate(),

@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.profile.data.remote
 
+import com.zc.vndb.feature.profile.data.dto.ListEntryLabelsPageDTO
 import com.zc.vndb.feature.profile.data.dto.ListEntryPageDTO
 import com.zc.vndb.feature.profile.data.dto.ListLabelsDTO
 import com.zc.vndb.feature.profile.data.dto.ListQueryDTO
@@ -36,6 +37,14 @@ class ProfileService(private val client: HttpClient) {
         authorize(token)
         setBody(query)
     }.body()
+
+    suspend fun entryLabels(query: ListQueryDTO, token: String?): ListEntryLabelsPageDTO =
+        client.post(
+            "ulist",
+        ) {
+            authorize(token)
+            setBody(query)
+        }.body()
 
     private fun HttpRequestBuilder.authorize(token: String?) {
         token?.let { header(HttpHeaders.Authorization, "Token $it") }

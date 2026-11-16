@@ -1,7 +1,11 @@
 package com.zc.vndb.feature.browse.domain.model
 
-/** Exclusive age filter. VNDB rates releases, not VNs: [Adult] = has an 18+ release, [AllAges] = has none. */
+/**
+ * Age filter. VNDB rates releases, not VNs: [Adult] = has an 18+ release, [AllAges] = has none,
+ * [Any] = no age filter (both).
+ */
 enum class AgeRating {
     AllAges,
     Adult,
+    Any,
 }

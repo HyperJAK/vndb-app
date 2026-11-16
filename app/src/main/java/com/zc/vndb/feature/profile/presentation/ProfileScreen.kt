@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -70,6 +71,14 @@ fun ProfileScreen(
         topBar = {
             AppTopBarView(
                 actions = {
+                    IconButton(onClick = { onIntent(ProfileIntent.SettingsClicked) }) {
+                        Icon(
+                            Icons.Outlined.Settings,
+                            contentDescription = UiText.StringResource(
+                                StringResource.cd_open_settings,
+                            ).asString(),
+                        )
+                    }
                     if (state.isSignedIn) {
                         IconButton(onClick = { onIntent(ProfileIntent.LogOutClicked) }) {
                             Icon(

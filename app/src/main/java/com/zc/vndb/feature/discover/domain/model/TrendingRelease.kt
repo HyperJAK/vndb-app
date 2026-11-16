@@ -13,4 +13,6 @@ data class TrendingRelease(
     val platforms: List<Platform>,
     val rating: Double?,
     val cover: Cover?,
+    /** Title in the original script, when VNDB has one. */
+    val originalTitle: String? = null,
 )

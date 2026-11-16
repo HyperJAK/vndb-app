@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launcher name of the development flavor, so it is told apart from production. -->
+    <string name="app_name">MyVNDB Dev</string>
+</resources>

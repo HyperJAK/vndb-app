@@ -1,5 +1,8 @@
 package com.zc.vndb.feature.profile.presentation.component.listentrycard.mapper
 
+import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.ui.mapper.primaryTitle
+import com.zc.vndb.common.ui.mapper.secondaryTitle
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -20,10 +23,26 @@ private const val VOTE_SCALE = 10.0
  * A list entry as a card. The label being shown ([shownLabelId]) and "Voted" (the vote is shown
  * instead) are left out of its labels.
  */
-fun ListEntry.toCardUIModel(shownLabelId: Int, now: Instant) = ListEntryCardUIModel(
+fun ListEntry.toCardUIModel(
+    shownLabelId: Int,
+    now: Instant,
+    titleLanguage: TitleLanguage = TitleLanguage.Romanized,
+): ListEntryCardUIModel = toCardUIModel(
+    shownLabelId,
+    now,
+    primaryTitle(title, originalTitle, titleLanguage),
+    secondaryTitle(title, originalTitle, titleLanguage),
+)
+
+private fun ListEntry.toCardUIModel(
+    shownLabelId: Int,
+    now: Instant,
+    primaryTitle: UiText,
+    secondaryTitle: UiText?,
+) = ListEntryCardUIModel(
     novelId = novelId,
-    title = UiText.StringValue(title),
-    originalTitle = originalTitle?.takeIf { it != title }?.let(UiText::StringValue),
+    title = primaryTitle,
+    originalTitle = secondaryTitle,
     coverUrl = cover?.thumbnailUrl ?: cover?.url,
     isCoverSensitive = cover?.isSensitive ?: false,
     voteLabel = vote?.let {

@@ -18,8 +18,14 @@ private const val MAX_THEME_TAGS = 12
 private const val MAX_TECHNICAL_TAGS = 6
 private const val VIOLENT_COVER = 1.0
 
-/** Themes and technical tags allowed by [level], most relevant first; empty groups are dropped. */
-fun NovelDetail.toTagGroups(level: SpoilerLevel): ImmutableList<TagGroupUIModel> = listOfNotNull(
+/**
+ * Themes and technical tags allowed by [level], most relevant first; sexual tags too when
+ * [showSexual] (Settings → Show sensitive content). Empty groups are dropped.
+ */
+fun NovelDetail.toTagGroups(
+    level: SpoilerLevel,
+    showSexual: Boolean = false,
+): ImmutableList<TagGroupUIModel> = listOfNotNull(
     tags.group(
         TagCategory.Content,
         level,
@@ -28,12 +34,22 @@ fun NovelDetail.toTagGroups(level: SpoilerLevel): ImmutableList<TagGroupUIModel>
     tags.group(TagCategory.Technical, level, MAX_TECHNICAL_TAGS)?.let {
         TagGroupUIModel(UiText.StringResource(StringResource.detail_tags_technical), it)
     },
+    if (showSexual) {
+        tags.group(TagCategory.Sexual, level, MAX_THEME_TAGS)?.let {
+            TagGroupUIModel(UiText.StringResource(StringResource.detail_tags_sexual), it)
+        }
+    } else {
+        null
+    },
 ).toImmutableList()
 
 /** How many tags the groups would show at the highest spoiler level but not at [level]; null when none. */
-fun NovelDetail.toHiddenTagsLabel(level: SpoilerLevel): UiText? {
-    val shown = toTagGroups(level).flatMap { it.tags }.toSet()
-    val hidden = toTagGroups(SpoilerLevel.Major).flatMap { it.tags }.count { it !in shown }
+fun NovelDetail.toHiddenTagsLabel(level: SpoilerLevel, showSexual: Boolean = false): UiText? {
+    val shown = toTagGroups(level, showSexual).flatMap { it.tags }.toSet()
+    val hidden = toTagGroups(
+        SpoilerLevel.Major,
+        showSexual,
+    ).flatMap { it.tags }.count { it !in shown }
     return if (hidden == 0) {
         null
     } else {

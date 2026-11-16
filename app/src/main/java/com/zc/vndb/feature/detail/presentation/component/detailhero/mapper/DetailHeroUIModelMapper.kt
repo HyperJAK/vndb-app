@@ -1,7 +1,10 @@
 package com.zc.vndb.feature.detail.presentation.component.detailhero.mapper
 
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
+import com.zc.vndb.common.ui.mapper.primaryTitle
+import com.zc.vndb.common.ui.mapper.secondaryTitle
 import com.zc.vndb.common.ui.mapper.toIsoLabel
 import com.zc.vndb.common.ui.mapper.toLabel
 import com.zc.vndb.common.ui.mapper.toNameLabel
@@ -18,9 +21,22 @@ private const val MAX_DEVELOPERS = 2
 private const val MINUTES_PER_HOUR = 60.0
 private const val ALL_AGES = 0
 
-fun NovelDetail.toHeroUIModel(ageRange: AgeRange?): DetailHeroUIModel = DetailHeroUIModel(
-    title = UiText.StringValue(title),
-    originalTitle = originalTitle?.let(UiText::StringValue),
+fun NovelDetail.toHeroUIModel(
+    ageRange: AgeRange?,
+    titleLanguage: TitleLanguage = TitleLanguage.Romanized,
+): DetailHeroUIModel = toHeroUIModel(
+    ageRange,
+    primaryTitle(title, originalTitle, titleLanguage),
+    secondaryTitle(title, originalTitle, titleLanguage),
+)
+
+private fun NovelDetail.toHeroUIModel(
+    ageRange: AgeRange?,
+    primaryTitle: UiText,
+    secondaryTitle: UiText?,
+) = DetailHeroUIModel(
+    title = primaryTitle,
+    originalTitle = secondaryTitle,
     coverUrl = cover?.url,
     isCoverSensitive = cover?.isSensitive ?: false,
     ratingLabel = rating?.toRatingLabel(),

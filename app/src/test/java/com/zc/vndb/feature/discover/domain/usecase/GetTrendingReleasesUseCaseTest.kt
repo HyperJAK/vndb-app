@@ -21,7 +21,7 @@ class GetTrendingReleasesUseCaseTest {
 
     @Test
     fun `asks for English and Japanese releases, over-fetching for de-duplication`() = runTest {
-        useCase()
+        useCase(LANGUAGES)
 
         assertEquals(listOf("en", "ja"), repository.requestedReleaseLanguages)
         assertEquals(GetTrendingReleasesUseCase.FETCH_LIMIT, repository.requestedReleaseLimit)
@@ -58,7 +58,7 @@ class GetTrendingReleasesUseCaseTest {
                 ReleaseKind.NewTranslation,
                 ReleaseKind.ReRelease,
             ),
-            useCase().getOrThrow().map { it.kind },
+            useCase(LANGUAGES).getOrThrow().map { it.kind },
         )
     }
 
@@ -72,7 +72,7 @@ class GetTrendingReleasesUseCaseTest {
             ),
         )
 
-        assertEquals(ReleaseKind.ReRelease, useCase().getOrThrow().single().kind)
+        assertEquals(ReleaseKind.ReRelease, useCase(LANGUAGES).getOrThrow().single().kind)
     }
 
     @Test
@@ -82,7 +82,7 @@ class GetTrendingReleasesUseCaseTest {
             release("r2", novelId = "v2", languages = listOf(english)),
         )
 
-        assertEquals(listOf("r2"), useCase().getOrThrow().map { it.releaseId })
+        assertEquals(listOf("r2"), useCase(LANGUAGES).getOrThrow().map { it.releaseId })
     }
 
     @Test
@@ -93,21 +93,24 @@ class GetTrendingReleasesUseCaseTest {
             release("r-old", novelId = "v1", released = date(2024, 9, 1)),
         )
 
-        assertEquals(listOf("r-new", "r-other"), useCase().getOrThrow().map { it.releaseId })
+        assertEquals(
+            listOf("r-new", "r-other"),
+            useCase(LANGUAGES).getOrThrow().map { it.releaseId },
+        )
     }
 
     @Test
     fun `returns at most RESULT_LIMIT rows`() = runTest {
         repository.releases = (1..20).map { release("r$it", novelId = "v$it") }
 
-        assertEquals(GetTrendingReleasesUseCase.RESULT_LIMIT, useCase().getOrThrow().size)
+        assertEquals(GetTrendingReleasesUseCase.RESULT_LIMIT, useCase(LANGUAGES).getOrThrow().size)
     }
 
     @Test
     fun `describes the row through its novel`() = runTest {
         repository.releases = listOf(release("r1", novelId = "v9"))
 
-        val row = useCase().getOrThrow().single()
+        val row = useCase(LANGUAGES).getOrThrow().single()
 
         assertEquals("v9", row.novelId)
         assertEquals("Novel v9", row.title)
@@ -118,6 +121,10 @@ class GetTrendingReleasesUseCaseTest {
     fun `propagates repository errors`() = runTest {
         repository.releasesError = DomainError.Network
 
-        assertEquals(DomainError.Network, useCase().exceptionOrNull())
+        assertEquals(DomainError.Network, useCase(LANGUAGES).exceptionOrNull())
+    }
+
+    private companion object {
+        val LANGUAGES = listOf("en", "ja")
     }
 }

@@ -1,0 +1,165 @@
+package com.zc.vndb.feature.settings.presentation
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.zc.vndb.BuildConfig
+import com.zc.vndb.common.domain.model.AppSettings
+import com.zc.vndb.common.domain.model.SpoilerPreference
+import com.zc.vndb.common.domain.model.TitleLanguage
+import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
+import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.feature.profile.domain.usecase.ObserveSessionUseCase
+import com.zc.vndb.feature.settings.domain.usecase.ClearImageCacheUseCase
+import com.zc.vndb.feature.settings.domain.usecase.GetImageCacheSizeUseCase
+import com.zc.vndb.feature.settings.domain.usecase.UpdateSettingsUseCase
+import com.zc.vndb.feature.settings.presentation.mapper.toSizeLabel
+import com.zc.vndb.feature.settings.presentation.mapper.withSettings
+import com.zc.vndb.feature.settings.presentation.model.SettingsDialog
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import org.koin.core.annotation.KoinViewModel
+
+/** Every change is written at once; other screens pick it up from the shared settings. */
+@KoinViewModel
+class SettingsViewModel(
+    observeSettings: ObserveSettingsUseCase,
+    observeSession: ObserveSessionUseCase,
+    private val updateSettings: UpdateSettingsUseCase,
+    private val getImageCacheSize: GetImageCacheSizeUseCase,
+    private val clearImageCache: ClearImageCacheUseCase,
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(
+        SettingsState(
+            versionLabel = UiText.StringResource(
+                StringResource.settings_version,
+                listOf(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE),
+            ),
+        ),
+    )
+
+    val state: StateFlow<SettingsState> =
+        combine(_state, observeSettings(), observeSession()) { state, settings, session ->
+            state.withSettings(settings).copy(isSignedIn = session != null)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), _state.value)
+
+    private val _effect = Channel<SettingsEffect>(Channel.BUFFERED)
+    val effect: Flow<SettingsEffect> = _effect.receiveAsFlow()
+
+    init {
+        measureImageCache()
+    }
+
+    fun onIntent(intent: SettingsIntent) {
+        when (intent) {
+            SettingsIntent.BackClicked -> sendEffect(SettingsEffect.NavigateBack)
+
+            is SettingsIntent.DialogOpened -> _state.update { it.copy(dialog = intent.dialog) }
+
+            SettingsIntent.DialogDismissed -> closeDialog()
+
+            is SettingsIntent.OptionSelected -> selectOption(intent.dialog, intent.key)
+
+            is SettingsIntent.LanguagesConfirmed -> {
+                closeDialog()
+                if (intent.codes.isNotEmpty()) {
+                    save {
+                        it.copy(
+                            trendingLanguages = intent.codes.toList(),
+                        )
+                    }
+                }
+            }
+
+            is SettingsIntent.SpoilIfFinishedChanged -> save {
+                it.copy(
+                    spoilIfFinished = intent.isOn,
+                )
+            }
+
+            // Turning sensitive content on asks for confirmation first; turning it off does not.
+            is SettingsIntent.ShowSensitiveChanged -> if (intent.isOn) {
+                _state.update { it.copy(dialog = SettingsDialog.ConfirmSensitive) }
+            } else {
+                save { it.copy(showSensitiveContent = false) }
+            }
+
+            SettingsIntent.SensitiveConfirmed -> {
+                closeDialog()
+                save { it.copy(showSensitiveContent = true) }
+            }
+
+            is SettingsIntent.IncludeAdultChanged -> save {
+                it.copy(
+                    includeAdultInBrowse = intent.isOn,
+                )
+            }
+
+            SettingsIntent.ClearCacheConfirmed -> clearCache()
+
+            is SettingsIntent.LinkClicked -> sendEffect(SettingsEffect.OpenUrl(intent.url))
+        }
+    }
+
+    private fun selectOption(dialog: SettingsDialog, key: String) {
+        closeDialog()
+        when (dialog) {
+            SettingsDialog.TitleLanguage -> TitleLanguage.entries.firstOrNull { it.name == key }
+                ?.let { language -> save { it.copy(titleLanguage = language) } }
+
+            SettingsDialog.SpoilerLevel -> SpoilerPreference.entries.firstOrNull { it.name == key }
+                ?.let { level -> save { it.copy(defaultSpoilerLevel = level) } }
+
+            else -> Unit
+        }
+    }
+
+    private fun clearCache() {
+        closeDialog()
+        _state.update { it.copy(isClearingCache = true) }
+        viewModelScope.launch {
+            clearImageCache()
+            _state.update { it.copy(isClearingCache = false) }
+            sendEffect(
+                SettingsEffect.ShowMessage(
+                    UiText.StringResource(StringResource.settings_cache_cleared),
+                ),
+            )
+            measureImageCache()
+        }
+    }
+
+    private fun measureImageCache() {
+        viewModelScope.launch {
+            val size = getImageCacheSize()
+            _state.update { it.copy(imageCacheLabel = size.toSizeLabel()) }
+        }
+    }
+
+    private fun save(transform: (AppSettings) -> AppSettings) {
+        viewModelScope.launch { updateSettings(transform) }
+    }
+
+    private fun closeDialog() {
+        _state.update { it.copy(dialog = null) }
+    }
+
+    private fun sendEffect(effect: SettingsEffect) {
+        viewModelScope.launch { _effect.send(effect) }
+    }
+
+    companion object {
+        const val VNDB_URL = "https://vndb.org"
+        const val SOURCE_URL = "https://github.com/zahichemaly/vndb-app"
+        private const val STOP_TIMEOUT_MILLIS = 5_000L
+    }
+}
