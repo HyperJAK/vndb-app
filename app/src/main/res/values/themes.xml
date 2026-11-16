@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MyVNDB" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Nocturne VN is dark-only; match the Compose canvas to avoid a white launch flash. -->
+    <style name="Theme.MyVNDB" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/nocturne_background</item>
+        <item name="android:colorAccent">@color/nocturne_primary</item>
+    </style>
 </resources>
