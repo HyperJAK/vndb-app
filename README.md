@@ -2,16 +2,24 @@
 
 An unofficial Android client for [vndb.org](https://vndb.org), the Visual Novel Database. It uses the public [VNDB API (Kana)](https://api.vndb.org/kana).
 
-## Stack
-- Kotlin 
+Browse and search visual novels, then dig into the details: tags, releases, screenshots, staff, characters and voice actors.
+
+## Technologies
+- Kotlin
 - Jetpack Compose (Material 3, Adaptive)
-- Clean Architecture + MVI
+- Navigation 3
 - Koin
 - Ktor
 - kotlinx.serialization
-- DataStore
-- Navigation 3
+- Coroutines and Flow
 - Coil
+- Detekt
+
+## Architecture
+- Single `:app` module, organised by feature (discover, browse, detail, character, release)
+- Clean Architecture: each feature has `data`, `domain`, `presentation` and `di` packages
+- MVI in the presentation layer: a ViewModel exposes one state and one-off effects, and handles intents
+- Shared code lives in `common`
 
 ## Requirements
 - Android Studio (latest stable)
