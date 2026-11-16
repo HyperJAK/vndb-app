@@ -3,9 +3,9 @@ package com.zc.vndb.feature.browse.data.repository
 import com.zc.vndb.common.data.network.appJson
 import com.zc.vndb.common.data.network.createHttpClient
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.feature.browse.data.remote.BrowseService
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
-import com.zc.vndb.feature.browse.domain.model.NovelLength
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.ContentType

@@ -1,10 +1,10 @@
 package com.zc.vndb.feature.browse.presentation.component.browsenovelcard.mapper
 
 import com.zc.vndb.R
+import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.BrowseSamples
-import com.zc.vndb.feature.browse.domain.model.NovelLength
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

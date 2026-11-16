@@ -2,7 +2,12 @@ package com.zc.vndb.common.ui.component.apptopbar
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -18,12 +23,30 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
-/** Top bar shared by the top-level screens: `VNDB` wordmark and the app version pill. */
+/**
+ * App top bar: wordmark and version pill, with a back button when [onBack] is set and
+ * optional trailing [actions].
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBarView(modifier: Modifier = Modifier) {
+fun AppTopBarView(
+    modifier: Modifier = Modifier,
+    onBack: (() -> Unit)? = null,
+    actions: @Composable RowScope.() -> Unit = {},
+) {
     TopAppBar(
         modifier = modifier,
+        navigationIcon = {
+            if (onBack != null) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.cd_navigate_back),
+                    )
+                }
+            }
+        },
+        actions = actions,
         title = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),

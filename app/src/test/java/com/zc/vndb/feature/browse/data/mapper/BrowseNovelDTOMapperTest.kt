@@ -1,8 +1,8 @@
 package com.zc.vndb.feature.browse.data.mapper
 
+import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.feature.browse.data.dto.BrowseNovelDTO
-import com.zc.vndb.feature.browse.domain.model.NovelLength
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

@@ -22,7 +22,6 @@
     <string name="nav_browse">Browse</string>
     <string name="nav_profile">Profile</string>
     <string name="placeholder_coming_soon">Coming soon</string>
-    <string name="placeholder_novel">Details for %1$s are coming soon</string>
     <string name="cd_navigate_back">Back</string>
 
     <!-- Discover -->
@@ -79,6 +78,71 @@
     <string name="length_long">30-50h</string>
     <string name="length_very_long">&gt;50h</string>
     <string name="credits_separator">%1$s / %2$s</string>
+
+    <!-- Detail -->
+    <string name="detail_share">Share</string>
+    <string name="detail_open_in_browser">Open on vndb.org</string>
+    <string name="detail_share_chooser">Share visual novel</string>
+    <string name="detail_vndb_link">vndb.org/%1$s</string>
+    <string name="detail_dev">Dev:</string>
+    <string name="detail_released">Released:</string>
+    <string name="detail_length">Length:</string>
+    <string name="detail_average_hours">%1$sh avg</string>
+    <string name="detail_age_all">All Ages</string>
+    <string name="detail_age_min">%1$d+</string>
+    <string name="detail_age_range_from_all">All Ages / %1$d+</string>
+    <string name="detail_age_range">%1$d+ / %2$d+</string>
+    <string name="detail_score_out_of">/ 10 (Bayesian)</string>
+    <plurals name="detail_votes">
+        <item quantity="one">%1$s recorded vote</item>
+        <item quantity="other">%1$s recorded votes</item>
+    </plurals>
+    <string name="detail_average">Average %1$s</string>
+    <string name="detail_spoiler_filter">SPOILER FILTER:</string>
+    <string name="detail_spoiler_none">None (0)</string>
+    <string name="detail_spoiler_minor">Minor (1)</string>
+    <string name="detail_spoiler_major">Major (2)</string>
+    <string name="detail_synopsis">Synopsis</string>
+    <string name="detail_read_more">Read more</string>
+    <string name="detail_read_less">Show less</string>
+    <string name="detail_tags_and_content">Tags &amp; Content</string>
+    <string name="detail_tags_themes">THEMES</string>
+    <string name="detail_tags_technical">TECHNICAL</string>
+    <string name="detail_tags_content_notes">CONTENT NOTES</string>
+    <string name="detail_note_sexual">Sexual content</string>
+    <string name="detail_note_no_sexual">No sexual content</string>
+    <string name="detail_note_violent_cover">Violent cover art</string>
+    <plurals name="detail_hidden_by_spoiler">
+        <item quantity="one">%1$d hidden by spoiler filter</item>
+        <item quantity="other">%1$d hidden by spoiler filter</item>
+    </plurals>
+    <string name="detail_characters">Characters</string>
+    <plurals name="detail_main_characters">
+        <item quantity="one">%1$d Main</item>
+        <item quantity="other">%1$d Main</item>
+    </plurals>
+    <string name="detail_role_main">ROLE: MAIN</string>
+    <string name="detail_role_primary">ROLE: PRIMARY</string>
+    <string name="detail_cv">CV: %1$s</string>
+    <string name="detail_releases">Releases &amp; Editions</string>
+    <string name="detail_family_pc">PC</string>
+    <string name="detail_family_console">Console</string>
+    <string name="detail_family_mobile">Mobile</string>
+    <string name="detail_family_web">Web</string>
+    <string name="detail_family_other">Other</string>
+    <string name="detail_relations">Relations</string>
+    <string name="detail_relation_sequel">SEQUEL</string>
+    <string name="detail_relation_prequel">PREQUEL</string>
+    <string name="detail_relation_same_setting">SAME SETTING</string>
+    <string name="detail_relation_alternative">ALTERNATIVE</string>
+    <string name="detail_relation_shares_characters">SHARES CHARACTERS</string>
+    <string name="detail_relation_side_story">SIDE STORY</string>
+    <string name="detail_relation_parent_story">PARENT STORY</string>
+    <string name="detail_relation_same_series">SAME SERIES</string>
+    <string name="detail_relation_fan_disc">FAN-DISC</string>
+    <string name="detail_relation_original">ORIGINAL</string>
+    <string name="detail_relation_other">RELATED</string>
+    <string name="detail_relation_score">Score: %1$s</string>
 
     <!-- Content descriptions -->
     <string name="cd_sensitive_cover">Cover hidden: sensitive content</string>
