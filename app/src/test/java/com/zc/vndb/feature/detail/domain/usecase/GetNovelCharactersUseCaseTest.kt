@@ -1,7 +1,7 @@
 package com.zc.vndb.feature.detail.domain.usecase
 
+import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.DomainError
-import com.zc.vndb.feature.detail.domain.model.CharacterRole
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.character
 import com.zc.vndb.feature.detail.domain.repository.FakeDetailRepository
 import kotlin.test.Test

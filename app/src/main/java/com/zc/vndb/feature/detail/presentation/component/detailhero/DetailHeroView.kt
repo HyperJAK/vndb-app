@@ -22,12 +22,12 @@ import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
 import com.zc.vndb.common.ui.component.ratingbadge.RatingBadgeView
+import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.detail.presentation.component.detailhero.model.DetailHeroUIModel
-import com.zc.vndb.feature.detail.presentation.component.sectioncard.SectionCardView
 import kotlinx.collections.immutable.persistentListOf
 
 private val CoverWidth = 128.dp

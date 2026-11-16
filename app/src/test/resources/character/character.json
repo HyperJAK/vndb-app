@@ -1,0 +1,158 @@
+{
+  "more": false,
+  "results": [
+    {
+      "age": 18,
+      "aliases": [
+        "Assistant",
+        "Celeb 17",
+        "Ku-nyan",
+        "Perverted Genius Girl"
+      ],
+      "birthday": [
+        7,
+        25
+      ],
+      "blood_type": "a",
+      "bust": 79,
+      "cup": null,
+      "description": "Kurisu is a neuroscience researcher at an American university, and can speak and read English well. Having had her research published in the academic journal Science at the young age of 18, Makise is ",
+      "gender": [
+        "f",
+        "f"
+      ],
+      "height": 160,
+      "hips": 83,
+      "id": "c6487",
+      "image": {
+        "sexual": 0,
+        "url": "https://t.vndb.org/ch/34/97234.jpg",
+        "violence": 0
+      },
+      "name": "Makise Kurisu",
+      "original": "牧瀬 紅莉栖",
+      "sex": [
+        "f",
+        "f"
+      ],
+      "traits": [
+        {
+          "group_name": "Hair",
+          "id": "i6",
+          "lie": false,
+          "name": "Brown",
+          "spoiler": 0
+        },
+        {
+          "group_name": "Hair",
+          "id": "i10",
+          "lie": false,
+          "name": "Red",
+          "spoiler": 0
+        },
+        {
+          "group_name": "Hair",
+          "id": "i23",
+          "lie": false,
+          "name": "Waist Length+",
+          "spoiler": 0
+        },
+        {
+          "group_name": "Hair",
+          "id": "i30",
+          "lie": false,
+          "name": "Straight",
+          "spoiler": 0
+        },
+        {
+          "group_name": "Body",
+          "id": "i54",
+          "lie": false,
+          "name": "Teen",
+          "spoiler": 0
+        },
+        {
+          "group_name": "Body",
+          "id": "i55",
+          "lie": false,
+          "name": "Slim",
+          "spoiler": 0
+        },
+        {
+          "group_name": "Subject of",
+          "id": "i90",
+          "lie": false,
+          "name": "Assault",
+          "spoiler": 2
+        },
+        {
+          "group_name": "Clothes",
+          "id": "i136",
+          "lie": false,
+          "name": "Trench Coat",
+          "spoiler": 1
+        }
+      ],
+      "vns": [
+        {
+          "id": "v2002",
+          "image": {
+            "sexual": 0,
+            "thumbnail": "https://t.vndb.org/cv.t/19/77819.jpg",
+            "url": "https://t.vndb.org/cv/19/77819.jpg",
+            "violence": 0
+          },
+          "rating": 90.2,
+          "released": "2009-10-15",
+          "role": "primary",
+          "spoiler": 0,
+          "title": "STEINS;GATE"
+        },
+        {
+          "id": "v5883",
+          "image": {
+            "sexual": 0,
+            "thumbnail": "https://t.vndb.org/cv.t/53/75853.jpg",
+            "url": "https://t.vndb.org/cv/53/75853.jpg",
+            "violence": 0
+          },
+          "rating": 76.8,
+          "released": "2012-06-28",
+          "role": "appears",
+          "spoiler": 1,
+          "title": "ROBOTICS;NOTES"
+        },
+        {
+          "id": "v6618",
+          "image": {
+            "sexual": 0,
+            "thumbnail": "https://t.vndb.org/cv.t/44/75844.jpg",
+            "url": "https://t.vndb.org/cv/44/75844.jpg",
+            "violence": 0
+          },
+          "rating": 71.9,
+          "released": "2011-06-16",
+          "role": "primary",
+          "spoiler": 0,
+          "title": "STEINS;GATE: Hiyoku Renri no Darling"
+        },
+        {
+          "id": "v9887",
+          "image": {
+            "sexual": 0,
+            "thumbnail": "https://t.vndb.org/cv/85/35285.jpg",
+            "url": "https://t.vndb.org/cv/85/35285.jpg",
+            "violence": 0
+          },
+          "rating": 65.3,
+          "released": "2011-10-28",
+          "role": "primary",
+          "spoiler": 0,
+          "title": "STEINS;GATE: Hen'i Kuukan no Octet"
+        }
+      ],
+      "waist": 56,
+      "weight": 45
+    }
+  ]
+}

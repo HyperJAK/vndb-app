@@ -1,6 +1,6 @@
 package com.zc.vndb.feature.detail.presentation
 
-import com.zc.vndb.feature.detail.presentation.model.SpoilerLevel
+import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 
 sealed interface DetailIntent {
     data object Load : DetailIntent
@@ -12,4 +12,5 @@ sealed interface DetailIntent {
     data class SpoilerLevelSelected(val level: SpoilerLevel) : DetailIntent
     data object SynopsisToggled : DetailIntent
     data class RelationClicked(val id: String) : DetailIntent
+    data class CharacterClicked(val id: String) : DetailIntent
 }

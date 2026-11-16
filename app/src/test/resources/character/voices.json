@@ -1,0 +1,65 @@
+{
+  "more": true,
+  "results": [
+    {
+      "id": "v2002",
+      "va": [
+        {
+          "character": {
+            "id": "c6487"
+          },
+          "staff": {
+            "id": "s240",
+            "name": "Imai Asami"
+          }
+        },
+        {
+          "character": {
+            "id": "c24993"
+          },
+          "staff": {
+            "id": "s9309",
+            "name": "Ogata Mitsuru"
+          }
+        }
+      ]
+    },
+    {
+      "id": "v5883",
+      "va": [
+        {
+          "character": {
+            "id": "c64480"
+          },
+          "staff": {
+            "id": "s8386",
+            "name": "Honda Takako"
+          }
+        }
+      ]
+    },
+    {
+      "id": "v6618",
+      "va": [
+        {
+          "character": {
+            "id": "c6487"
+          },
+          "staff": {
+            "id": "s240",
+            "name": "Imai Asami"
+          }
+        },
+        {
+          "character": {
+            "id": "c6495"
+          },
+          "staff": {
+            "id": "s753",
+            "name": "Terasoma Masaki"
+          }
+        }
+      ]
+    }
+  ]
+}

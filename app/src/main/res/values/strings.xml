@@ -144,6 +144,40 @@
     <string name="detail_relation_other">RELATED</string>
     <string name="detail_relation_score">Score: %1$s</string>
 
+    <!-- Character -->
+    <string name="character_share_chooser">Share character</string>
+    <string name="character_age">Age:</string>
+    <string name="character_birthday">Birthday:</string>
+    <string name="character_blood_type">Blood type:</string>
+    <string name="character_height">Height:</string>
+    <string name="character_weight">Weight:</string>
+    <string name="character_measurements">Measures:</string>
+    <string name="character_height_value">%1$d cm</string>
+    <string name="character_weight_value">%1$d kg</string>
+    <string name="character_measurements_value">B%1$s W%2$s H%3$s</string>
+    <string name="character_measurements_with_cup">B%1$s W%2$s H%3$s (%4$s)</string>
+    <string name="character_sex_male">Male</string>
+    <string name="character_sex_female">Female</string>
+    <string name="character_sex_both">Both sexes</string>
+    <string name="character_sex_sexless">Sexless</string>
+    <string name="character_sex_actually_male">Actually male</string>
+    <string name="character_sex_actually_female">Actually female</string>
+    <string name="character_sex_actually_both">Actually both sexes</string>
+    <string name="character_sex_actually_sexless">Actually sexless</string>
+    <string name="character_gender_male">Gender: male</string>
+    <string name="character_gender_female">Gender: female</string>
+    <string name="character_gender_non_binary">Gender: non-binary</string>
+    <string name="character_gender_ambiguous">Gender: ambiguous</string>
+    <string name="character_aliases">Aliases</string>
+    <string name="character_description">Description</string>
+    <string name="character_traits">Traits</string>
+    <string name="character_trait_lie">%1$s (lie)</string>
+    <string name="character_appears_in">Appears in</string>
+    <string name="character_role_main">MAIN</string>
+    <string name="character_role_primary">PRIMARY</string>
+    <string name="character_role_side">SIDE</string>
+    <string name="character_role_appears">APPEARS</string>
+
     <!-- Content descriptions -->
     <string name="cd_sensitive_cover">Cover hidden: sensitive content</string>
 </resources>

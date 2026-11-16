@@ -35,6 +35,10 @@ import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
+import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.component.spoilerfilter.SpoilerFilterView
+import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
@@ -51,11 +55,7 @@ import com.zc.vndb.feature.detail.presentation.component.relationcard.RelationCa
 import com.zc.vndb.feature.detail.presentation.component.relationcard.model.RelationCardUIModel
 import com.zc.vndb.feature.detail.presentation.component.scorecard.ScoreCardView
 import com.zc.vndb.feature.detail.presentation.component.scorecard.model.ScoreUIModel
-import com.zc.vndb.feature.detail.presentation.component.sectioncard.SectionCardView
-import com.zc.vndb.feature.detail.presentation.component.spoilerfilter.SpoilerFilterView
-import com.zc.vndb.feature.detail.presentation.component.synopsis.SynopsisView
 import com.zc.vndb.feature.detail.presentation.component.taggroups.TagGroupsView
-import com.zc.vndb.feature.detail.presentation.model.SpoilerLevel
 import kotlinx.collections.immutable.persistentListOf
 
 /** The page stays readable on wide screens instead of stretching edge to edge. */
@@ -68,6 +68,7 @@ private class DetailActions(
     val onSpoilerLevelSelect: (SpoilerLevel) -> Unit,
     val onSynopsisToggle: () -> Unit,
     val onRelationClick: (String) -> Unit,
+    val onCharacterClick: (String) -> Unit,
 )
 
 @Composable
@@ -82,6 +83,7 @@ fun DetailScreen(
             onSpoilerLevelSelect = { onIntent(DetailIntent.SpoilerLevelSelected(it)) },
             onSynopsisToggle = { onIntent(DetailIntent.SynopsisToggled) },
             onRelationClick = { onIntent(DetailIntent.RelationClicked(it)) },
+            onCharacterClick = { onIntent(DetailIntent.CharacterClicked(it)) },
         )
     }
     Scaffold(
@@ -173,7 +175,8 @@ private fun LazyListScope.detailSections(
     }
     state.synopsis?.let { synopsis ->
         item(key = "synopsis", contentType = "synopsis") {
-            SynopsisView(
+            ExpandableTextView(
+                title = UiText.StringResource(R.string.detail_synopsis),
                 text = synopsis,
                 isExpanded = state.isSynopsisExpanded,
                 onToggle = actions.onSynopsisToggle,
@@ -189,12 +192,12 @@ private fun LazyListScope.detailSections(
             modifier = Modifier.fillMaxWidth(),
         )
     }
-    charactersSection(state)
+    charactersSection(state, actions)
     editionsSection(state)
     relationsSection(state, actions)
 }
 
-private fun LazyListScope.charactersSection(state: DetailState) {
+private fun LazyListScope.charactersSection(state: DetailState, actions: DetailActions) {
     if (state.characters.isEmpty() && state.hiddenCharactersLabel == null) return
     item(key = "characters", contentType = "characters") {
         SectionCardView(
@@ -208,7 +211,12 @@ private fun LazyListScope.charactersSection(state: DetailState) {
                 items(
                     items = state.characters,
                     key = { it.id },
-                ) { character -> CharacterCardView(model = character) }
+                ) { character ->
+                    CharacterCardView(
+                        model = character,
+                        onClick = { actions.onCharacterClick(character.id) },
+                    )
+                }
             }
             state.hiddenCharactersLabel?.let { hidden -> MutedNote(hidden) }
         }

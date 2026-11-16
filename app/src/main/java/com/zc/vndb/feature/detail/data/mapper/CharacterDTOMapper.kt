@@ -1,8 +1,8 @@
 package com.zc.vndb.feature.detail.data.mapper
 
 import com.zc.vndb.common.data.mapper.toCover
+import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.feature.detail.data.dto.CharacterDTO
-import com.zc.vndb.feature.detail.domain.model.CharacterRole
 import com.zc.vndb.feature.detail.domain.model.NovelCharacter
 
 /** Unknown spoiler levels are treated as major so they stay hidden. */

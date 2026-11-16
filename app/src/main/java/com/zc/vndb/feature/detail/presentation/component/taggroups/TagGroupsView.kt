@@ -11,11 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zc.vndb.R
 import com.zc.vndb.common.ui.component.chip.TagChipView
+import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.TintedColors
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
-import com.zc.vndb.feature.detail.presentation.component.sectioncard.SectionCardView
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteTone
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.TagGroupUIModel

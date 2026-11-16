@@ -17,6 +17,7 @@ fun DetailRoute(
     novelId: String,
     onNavigateBack: () -> Unit,
     onOpenNovel: (String) -> Unit,
+    onOpenCharacter: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DetailViewModel = koinViewModel { parametersOf(novelId) },
 ) {
@@ -29,6 +30,8 @@ fun DetailRoute(
             DetailEffect.NavigateBack -> onNavigateBack()
 
             is DetailEffect.NavigateToNovel -> onOpenNovel(effect.id)
+
+            is DetailEffect.NavigateToCharacter -> onOpenCharacter(effect.id)
 
             is DetailEffect.OpenUrl -> uriHandler.openUri(effect.url)
 

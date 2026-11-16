@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.detail.presentation.model
+package com.zc.vndb.common.ui.component.spoilerfilter.model
 
 /** How much spoiler content the reader allows; matches VNDB's 0 / 1 / 2 spoiler levels. */
 enum class SpoilerLevel(val maxLevel: Int) {

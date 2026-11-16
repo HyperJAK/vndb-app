@@ -11,11 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zc.vndb.R
+import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.detail.presentation.component.scorecard.model.ScoreUIModel
-import com.zc.vndb.feature.detail.presentation.component.sectioncard.SectionCardView
 
 /** Bayesian score, vote count and plain average. */
 @Composable

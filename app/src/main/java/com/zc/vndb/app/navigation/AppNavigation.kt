@@ -37,6 +37,7 @@ import com.zc.vndb.R
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.feature.browse.presentation.BrowseRoute
+import com.zc.vndb.feature.character.presentation.CharacterRoute
 import com.zc.vndb.feature.detail.presentation.DetailRoute
 import com.zc.vndb.feature.discover.presentation.DiscoverRoute
 import kotlinx.serialization.Serializable
@@ -49,6 +50,10 @@ data object BrowseNavKey : NavKey
 
 @Serializable
 data object ProfileNavKey : NavKey
+
+/** A character's page. */
+@Serializable
+data class CharacterNavKey(val id: String) : NavKey
 
 /** A visual novel's detail page. */
 @Serializable
@@ -152,6 +157,14 @@ private fun AppNavDisplay(backStack: NavBackStack<NavKey>) {
             entry<NovelDetailNavKey> { key ->
                 DetailRoute(
                     novelId = key.id,
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
+                    onOpenCharacter = { id -> backStack.add(CharacterNavKey(id)) },
+                )
+            }
+            entry<CharacterNavKey> { key ->
+                CharacterRoute(
+                    characterId = key.id,
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) },
                 )

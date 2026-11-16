@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.detail.presentation.component.synopsis
+package com.zc.vndb.common.ui.component.expandabletext
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -23,17 +23,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.R
+import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
-import com.zc.vndb.feature.detail.presentation.component.sectioncard.SectionCardView
 
 private const val COLLAPSED_LINES = 4
 private val ArrowSize = 16.dp
 
-/** Description, collapsed to a few lines with "Read more". */
+/** A titled card of long text, collapsed to a few lines with "Read more" when it does not fit. */
 @Composable
-fun SynopsisView(
+fun ExpandableTextView(
+    title: UiText,
     text: UiText,
     isExpanded: Boolean,
     onToggle: () -> Unit,
@@ -41,7 +42,7 @@ fun SynopsisView(
 ) {
     // Only offer "Read more" when the collapsed text is actually cut off (purely visual state).
     var isTruncated by remember(text) { mutableStateOf(false) }
-    SectionCardView(modifier = modifier, title = UiText.StringResource(R.string.detail_synopsis)) {
+    SectionCardView(modifier = modifier, title = title) {
         Text(
             text = text.asString(),
             style = MaterialTheme.typography.bodyLarge,
@@ -83,9 +84,10 @@ private fun ReadMoreButton(isExpanded: Boolean, onToggle: () -> Unit) {
 
 @AdaptivePreviews
 @Composable
-private fun SynopsisViewPreview() {
+private fun ExpandableTextViewPreview() {
     VndbTheme {
-        SynopsisView(
+        ExpandableTextView(
+            title = UiText.StringValue("Synopsis"),
             text = UiText.StringValue(
                 "Set in Akihabara in summer 2010, self-proclaimed mad scientist Rintaro Okabe…",
             ),
