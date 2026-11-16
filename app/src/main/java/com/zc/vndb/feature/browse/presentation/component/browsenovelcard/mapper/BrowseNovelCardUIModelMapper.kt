@@ -3,10 +3,9 @@ package com.zc.vndb.feature.browse.presentation.component.browsenovelcard.mapper
 import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
-import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.mapper.toLabel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.BrowseNovel
-import com.zc.vndb.feature.browse.domain.model.NovelLength
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.BrowseNovelCardUIModel
 import kotlinx.collections.immutable.toImmutableList
 
@@ -17,7 +16,7 @@ fun BrowseNovel.toCardUIModel(): BrowseNovelCardUIModel = BrowseNovelCardUIModel
     creditsLabel = developerNames.toCreditsLabel(),
     yearLabel = releaseDate.toYearLabel(),
     ratingLabel = rating?.toRatingLabel(),
-    lengthLabel = length?.let { UiText.StringResource(it.labelRes()) },
+    lengthLabel = length?.toLabel(),
     coverUrl = cover?.thumbnailUrl ?: cover?.url,
     isCoverSensitive = cover?.isSensitive ?: false,
     tags = tags.map { UiText.StringValue(it.name) }.toImmutableList(),
@@ -35,12 +34,4 @@ private fun ReleaseDate.toYearLabel(): UiText = when (this) {
     is ReleaseDate.Month -> UiText.StringValue(yearMonth.year.toString())
     is ReleaseDate.Year -> UiText.StringValue(year.toString())
     ReleaseDate.Tba -> UiText.StringResource(R.string.release_tba)
-}
-
-private fun NovelLength.labelRes(): StringResource = when (this) {
-    NovelLength.VeryShort -> R.string.length_very_short
-    NovelLength.Short -> R.string.length_short
-    NovelLength.Medium -> R.string.length_medium
-    NovelLength.Long -> R.string.length_long
-    NovelLength.VeryLong -> R.string.length_very_long
 }

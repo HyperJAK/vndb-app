@@ -1,0 +1,235 @@
+{
+    "more": true,
+    "results": [
+        {
+            "id": "c6487",
+            "image": {
+                "sexual": 0,
+                "url": "https://t.vndb.org/ch/34/97234.jpg",
+                "violence": 0
+            },
+            "name": "Makise Kurisu",
+            "original": "牧瀬 紅莉栖",
+            "vns": [
+                {
+                    "id": "v2002",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v5883",
+                    "role": "appears",
+                    "spoiler": 1
+                },
+                {
+                    "id": "v6618",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v9887",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v11660",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v17102",
+                    "role": "appears",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v21281",
+                    "role": "appears",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v23221",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v37274",
+                    "role": "appears",
+                    "spoiler": 0
+                }
+            ]
+        },
+        {
+            "id": "c6492",
+            "image": {
+                "sexual": 0,
+                "url": "https://t.vndb.org/ch/36/97236.jpg",
+                "violence": 0
+            },
+            "name": "Amane Suzuha",
+            "original": "阿万音 鈴羽",
+            "vns": [
+                {
+                    "id": "v2002",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v6618",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v9887",
+                    "role": "side",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v11660",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v17102",
+                    "role": "appears",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v23221",
+                    "role": "primary",
+                    "spoiler": 0
+                }
+            ]
+        },
+        {
+            "id": "c6493",
+            "image": {
+                "sexual": 0,
+                "url": "https://t.vndb.org/ch/38/97238.jpg",
+                "violence": 0
+            },
+            "name": "Hashida Itaru",
+            "original": "橋田 至",
+            "vns": [
+                {
+                    "id": "v2002",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v6618",
+                    "role": "side",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v9887",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v11660",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v17102",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v23221",
+                    "role": "primary",
+                    "spoiler": 0
+                }
+            ]
+        },
+        {
+            "id": "c6495",
+            "image": {
+                "sexual": 0,
+                "url": "https://t.vndb.org/ch/46/28046.jpg",
+                "violence": 0
+            },
+            "name": "Tennouji Yuugo",
+            "original": "天王寺 裕吾",
+            "vns": [
+                {
+                    "id": "v2002",
+                    "role": "side",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v6618",
+                    "role": "side",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v9887",
+                    "role": "appears",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v11660",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v17102",
+                    "role": "side",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v23221",
+                    "role": "side",
+                    "spoiler": 0
+                }
+            ]
+        },
+        {
+            "id": "c6496",
+            "image": {
+                "sexual": 0,
+                "url": "https://t.vndb.org/ch/38/28038.jpg",
+                "violence": 0
+            },
+            "name": "Kiryuu Moeka",
+            "original": "桐生 萌郁",
+            "vns": [
+                {
+                    "id": "v2002",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v6618",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v9887",
+                    "role": "side",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v11660",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v17102",
+                    "role": "primary",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v21281",
+                    "role": "appears",
+                    "spoiler": 0
+                },
+                {
+                    "id": "v23221",
+                    "role": "side",
+                    "spoiler": 0
+                }
+            ]
+        }
+    ]
+}

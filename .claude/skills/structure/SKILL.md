@@ -40,6 +40,7 @@ com.zc.vndb/
 │   └── ui/
 │       ├── theme/                   # Material 3 Color.kt, Type.kt, Theme.kt
 │       ├── util/                    # ObserveAsEvents.kt, AdaptivePreviews.kt (non-visual Compose helpers)
+│       ├── mapper/                  # common/domain -> UiText/UI model mappers used by 2+ features (e.g. NovelLength labels)
 │       └── component/               # Shared UI widgets & adaptive scaffolds — same recursive shape as §1.1
 │           └── [name]/              # e.g. coverimage/, markdown/, error/
 │               ├── model/           # e.g. error/model/ErrorUIModel.kt
@@ -159,6 +160,7 @@ Rules are in `library-management`.
 | Koin bindings for `HttpClient`, `Json`, `DataStore`, `DispatcherProvider` | `common/di/CommonModule.kt` |
 | Theme, colors, typography | `common/ui/theme/` |
 | `ObserveAsEvents`, `@AdaptivePreviews` and other non-visual Compose helpers | `common/ui/util/` |
+| Presentation mapper for a `common/domain` type used by 2+ features (not tied to one component) | `common/ui/mapper/[Name]UIModelMapper.kt` |
 | `UiText` (all user-visible text in `presentation`) | `common/ui/text/UiText.kt` |
 | `StringResource` / `DrawableResource` typealiases for `R.string` / `R.drawable` ids | `common/ui/resource/ResourceTypes.kt` |
 | `ErrorUIModel`, `ErrorUIModelMapper`, `ErrorView` | `common/ui/component/error/{model,mapper}/`, `ErrorView.kt` |

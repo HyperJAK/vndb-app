@@ -3,6 +3,7 @@ package com.zc.vndb.feature.discover.presentation.component.trendingrelease.mapp
 import com.zc.vndb.R
 import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingLabel
+import com.zc.vndb.common.ui.mapper.platformLabel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.discover.domain.model.Platform
@@ -25,25 +26,6 @@ private val monthYearFormat = YearMonth.Format {
     year()
 }
 
-private val platformNames = mapOf(
-    "win" to "Windows",
-    "lin" to "Linux",
-    "mac" to "macOS",
-    "web" to "Web",
-    "and" to "Android",
-    "ios" to "iOS",
-    "swi" to "Switch",
-    "ps3" to "PS3",
-    "ps4" to "PS4",
-    "ps5" to "PS5",
-    "psv" to "PS Vita",
-    "psp" to "PSP",
-    "n3d" to "3DS",
-    "xb1" to "Xbox One",
-    "xxs" to "Xbox Series",
-    "dvd" to "DVD",
-)
-
 fun TrendingRelease.toUIModel(): TrendingReleaseUIModel = TrendingReleaseUIModel(
     releaseId = releaseId,
     novelId = novelId,
@@ -65,7 +47,7 @@ fun ReleaseDate.toLabel(): UiText = when (this) {
     ReleaseDate.Tba -> UiText.StringResource(R.string.release_tba)
 }
 
-private fun Platform.toLabel(): UiText = UiText.StringValue(platformNames[code] ?: code.uppercase())
+private fun Platform.toLabel(): UiText = platformLabel(code)
 
 private fun ReleaseKind.labelRes(): StringResource = when (this) {
     ReleaseKind.NewRelease -> R.string.discover_release_new

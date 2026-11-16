@@ -1,0 +1,157 @@
+{
+  "more": false,
+  "results": [
+    {
+      "alttitle": null,
+      "average": 80.8,
+      "description": "\"This is the story of the 'future' that could not be saved.\" \n\nDecember, 2010 - Beta Worldline:\n\nAt the end of his journey through countless worldlines filled with untold sorrows and hardship, the protagonist, [url=https://vndb.org/c6498]Okabe Rintarou[/url], sinks into despair and abandons all efforts of saving \"her\".\n\nAs his friends grow concerned for his well-being, Okabe immerses himself in th",
+      "developers": [
+        {
+          "id": "p146",
+          "name": "MAGES."
+        },
+        {
+          "id": "p5008",
+          "name": "M2 Co., Ltd."
+        }
+      ],
+      "extlinks": [
+        {
+          "label": "Wikipedia (en)",
+          "url": "https://en.wikipedia.org/wiki/Steins;Gate_0"
+        },
+        {
+          "label": "Wikipedia (ja)",
+          "url": "https://ja.wikipedia.org/wiki/STEINS;GATE_0"
+        },
+        {
+          "label": "Wikidata",
+          "url": "https://www.wikidata.org/wiki/Q21775901"
+        },
+        {
+          "label": "MobyGames",
+          "url": "https://www.mobygames.com/game/86394/"
+        }
+      ],
+      "id": "v17102",
+      "image": {
+        "sexual": 0,
+        "thumbnail": "https://t.vndb.org/cv.t/34/75834.jpg",
+        "url": "https://t.vndb.org/cv/34/75834.jpg",
+        "violence": 0
+      },
+      "length": 4,
+      "length_minutes": 2100,
+      "rating": 80.8,
+      "relations": [
+        {
+          "id": "v2002",
+          "rating": 90.2,
+          "relation": "par",
+          "relation_official": true,
+          "released": "2009-10-15",
+          "title": "STEINS;GATE"
+        }
+      ],
+      "released": "2015-12-10",
+      "tags": [
+        {
+          "category": "cont",
+          "id": "g19",
+          "name": "Mystery",
+          "rating": 1.66666662693024,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g46",
+          "name": "Military",
+          "rating": 2,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g105",
+          "name": "Science Fiction",
+          "rating": 2.42424249649048,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g108",
+          "name": "Genius Heroine",
+          "rating": 2,
+          "spoiler": 0
+        },
+        {
+          "category": "cont",
+          "id": "g152",
+          "name": "Amnesia",
+          "rating": 1.77777779102325,
+          "spoiler": 1
+        },
+        {
+          "category": "cont",
+          "id": "g237",
+          "name": "Secret Identity",
+          "rating": 2.16666674613953,
+          "spoiler": 1
+        },
+        {
+          "category": "tech",
+          "id": "g32",
+          "name": "ADV",
+          "rating": 2.16666674613953,
+          "spoiler": 0
+        },
+        {
+          "category": "tech",
+          "id": "g135",
+          "name": "Protagonist with Voice Acting",
+          "rating": 2.55555558204651,
+          "spoiler": 0
+        }
+      ],
+      "title": "STEINS;GATE 0",
+      "va": [
+        {
+          "character": {
+            "id": "c38154"
+          },
+          "staff": {
+            "id": "s8184",
+            "name": "Han Megumi"
+          }
+        },
+        {
+          "character": {
+            "id": "c73595"
+          },
+          "staff": {
+            "id": "s8184",
+            "name": "Han Megumi"
+          }
+        },
+        {
+          "character": {
+            "id": "c73596"
+          },
+          "staff": {
+            "id": "s8184",
+            "name": "Han Megumi"
+          }
+        },
+        {
+          "character": {
+            "id": "c38152"
+          },
+          "staff": {
+            "id": "s670",
+            "name": "Yahagi Sayuri"
+          }
+        }
+      ],
+      "votecount": 7788
+    }
+  ]
+}

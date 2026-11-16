@@ -1,6 +1,7 @@
 package com.zc.vndb.feature.browse.domain.model
 
 import com.zc.vndb.common.domain.model.Cover
+import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.common.domain.model.NovelTag
 import com.zc.vndb.common.domain.model.ReleaseDate
 

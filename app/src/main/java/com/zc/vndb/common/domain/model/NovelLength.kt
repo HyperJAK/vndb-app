@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.browse.domain.model
+package com.zc.vndb.common.domain.model
 
 /** VNDB's play-time ranges. */
 enum class NovelLength {

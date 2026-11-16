@@ -1,0 +1,101 @@
+{
+    "more": true,
+    "results": [
+        {
+            "id": "r39472",
+            "languages": [
+                {
+                    "lang": "ja"
+                }
+            ],
+            "minage": 15,
+            "official": true,
+            "patch": false,
+            "platforms": [
+                "ps4"
+            ],
+            "released": "2015-12-10",
+            "title": "STEINS;GATE 0 - Package Edition"
+        },
+        {
+            "id": "r40963",
+            "languages": [
+                {
+                    "lang": "ja"
+                }
+            ],
+            "minage": 15,
+            "official": true,
+            "patch": false,
+            "platforms": [
+                "ps3"
+            ],
+            "released": "2015-12-10",
+            "title": "STEINS;GATE 0 - Package Edition"
+        },
+        {
+            "id": "r40964",
+            "languages": [
+                {
+                    "lang": "ja"
+                }
+            ],
+            "minage": 15,
+            "official": true,
+            "patch": false,
+            "platforms": [
+                "psv"
+            ],
+            "released": "2015-12-10",
+            "title": "STEINS;GATE 0 - Package Edition"
+        },
+        {
+            "id": "r124592",
+            "languages": [
+                {
+                    "lang": "ja"
+                }
+            ],
+            "minage": 15,
+            "official": true,
+            "patch": false,
+            "platforms": [
+                "ps4"
+            ],
+            "released": "2015-12-10",
+            "title": "STEINS;GATE 0 - 3D Crystal Set Ebiten Limited Edition"
+        },
+        {
+            "id": "r124593",
+            "languages": [
+                {
+                    "lang": "ja"
+                }
+            ],
+            "minage": 15,
+            "official": true,
+            "patch": false,
+            "platforms": [
+                "ps3"
+            ],
+            "released": "2015-12-10",
+            "title": "STEINS;GATE 0 - 3D Crystal Set Ebiten Limited Edition"
+        },
+        {
+            "id": "r124594",
+            "languages": [
+                {
+                    "lang": "ja"
+                }
+            ],
+            "minage": 15,
+            "official": true,
+            "patch": false,
+            "platforms": [
+                "psv"
+            ],
+            "released": "2015-12-10",
+            "title": "STEINS;GATE 0 - 3D Crystal Set Ebiten Limited Edition"
+        }
+    ]
+}
