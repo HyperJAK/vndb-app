@@ -1,5 +1,8 @@
 package com.zc.vndb.feature.discover.data.dto
 
+import com.zc.vndb.common.data.dto.DeveloperDTO
+import com.zc.vndb.common.data.dto.ImageDTO
+import com.zc.vndb.common.data.dto.TagDTO
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

@@ -1,8 +1,8 @@
 package com.zc.vndb.feature.discover.presentation.component.featurednovel.mapper
 
 import com.zc.vndb.R
+import com.zc.vndb.common.domain.model.Cover
 import com.zc.vndb.common.ui.text.UiText
-import com.zc.vndb.feature.discover.domain.model.Cover
 import com.zc.vndb.feature.discover.domain.model.FeaturedNovel
 import kotlin.test.Test
 import kotlin.test.assertEquals

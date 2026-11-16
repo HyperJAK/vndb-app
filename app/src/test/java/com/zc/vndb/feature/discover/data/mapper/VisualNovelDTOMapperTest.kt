@@ -1,15 +1,15 @@
 package com.zc.vndb.feature.discover.data.mapper
 
+import com.zc.vndb.common.data.dto.DeveloperDTO
+import com.zc.vndb.common.data.dto.ImageDTO
+import com.zc.vndb.common.data.dto.TagDTO
+import com.zc.vndb.common.domain.model.Cover
 import com.zc.vndb.common.domain.model.DomainError
-import com.zc.vndb.feature.discover.data.dto.DeveloperDTO
-import com.zc.vndb.feature.discover.data.dto.ImageDTO
+import com.zc.vndb.common.domain.model.NovelTag
+import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.feature.discover.data.dto.StaffDTO
-import com.zc.vndb.feature.discover.data.dto.TagDTO
 import com.zc.vndb.feature.discover.data.dto.VisualNovelDTO
-import com.zc.vndb.feature.discover.domain.model.Cover
-import com.zc.vndb.feature.discover.domain.model.NovelTag
 import com.zc.vndb.feature.discover.domain.model.StaffRole
-import com.zc.vndb.feature.discover.domain.model.TagCategory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

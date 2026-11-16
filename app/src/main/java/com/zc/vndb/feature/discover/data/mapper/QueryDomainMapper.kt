@@ -1,6 +1,6 @@
 package com.zc.vndb.feature.discover.data.mapper
 
-import com.zc.vndb.feature.discover.data.dto.QueryDTO
+import com.zc.vndb.common.data.dto.QueryDTO
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.add
@@ -29,6 +29,8 @@ fun topRatedNovelsQuery(limit: Int) = QueryDTO(
     sort = "rating",
     reverse = true,
     results = limit,
+    page = null,
+    count = null,
 )
 
 fun novelDetailsQuery(id: String) = QueryDTO(
@@ -37,6 +39,8 @@ fun novelDetailsQuery(id: String) = QueryDTO(
     sort = null,
     reverse = null,
     results = 1,
+    page = null,
+    count = null,
 )
 
 fun recentReleasesQuery(languageCodes: List<String>, limit: Int) = QueryDTO(
@@ -52,6 +56,8 @@ fun recentReleasesQuery(languageCodes: List<String>, limit: Int) = QueryDTO(
     sort = "released",
     reverse = true,
     results = limit,
+    page = null,
+    count = null,
 )
 
 fun latestNovelQuery() = QueryDTO(
@@ -60,6 +66,8 @@ fun latestNovelQuery() = QueryDTO(
     sort = "id",
     reverse = true,
     results = 1,
+    page = null,
+    count = null,
 )
 
 fun firstNovelFromQuery(number: Int) = QueryDTO(
@@ -68,6 +76,8 @@ fun firstNovelFromQuery(number: Int) = QueryDTO(
     sort = "id",
     reverse = false,
     results = 1,
+    page = null,
+    count = null,
 )
 
 private fun filter(name: String, operator: String, value: JsonPrimitive): JsonArray =

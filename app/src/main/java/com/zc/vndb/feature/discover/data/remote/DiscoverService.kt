@@ -1,6 +1,6 @@
 package com.zc.vndb.feature.discover.data.remote
 
-import com.zc.vndb.feature.discover.data.dto.QueryDTO
+import com.zc.vndb.common.data.dto.QueryDTO
 import com.zc.vndb.feature.discover.data.dto.ReleasePageDTO
 import com.zc.vndb.feature.discover.data.dto.StatsDTO
 import com.zc.vndb.feature.discover.data.dto.VisualNovelPageDTO

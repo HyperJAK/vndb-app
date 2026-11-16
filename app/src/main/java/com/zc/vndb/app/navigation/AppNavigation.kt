@@ -36,6 +36,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.zc.vndb.R
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.feature.browse.presentation.BrowseRoute
 import com.zc.vndb.feature.discover.presentation.DiscoverRoute
 import kotlinx.serialization.Serializable
 
@@ -140,9 +141,7 @@ private fun AppNavDisplay(backStack: NavBackStack<NavKey>) {
                 )
             }
             entry<BrowseNavKey> {
-                PlaceholderScreen(
-                    text = stringResource(R.string.placeholder_coming_soon),
-                )
+                BrowseRoute(onOpenNovel = { id -> backStack.add(NovelDetailNavKey(id)) })
             }
             entry<ProfileNavKey> {
                 PlaceholderScreen(

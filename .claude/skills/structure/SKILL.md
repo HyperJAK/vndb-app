@@ -26,6 +26,8 @@ com.zc.vndb/
 ├── common/                          # Shared code used across two or more features
 │   ├── data/
 │   │   ├── network/                 # Shared Ktor HttpClient factory, Json config, plugins
+│   │   ├── dto/                     # Wire-format DTOs used by 2+ features (QueryDTO, ImageDTO, TagDTO)
+│   │   ├── mapper/                  # DTO -> common/domain mappers for those DTOs
 │   │   ├── local/                   # Shared Jetpack DataStore helpers
 │   │   └── util/
 │   │       └── SafeApiCall.kt       # safeApiCall { } — Ktor/serialization exceptions -> DomainError
@@ -81,6 +83,7 @@ Rules:
 - Feature names are **lowercase**, no underscores or hyphens (`feature/userlist`, never `feature/UserList` or `feature/user_list`).
 - **NEVER** add top-level packages beyond `app`, `common`, `feature`. No layer-first packages (`com.zc.vndb.data`, `com.zc.vndb.ui`, `com.zc.vndb.viewmodels`, `com.zc.vndb.utils`).
 - **NEVER** add folders that are not in the tree (`helper/`, `base/`, `extensions/`, `manager/`). Place the code in the folder that matches its role.
+- `common/data/dto/` and `common/data/mapper/` hold only DTOs (and their mappers) that two or more features send or receive; a DTO used by one feature stays in that feature.
 - `util/` exists **only** at `common/data/util/`, `common/domain/util/` and `common/ui/util/`, for the cross-cutting helpers listed in §2. **NEVER** create `util/` inside a feature, and never use these folders as a dumping ground for feature logic.
 - Feature `presentation/` is flat: a feature with several screens holds several `[Name]State/Intent/Effect/ViewModel/Route/Screen` sets side by side.
 
@@ -148,6 +151,8 @@ Rules are in `library-management`.
 | `@Serializable` `NavKey`s, back stack, `NavDisplay`, `NavigationSuiteScaffold` | `app/navigation/AppNavigation.kt` |
 | Shared `HttpClient` factory, `Json` instance | `common/data/network/` |
 | `safeApiCall { }` (exception → `DomainError` mapping) | `common/data/util/SafeApiCall.kt` |
+| DTO used by 2+ features (query body, image, tag) | `common/data/dto/[Name]DTO.kt` |
+| Mapper from a shared DTO to a `common/domain` model | `common/data/mapper/[Name]DTOMapper.kt` |
 | Shared DataStore helpers (file factory, preference key helpers) | `common/data/local/` |
 | `DomainError` and other error/result/value types used by 2+ features' domains | `common/domain/model/` |
 | `DispatcherProvider` / `DefaultDispatcherProvider` | `common/domain/util/DispatcherProvider.kt` |

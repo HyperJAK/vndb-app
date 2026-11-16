@@ -1,10 +1,10 @@
 package com.zc.vndb.feature.discover.data.mapper
 
+import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.feature.discover.data.dto.ReleaseDTO
 import com.zc.vndb.feature.discover.data.dto.ReleaseLanguageDTO
 import com.zc.vndb.feature.discover.data.dto.ReleaseVisualNovelDTO
 import com.zc.vndb.feature.discover.domain.model.Platform
-import com.zc.vndb.feature.discover.domain.model.ReleaseDate
 import com.zc.vndb.feature.discover.domain.model.ReleaseLanguage
 import kotlin.test.Test
 import kotlin.test.assertEquals

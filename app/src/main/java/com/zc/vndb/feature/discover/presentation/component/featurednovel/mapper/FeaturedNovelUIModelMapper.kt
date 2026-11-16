@@ -1,10 +1,10 @@
 package com.zc.vndb.feature.discover.presentation.component.featurednovel.mapper
 
 import com.zc.vndb.R
+import com.zc.vndb.common.ui.component.ratingbadge.mapper.toRatingOutOfTenLabel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.discover.domain.model.FeaturedNovel
 import com.zc.vndb.feature.discover.presentation.component.featurednovel.model.FeaturedNovelUIModel
-import com.zc.vndb.feature.discover.presentation.mapper.toRatingOutOfTenLabel
 import kotlinx.collections.immutable.toImmutableList
 
 fun FeaturedNovel.toUIModel(): FeaturedNovelUIModel = FeaturedNovelUIModel(

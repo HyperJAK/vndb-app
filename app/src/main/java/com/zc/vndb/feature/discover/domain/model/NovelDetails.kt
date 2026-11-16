@@ -1,5 +1,8 @@
 package com.zc.vndb.feature.discover.domain.model
 
+import com.zc.vndb.common.domain.model.Cover
+import com.zc.vndb.common.domain.model.NovelTag
+
 /** The full record of one visual novel, as needed to build a [FeaturedNovel]. */
 data class NovelDetails(
     val id: String,

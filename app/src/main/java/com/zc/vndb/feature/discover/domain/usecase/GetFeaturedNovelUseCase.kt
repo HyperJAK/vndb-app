@@ -1,11 +1,11 @@
 package com.zc.vndb.feature.discover.domain.usecase
 
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.feature.discover.domain.model.DiscoverNovel
 import com.zc.vndb.feature.discover.domain.model.FeaturedNovel
 import com.zc.vndb.feature.discover.domain.model.NovelDetails
 import com.zc.vndb.feature.discover.domain.model.StaffRole
-import com.zc.vndb.feature.discover.domain.model.TagCategory
 import com.zc.vndb.feature.discover.domain.repository.DiscoverRepository
 import kotlin.time.Clock
 import kotlinx.datetime.TimeZone

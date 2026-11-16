@@ -1,0 +1,349 @@
+package com.zc.vndb.feature.browse.presentation
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.window.core.layout.WindowSizeClass
+import com.zc.vndb.R
+import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
+import com.zc.vndb.common.ui.component.error.ErrorView
+import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
+import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.util.AdaptivePreviews
+import com.zc.vndb.feature.browse.domain.model.AgeRating
+import com.zc.vndb.feature.browse.domain.model.BrowseSort
+import com.zc.vndb.feature.browse.domain.model.Genre
+import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.BrowseNovelCardView
+import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.BrowseNovelCardUIModel
+import com.zc.vndb.feature.browse.presentation.component.filterbar.FilterBarView
+import com.zc.vndb.feature.browse.presentation.component.searchfield.SearchFieldView
+import com.zc.vndb.feature.browse.presentation.component.selectablechip.SelectableChipView
+import com.zc.vndb.feature.browse.presentation.model.GenreChipUIState
+import com.zc.vndb.feature.browse.presentation.model.SortOptionUIModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+
+/** Start loading the next page this many items before the end. */
+private const val LOAD_MORE_THRESHOLD = 5
+
+/** Callbacks built once from `onIntent`, so rows get stable lambdas. */
+@Immutable
+private class BrowseActions(
+    val onQueryChange: (String) -> Unit,
+    val onSearch: () -> Unit,
+    val onClear: () -> Unit,
+    val onAgeRatingSelect: (AgeRating) -> Unit,
+    val onSortSelect: (BrowseSort) -> Unit,
+    val onGenreToggle: (Genre) -> Unit,
+    val onNovelClick: (String) -> Unit,
+    val onRetry: () -> Unit,
+    val onLoadMoreRetry: () -> Unit,
+)
+
+@Composable
+fun BrowseScreen(
+    state: BrowseState,
+    onIntent: (BrowseIntent) -> Unit,
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+) {
+    val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
+    val columns = if (windowSizeClass.isWidthAtLeastBreakpoint(
+            WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+        )
+    ) {
+        2
+    } else {
+        1
+    }
+    val margin = if (windowSizeClass.isWidthAtLeastBreakpoint(
+            WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND,
+        )
+    ) {
+        VndbTheme.spacing.marginDesktop
+    } else {
+        VndbTheme.spacing.margin
+    }
+    val actions = remember(onIntent) {
+        BrowseActions(
+            onQueryChange = { onIntent(BrowseIntent.QueryChanged(it)) },
+            onSearch = { onIntent(BrowseIntent.SearchSubmitted) },
+            onClear = { onIntent(BrowseIntent.QueryCleared) },
+            onAgeRatingSelect = { onIntent(BrowseIntent.AgeRatingSelected(it)) },
+            onSortSelect = { onIntent(BrowseIntent.SortSelected(it)) },
+            onGenreToggle = { onIntent(BrowseIntent.GenreToggled(it)) },
+            onNovelClick = { onIntent(BrowseIntent.NovelClicked(it)) },
+            onRetry = { onIntent(BrowseIntent.Retry) },
+            onLoadMoreRetry = { onIntent(BrowseIntent.LoadMoreRetried) },
+        )
+    }
+    val gridState = rememberLazyGridState()
+    LoadMoreTrigger(gridState) { onIntent(BrowseIntent.EndReached) }
+
+    Scaffold(
+        modifier = modifier,
+        topBar = { AppTopBarView() },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { padding ->
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
+            state = gridState,
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = margin, vertical = VndbTheme.spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.gutter),
+            verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
+        ) {
+            filters(state, actions)
+            results(state, actions)
+        }
+    }
+}
+
+/** Asks for the next page once the last visible item is near the end of the grid. */
+@Composable
+private fun LoadMoreTrigger(gridState: LazyGridState, onLoadMore: () -> Unit) {
+    val currentOnLoadMore by rememberUpdatedState(onLoadMore)
+    val nearEnd by remember(gridState) {
+        derivedStateOf {
+            val info = gridState.layoutInfo
+            val lastVisible =
+                info.visibleItemsInfo.lastOrNull()?.index ?: return@derivedStateOf false
+            info.totalItemsCount > 0 && lastVisible >= info.totalItemsCount - LOAD_MORE_THRESHOLD
+        }
+    }
+    LaunchedEffect(nearEnd) {
+        if (nearEnd) currentOnLoadMore()
+    }
+}
+
+private fun LazyGridScope.fullWidthItem(key: String, content: @Composable () -> Unit) {
+    item(key = key, contentType = key, span = { GridItemSpan(maxLineSpan) }) { content() }
+}
+
+private fun LazyGridScope.filters(state: BrowseState, actions: BrowseActions) {
+    fullWidthItem("search") {
+        SearchFieldView(
+            value = state.query,
+            onValueChange = actions.onQueryChange,
+            onSearch = actions.onSearch,
+            onClear = actions.onClear,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+    fullWidthItem("filter-bar") {
+        FilterBarView(
+            ageRating = state.ageRating,
+            sort = state.sort,
+            sortOptions = state.sortOptions,
+            onAgeRatingSelect = actions.onAgeRatingSelect,
+            onSortSelect = actions.onSortSelect,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+    fullWidthItem("genres") { GenreRow(genres = state.genres, onToggle = actions.onGenreToggle) }
+    state.resultCountLabel?.let { label ->
+        fullWidthItem("count") { ResultCountHeader(label) }
+    }
+}
+
+private fun LazyGridScope.results(state: BrowseState, actions: BrowseActions) {
+    when {
+        state.isLoading -> fullWidthItem("loading") { CenteredProgress() }
+
+        state.error != null -> fullWidthItem("error") {
+            ErrorView(
+                model = state.error,
+                onRetry = actions.onRetry,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
+        state.showEmpty -> fullWidthItem("empty") { EmptyResults() }
+
+        else -> {
+            items(items = state.results, key = { it.id }, contentType = { "novel" }) { novel ->
+                BrowseNovelCardView(
+                    model = novel,
+                    onClick = { actions.onNovelClick(novel.id) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            when {
+                state.isLoadingMore -> fullWidthItem("loading-more") { CenteredProgress() }
+
+                state.loadMoreFailed -> fullWidthItem(
+                    "load-more-failed",
+                ) { LoadMoreFailed(actions.onLoadMoreRetry) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GenreRow(genres: ImmutableList<GenreChipUIState>, onToggle: (Genre) -> Unit) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm)) {
+        items(items = genres, key = { it.genre.name }) { chip ->
+            SelectableChipView(
+                label = chip.label,
+                isSelected = chip.isSelected,
+                onClick = { onToggle(chip.genre) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun ResultCountHeader(label: UiText) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = VndbTheme.spacing.sm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label.asString(),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f),
+        )
+        Text(
+            text = stringResource(R.string.browse_indexed_database),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun CenteredProgress() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(VndbTheme.spacing.xl),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(color = VndbTheme.colors.accent)
+    }
+}
+
+@Composable
+private fun EmptyResults() {
+    Text(
+        text = stringResource(R.string.browse_no_results),
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(VndbTheme.spacing.xl),
+    )
+}
+
+@Composable
+private fun LoadMoreFailed(onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(VndbTheme.spacing.md),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(R.string.browse_load_more_failed),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        TextButton(onClick = onRetry) {
+            Text(text = stringResource(R.string.action_retry), color = VndbTheme.colors.accent)
+        }
+    }
+}
+
+private val previewCards = listOf(
+    "Steins;Gate",
+    "Fate/stay night",
+    "CLANNAD",
+).mapIndexed { index, title ->
+    BrowseNovelCardUIModel(
+        id = "v$index",
+        title = UiText.StringValue(title),
+        originalTitle = UiText.StringValue("原題 $index"),
+        creditsLabel = UiText.StringValue("Studio"),
+        yearLabel = UiText.StringValue("200$index"),
+        ratingLabel = UiText.StringValue("8.9$index"),
+        lengthLabel = UiText.StringValue("30-50h"),
+        coverUrl = null,
+        isCoverSensitive = false,
+        tags = persistentListOf(UiText.StringValue("Romance"), UiText.StringValue("Drama")),
+    )
+}.toImmutableList()
+
+private val previewFilters = BrowseState(
+    sortOptions = persistentListOf(
+        SortOptionUIModel(BrowseSort.Popularity, UiText.StringValue("Popularity")),
+    ),
+    genres = Genre.entries.map {
+        GenreChipUIState(it, UiText.StringValue(it.name), isSelected = it == Genre.Mystery)
+    }.toImmutableList(),
+)
+
+private class BrowseStateProvider : PreviewParameterProvider<BrowseState> {
+    override val values = sequenceOf(
+        previewFilters.copy(
+            results = previewCards,
+            resultCountLabel = UiText.StringValue("Found 142 titles"),
+            canLoadMore = true,
+        ),
+        previewFilters.copy(isLoading = true),
+        previewFilters.copy(
+            error = ErrorUIModel(UiText.StringResource(R.string.error_network), isRetryable = true),
+        ),
+    )
+}
+
+@AdaptivePreviews
+@Composable
+private fun BrowseScreenPreview(@PreviewParameter(BrowseStateProvider::class) state: BrowseState) {
+    VndbTheme {
+        BrowseScreen(state = state, onIntent = {})
+    }
+}

@@ -1,15 +1,15 @@
 package com.zc.vndb.feature.discover.domain.usecase
 
+import com.zc.vndb.common.domain.model.Cover
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.TagCategory
 import com.zc.vndb.common.domain.util.FixedClock
-import com.zc.vndb.feature.discover.domain.model.Cover
 import com.zc.vndb.feature.discover.domain.model.DiscoverSamples.details
 import com.zc.vndb.feature.discover.domain.model.DiscoverSamples.novel
 import com.zc.vndb.feature.discover.domain.model.DiscoverSamples.tag
 import com.zc.vndb.feature.discover.domain.model.NovelDetails
 import com.zc.vndb.feature.discover.domain.model.StaffCredit
 import com.zc.vndb.feature.discover.domain.model.StaffRole
-import com.zc.vndb.feature.discover.domain.model.TagCategory
 import com.zc.vndb.feature.discover.domain.repository.FakeDiscoverRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
