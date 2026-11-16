@@ -20,7 +20,6 @@
     <string name="nav_discover">Discover</string>
     <string name="nav_browse">Browse</string>
     <string name="nav_profile">Profile</string>
-    <string name="placeholder_coming_soon">Coming soon</string>
     <string name="cd_navigate_back">Back</string>
 
     <!-- Discover -->
@@ -300,6 +299,70 @@
     <string name="character_role_primary">PRIMARY</string>
     <string name="character_role_side">SIDE</string>
     <string name="character_role_appears">APPEARS</string>
+
+    <!-- Profile -->
+    <string name="profile_guest_title">Not logged in</string>
+    <string name="profile_guest_body">Log in with your VNDB account to see your lists, votes and reading progress.</string>
+    <string name="profile_log_in">Log in</string>
+    <string name="profile_guest_note">You log in with an API token from vndb.org. It stays on this device.</string>
+    <string name="profile_log_out">Log out</string>
+    <string name="profile_log_out_title">Log out?</string>
+    <string name="profile_log_out_body">Your token will be removed from this device. You can log in again any time with the same or a new token.</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="profile_private_hidden">Private lists are hidden: this token can\'t read your list. Create one with list access to see them.</string>
+    <string name="profile_hours_logged">%1$sh logged</string>
+    <string name="profile_stats_line">%1$s · %2$s</string>
+    <string name="profile_label_with_count">%1$s (%2$s)</string>
+    <string name="profile_no_lists">Your VNDB list is empty. Titles you add on vndb.org show up here.</string>
+    <string name="profile_no_entries">Nothing here yet.</string>
+    <string name="profile_session_expired">Your token is no longer valid. Log in again to see your lists.</string>
+    <string name="profile_my_vote">My vote %1$s</string>
+    <string name="profile_started">Started %1$s</string>
+    <string name="profile_finished">Finished %1$s</string>
+    <string name="profile_updated_just_now">Updated just now</string>
+    <string name="profile_updated_on">Updated %1$s</string>
+    <string name="cd_log_out">Log out</string>
+    <plurals name="profile_length_votes">
+        <item quantity="one">%1$s play-time vote</item>
+        <item quantity="other">%1$s play-time votes</item>
+    </plurals>
+    <plurals name="profile_updated_minutes">
+        <item quantity="one">Updated %1$d minute ago</item>
+        <item quantity="other">Updated %1$d minutes ago</item>
+    </plurals>
+    <plurals name="profile_updated_hours">
+        <item quantity="one">Updated %1$d hour ago</item>
+        <item quantity="other">Updated %1$d hours ago</item>
+    </plurals>
+    <plurals name="profile_updated_days">
+        <item quantity="one">Updated %1$d day ago</item>
+        <item quantity="other">Updated %1$d days ago</item>
+    </plurals>
+
+    <!-- Login -->
+    <string name="login_title">Connect your VNDB account</string>
+    <string name="login_intro_title">Sync with VNDB</string>
+    <string name="login_intro_body">MyVNDB uses an API token to read your visual novel lists. You create the token on vndb.org; you never enter your password here.</string>
+    <string name="login_how_to">How to connect</string>
+    <string name="login_steps_count">3 simple steps</string>
+    <string name="login_step1_title">Create a token on vndb.org</string>
+    <string name="login_step1_body">Log in on vndb.org, then open My Profile → Applications. The button below takes you straight there.</string>
+    <string name="login_step1_action">Open VNDB tokens page</string>
+    <string name="login_step2_title">Give it access to your list</string>
+    <string name="login_step2_body">Name it (for example “MyVNDB”) and tick the permission to access your list, so private lists show here too. MyVNDB only reads your lists; it never changes them.</string>
+    <string name="login_step3_title">Copy the token and paste it below</string>
+    <string name="login_step3_body">It looks like %1$s. Dashes and spaces don\'t matter.</string>
+    <string name="login_token_example">xxxx-xxxxx-xxxxx-xxxx-xxxxx-xxxxx-xxxx</string>
+    <string name="login_token_label">VNDB token</string>
+    <string name="login_token_placeholder">Paste your token here</string>
+    <string name="login_paste">Paste</string>
+    <string name="login_show_token">Show token</string>
+    <string name="login_hide_token">Hide token</string>
+    <string name="login_storage_note">Your token is encrypted and stored only on this device.</string>
+    <string name="login_connect">Connect account</string>
+    <string name="login_continue_as_guest">Continue as guest</string>
+    <string name="login_error_format">That doesn\'t look like a VNDB token. Copy the whole token, it has 32 letters and digits.</string>
+    <string name="login_error_invalid">VNDB didn\'t accept this token. It may have been deleted, or part of it is missing.</string>
 
     <!-- Content descriptions -->
     <string name="cd_sensitive_cover">Cover hidden: sensitive content</string>

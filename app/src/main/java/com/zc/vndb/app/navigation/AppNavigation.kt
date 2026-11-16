@@ -1,32 +1,23 @@
 package com.zc.vndb.app.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRailItemDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -37,6 +28,8 @@ import com.zc.vndb.feature.browse.presentation.BrowseRoute
 import com.zc.vndb.feature.character.presentation.CharacterRoute
 import com.zc.vndb.feature.detail.presentation.DetailRoute
 import com.zc.vndb.feature.discover.presentation.DiscoverRoute
+import com.zc.vndb.feature.profile.presentation.LoginRoute
+import com.zc.vndb.feature.profile.presentation.ProfileRoute
 import com.zc.vndb.feature.release.presentation.ReleaseRoute
 import kotlinx.serialization.Serializable
 
@@ -48,6 +41,10 @@ data object BrowseNavKey : NavKey
 
 @Serializable
 data object ProfileNavKey : NavKey
+
+/** Log in with a VNDB API token (pushed on the Profile tab). */
+@Serializable
+data object LoginNavKey : NavKey
 
 /** A release's page. */
 @Serializable
@@ -159,9 +156,13 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
         BrowseRoute(onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) })
     }
     entry<ProfileNavKey> {
-        PlaceholderScreen(
-            text = stringResource(R.string.placeholder_coming_soon),
+        ProfileRoute(
+            onOpenLogin = { navigator.navigate(LoginNavKey) },
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
         )
+    }
+    entry<LoginNavKey> {
+        LoginRoute(onNavigateBack = navigator::goBack)
     }
     entry<NovelDetailNavKey> { key ->
         DetailRoute(
@@ -193,35 +194,5 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
             onNavigateBack = { navigator.goBack() },
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
         )
-    }
-}
-
-/** Empty screen for destinations whose features have not landed yet. */
-@Composable
-private fun PlaceholderScreen(text: String, onBack: (() -> Unit)? = null) {
-    Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.padding(VndbTheme.spacing.xl),
-            verticalArrangement = Arrangement.spacedBy(
-                VndbTheme.spacing.lg,
-                Alignment.CenterVertically,
-            ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-            onBack?.let { back ->
-                IconButton(onClick = back) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.cd_navigate_back),
-                    )
-                }
-            }
-        }
     }
 }

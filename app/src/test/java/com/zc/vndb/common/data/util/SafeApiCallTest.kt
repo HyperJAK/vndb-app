@@ -125,4 +125,16 @@ class SafeApiCallTest {
             }
         }
     }
+
+    @Test
+    fun `maps VNDB's 401 with a malformed text content type to Unauthorized`() = runTest {
+        val handler: MockRequestHandler = {
+            respond(
+                "Invalid token.",
+                HttpStatusCode.Unauthorized,
+                headersOf(HttpHeaders.ContentType, "text"),
+            )
+        }
+        assertEquals(DomainError.Unauthorized, safeApiCall(call(handler)).exceptionOrNull())
+    }
 }
