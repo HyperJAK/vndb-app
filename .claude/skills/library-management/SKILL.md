@@ -96,12 +96,14 @@ plugins {
     alias(libs.plugins.vndb.detekt)
     alias(libs.plugins.vndb.kotlin.only)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.koin.compiler)          // Koin Annotations, no KSP
 }
 
 dependencies {
     implementation(libs.bundles.ktor.client)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
+    implementation(libs.koin.annotations)
     testImplementation(libs.kotlinx.coroutines.test)
 }
 ```

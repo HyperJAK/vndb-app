@@ -43,7 +43,7 @@ presentation ──▶ domain ◀── data
 - Android or Compose: `android.*`, `androidx.*`, `@StringRes`, `Parcelable`, `Context`, `Uri`, `Color`, `Dp`, `R.*`
 - Networking or serialization: `io.ktor.*`, `kotlinx.serialization.*` (`@Serializable`, `@SerialName`)
 - Persistence: `androidx.datastore.*`
-- DI: `org.koin.*` except the annotations in `org.koin.core.annotation.*`, and `javax.inject.*`. Domain classes use plain constructors; the only Koin touch is the `@Factory` annotation on a use case.
+- DI: `org.koin.*` except the annotations in `org.koin.core.annotation.*`, and `javax.inject.*`. Domain classes use plain constructors; the only Koin touch is an annotation on the class (`@Factory` on use cases, `@Single` on `DefaultDispatcherProvider`).
 
 Both commands must print nothing:
 
@@ -74,7 +74,7 @@ ViewModel ◀────────── Domain model / Result ◀───�
     └──[Name]UIModelMapper──▶ UIModel / UIState ──reduce──▶ State ──▶ Composable
 ```
 
-- **MUST**: ViewModels depend only on **use cases**, navigation arguments (via Koin `parametersOf`) and presentation mappers that have dependencies.
+- **MUST**: ViewModels depend only on **use cases**, navigation arguments (`@InjectedParam`, passed by the Route with `parametersOf`) and presentation mappers that have dependencies.
 - **NEVER** inject a repository, `RepositoryImpl`, Ktor service, `HttpClient`, `DataStore`, or data source into a ViewModel, even for "simple" reads. Write a use case. Pass-through use cases are intentional: they keep the rule uniform and give business logic an obvious home.
 - **NEVER** call a use case, repository or service from a Composable. Composables only emit intents.
 - Use cases depend on repository **interfaces** (or other use cases), never on implementations or data sources.
@@ -107,6 +107,7 @@ class NovelDetailViewModel(
 }
 
 // ✅ DO — ViewModel -> UseCase, map to UI models, reduce into State
+@KoinViewModel
 class NovelDetailViewModel(
     private val novelId: String,
     private val getVisualNovelDetails: GetVisualNovelDetailsUseCase,
@@ -123,6 +124,7 @@ interface VisualNovelRepository { suspend fun getById(id: String): Result<Visual
 
 ```kotlin
 // ✅ data/repository/VisualNovelRepositoryImpl.kt — the only DTO -> Domain hand-off point
+@Single
 class VisualNovelRepositoryImpl(
     private val service: NovelService,
 ) : VisualNovelRepository {

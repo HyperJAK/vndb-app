@@ -268,6 +268,7 @@ class DefaultDispatcherProvider : DispatcherProvider {
 
 ```kotlin
 // ✅ repository using it for CPU-heavy mapping
+@Single
 class VisualNovelRepositoryImpl(
     private val service: NovelService,
     private val dispatchers: DispatcherProvider,
@@ -300,6 +301,7 @@ safeApiCall { service.fetch() }
 
 ```kotlin
 // ✅
+@KoinViewModel
 class SettingsViewModel(
     observeSettings: ObserveSettingsUseCase,
     private val updateShowNsfw: UpdateShowNsfwUseCase,

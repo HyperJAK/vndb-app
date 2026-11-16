@@ -19,7 +19,8 @@ com.zc.vndb/
 │   ├── MainActivity.kt
 │   ├── AppApplication.kt            # Initializes Koin (+ Coil ImageLoader factory)
 │   ├── di/
-│   │   └── AppModule.kt             # Aggregates CommonModule and all feature modules (+ AppKoin, the @KoinApplication entry point)
+│   │   ├── AppModule.kt             # @Module(includes = [...]): CommonModule and every feature module
+│   │   └── AppKoin.kt               # @KoinApplication entry point for startKoin<AppKoin>
 │   └── navigation/
 │       └── AppNavigation.kt         # Navigation 3: @Serializable NavKeys, back stack, NavDisplay, NavigationSuiteScaffold
 │
@@ -38,7 +39,7 @@ com.zc.vndb/
 │   │   └── util/
 │   │       └── DispatcherProvider.kt  # DispatcherProvider interface + DefaultDispatcherProvider
 │   ├── di/
-│   │   └── CommonModule.kt          # Koin bindings for HttpClient, Json, DataStore, DispatcherProvider
+│   │   └── CommonModule.kt          # @Module @ComponentScan(common) + @Single providers for Json, HttpClient, Clock, DataStore
 │   └── ui/
 │       ├── theme/                   # Material 3 Color.kt, Type.kt, Theme.kt
 │       ├── util/                    # ObserveAsEvents.kt, AdaptivePreviews.kt (non-visual Compose helpers)
@@ -149,8 +150,8 @@ Rules are in `library-management`.
 
 | I am writing… | It goes in |
 |---|---|
-| Activity, `Application`, Koin `startKoin` | `app/` |
-| Aggregated Koin module (`includes(...)`) | `app/di/AppModule.kt` |
+| Activity, `Application`, `startKoin<AppKoin>` | `app/` |
+| Aggregated Koin module (`@Module(includes = [...])`) and the `@KoinApplication` entry point | `app/di/AppModule.kt`, `app/di/AppKoin.kt` |
 | `@Serializable` `NavKey`s, back stack, `NavDisplay`, `NavigationSuiteScaffold` | `app/navigation/AppNavigation.kt` |
 | Shared `HttpClient` factory, `Json` instance | `common/data/network/` |
 | `safeApiCall { }` (exception → `DomainError` mapping) | `common/data/util/SafeApiCall.kt` |
@@ -159,7 +160,7 @@ Rules are in `library-management`.
 | Shared DataStore helpers (file factory, preference key helpers) | `common/data/local/` |
 | `DomainError` and other error/result/value types used by 2+ features' domains | `common/domain/model/` |
 | `DispatcherProvider` / `DefaultDispatcherProvider` | `common/domain/util/DispatcherProvider.kt` |
-| Koin bindings for `HttpClient`, `Json`, `DataStore`, `DispatcherProvider` | `common/di/CommonModule.kt` |
+| Koin providers for types we don't own (`HttpClient`, `Json`, `Clock`, `DataStore`) | `common/di/CommonModule.kt` |
 | Theme, colors, typography | `common/ui/theme/` |
 | `ObserveAsEvents`, `@AdaptivePreviews` and other non-visual Compose helpers | `common/ui/util/` |
 | Presentation mapper for a `common/domain` type used by 2+ features (not tied to one component) | `common/ui/mapper/[Name]UIModelMapper.kt` |
@@ -173,7 +174,7 @@ Rules are in `library-management`.
 | DTO → Domain / Domain → DTO | `feature/[name]/data/mapper/[Name]DTOMapper.kt` / `[Name]DomainMapper.kt` |
 | Repository implementation | `feature/[name]/data/repository/[Name]RepositoryImpl.kt` |
 | Domain model / repository interface / use case | `feature/[name]/domain/{model,repository,usecase}/` |
-| Feature Koin module | `feature/[name]/di/[Name]Module.kt` |
+| Feature Koin module (`@Module @ComponentScan("com.zc.vndb.feature.[name]")`) | `feature/[name]/di/[Name]Module.kt` |
 | UI model / UI state read by the Screen or 2+ components | `feature/[name]/presentation/model/` |
 | Domain → UI mapper for those models | `feature/[name]/presentation/mapper/[Name]UIModelMapper.kt` |
 | Composable reused by screens of one feature | `feature/[name]/presentation/component/[component]/[Name]View.kt` |
@@ -229,9 +230,12 @@ Each component folder follows §1.1 (`model/`, `mapper/`, nested `component/`).
 
 ```kotlin
 // app/di/AppModule.kt
-val appModule = module {
-    includes(commonModule, novelModule, searchModule, settingsModule)
-}
+@Module(includes = [CommonModule::class, NovelModule::class, SearchModule::class, SettingsModule::class])
+class AppModule
+
+// app/di/AppKoin.kt
+@KoinApplication(modules = [AppModule::class])
+object AppKoin
 ```
 
 ```kotlin
@@ -239,10 +243,9 @@ val appModule = module {
 class AppApplication : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
-        startKoin {
+        startKoin<AppKoin> {
             androidLogger()
             androidContext(this@AppApplication)
-            modules(appModule)
         }
     }
 

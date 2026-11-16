@@ -55,7 +55,9 @@ package com.zc.vndb.feature.novel.domain.usecase
 
 import com.zc.vndb.feature.novel.domain.model.VisualNovel
 import com.zc.vndb.feature.novel.domain.repository.VisualNovelRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class GetVisualNovelDetailsUseCase(
     private val repository: VisualNovelRepository,
 ) {
@@ -65,6 +67,7 @@ class GetVisualNovelDetailsUseCase(
 
 ```kotlin
 // ✅ domain/usecase/ObserveFavoriteNovelsUseCase.kt
+@Factory
 class ObserveFavoriteNovelsUseCase(
     private val repository: VisualNovelRepository,
 ) {
@@ -445,8 +448,9 @@ Rules:
 
 ```kotlin
 // ✅ presentation/NovelDetailViewModel.kt
+@KoinViewModel
 class NovelDetailViewModel(
-    private val novelId: String,                       // NovelDetailNavKey.id via parametersOf
+    @InjectedParam private val novelId: String,        // NovelDetailNavKey.id via parametersOf
     private val getVisualNovelDetails: GetVisualNovelDetailsUseCase,
     private val toggleFavorite: ToggleFavoriteUseCase,
 ) : ViewModel() {

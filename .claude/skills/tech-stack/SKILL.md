@@ -99,7 +99,7 @@ grep -rnE "runBlocking|GlobalScope|KoinComponent|by inject\(\)" app/src/main
 | Coil | — | — | ✅ | ✅ | — | ✅ `ImageLoader` setup |
 | Navigation 3 | — | — | — | — | — | ✅ `NavKey`s, `NavDisplay`, back stack |
 | Lifecycle / ViewModel | — | — | ✅ | — | — | ✅ |
-| Koin | — | — | ✅ `koinViewModel()` in Routes only | — | ✅ | ✅ `startKoin` |
+| Koin | ✅ annotations only (`@Factory`, `@Single`) | ✅ annotations only (`@Single`) | ✅ `@KoinViewModel` / `@Factory`, `koinViewModel()` in Routes only | — | ✅ `@Module`, providers | ✅ `startKoin<AppKoin>` |
 
 ---
 
@@ -315,7 +315,7 @@ private fun AppNavDisplay(backStack: NavBackStack<NavKey>) {
 
 ### Ktor Client
 
-- **One** app-wide `HttpClient`, built in `common/data/network/HttpClientFactory.kt` and provided as a Koin `single`. Base URL, JSON, timeouts, logging and `expectSuccess = true` are configured there.
+- **One** app-wide `HttpClient`, built in `common/data/network/HttpClientFactory.kt` and provided by a `@Single` function in `CommonModule`. Base URL, JSON, timeouts, logging and response validation are configured there (`expectSuccess = false` plus an `HttpResponseValidator` that maps status codes without reading the body, because VNDB errors use `Content-Type: text`).
 - Per-feature API classes `[Name]Service` live in `feature/[name]/data/remote/`, take `HttpClient` in the constructor, expose `suspend` functions returning **DTOs**, and contain no mapping or business logic.
 - The OkHttp artifact is used only as Ktor's **engine** — never import `okhttp3.*` directly.
 - Ktor types (`HttpClient`, `HttpResponse`, `ResponseException`) **NEVER** leave `data`. Repository implementations wrap every service call in `safeApiCall {}`, which converts failures into `Result.failure(DomainError.…)`.
@@ -347,6 +347,7 @@ val appJson = Json {
 
 ```kotlin
 // ✅ feature/novel/data/remote/NovelService.kt
+@Single
 class NovelService(private val client: HttpClient) {
 
     suspend fun queryNovels(request: NovelQueryDTO): VisualNovelPageDTO =
@@ -372,12 +373,13 @@ HttpClient().get(url)                                  // ❌ ad-hoc client per 
 ### Jetpack DataStore
 
 - Preferences DataStore for simple key/value settings; Proto/typed DataStore (with a kotlinx.serialization `Serializer`) for structured data.
-- Exactly **one** `DataStore` instance per file, provided as a Koin `single`.
+- Exactly **one** `DataStore` instance per file, provided by a `@Single` function in a `@Module` class (e.g. the `session` store in `CommonModule`).
 - Wrapped in a `[Name]LocalDataSource` in `feature/[name]/data/local/`. Reads are `Flow`s; writes are `suspend` functions using `edit {}` / `updateData {}`.
 - Handle read `IOException`s by emitting defaults; rethrow everything else.
 
 ```kotlin
 // ✅ feature/settings/data/local/SettingsLocalDataSource.kt
+@Single
 class SettingsLocalDataSource(private val dataStore: DataStore<Preferences>) {
 
     val showNsfwCovers: Flow<Boolean> = dataStore.data
@@ -414,7 +416,7 @@ runBlocking { dataStore.data.first() }                                          
   - Use a provider function in a `@Module` class only for types you do not own. An Android `Context` parameter is resolved from `androidContext(...)`.
 - **NEVER** `KoinComponent`, `by inject()`, or `get()` inside classes.
 - The **only** Koin call outside `di`/`Application` is `koinViewModel()` in a `[Name]Route`.
-- Navigation arguments reach the ViewModel through `parametersOf(...)` from the Route.
+- Navigation arguments reach the ViewModel's `@InjectedParam` parameters through `parametersOf(...)` from the Route.
 - Add a Koin `verify()` unit test covering all modules (`AppModule().module().verify(...)`).
 
 ```kotlin
@@ -480,7 +482,8 @@ class VisualNovelRepositoryImpl : VisualNovelRepository, KoinComponent {
     private val service: NovelService by inject()                          // ❌ service locator
 }
 object ServiceLocator { val repo by lazy { VisualNovelRepositoryImpl() } } // ❌ manual locator
-single<VisualNovelRepository> { VisualNovelRepositoryImpl(get(), get()) } // ⚠️ prefer singleOf + bind
+val novelModule = module { singleOf(::VisualNovelRepositoryImpl) { bind<VisualNovelRepository>() } } // ❌ Koin DSL — annotate the class
+@Single(binds = [VisualNovelRepository::class]) class VisualNovelRepositoryImpl(…)                    // ❌ redundant bind
 ```
 
 ---
@@ -494,6 +497,6 @@ single<VisualNovelRepository> { VisualNovelRepositoryImpl(get(), get()) } // ⚠
 - [ ] Destinations are `@Serializable` `[Name]NavKey`s; keys, back stack and `NavDisplay` only in `app/navigation/`; Routes navigate via callbacks in response to Effects.
 - [ ] Networking via the shared Ktor `HttpClient` in `data`; DTOs use kotlinx.serialization; Ktor types never leave `data`.
 - [ ] Persistence via DataStore exposed as `Flow`; no `SharedPreferences`.
-- [ ] DI via Koin modules in `di/` (`singleOf` / `factoryOf` / `viewModelOf` + `bind`); no annotations or `inject()` in classes; `koinViewModel()` only in Routes.
+- [ ] DI via Koin Annotations: classes carry `@Single` / `@Factory` / `@KoinViewModel` (navigation args `@InjectedParam`), each feature has one `@Module @ComponentScan` class listed in `AppModule`; no Koin DSL (`module { }`, `singleOf`, …), no `KoinComponent` / `inject()`; `koinViewModel()` only in Routes; `KoinModulesTest` passes.
 - [ ] Every library used appears in §1, and is used only in the layers allowed by §2.
 - [ ] Any new or changed dependency follows `library-management`.

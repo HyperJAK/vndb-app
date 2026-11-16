@@ -8,7 +8,7 @@ Browse and search visual novels, then dig into the details: tags, releases, scre
 - Kotlin
 - Jetpack Compose (Material 3, Adaptive)
 - Navigation 3
-- Koin
+- Koin (Annotations, via the Koin compiler plugin)
 - Ktor
 - kotlinx.serialization
 - Coroutines and Flow
@@ -16,7 +16,7 @@ Browse and search visual novels, then dig into the details: tags, releases, scre
 - Detekt
 
 ## Architecture
-- Single `:app` module, organised by feature (discover, browse, detail, character, release)
+- Single `:app` module, organised by feature (discover, browse, detail, character, release, profile, login)
 - Clean Architecture: each feature has `data`, `domain`, `presentation` and `di` packages
 - MVI in the presentation layer: a ViewModel exposes one state and one-off effects, and handles intents
 - Shared code lives in `common`
