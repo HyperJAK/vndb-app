@@ -31,8 +31,8 @@ presentation ──▶ domain ◀── data
 
 | Layer | MAY import | MUST NEVER import |
 |---|---|---|
-| `domain` | Kotlin stdlib, `kotlinx.coroutines` core, kotlinx-datetime, `common/domain`, other features' `domain` | `presentation`, `data`, `di`, `android.*`, `androidx.*`, Compose, Ktor, `kotlinx.serialization`, DataStore, Koin, `javax.inject` |
-| `data` | own feature's `domain`, `common/domain`, `common/data`, Ktor, kotlinx.serialization, DataStore, Android framework where needed | `presentation`, `common/ui`, Compose, Koin |
+| `domain` | Kotlin stdlib, `kotlinx.coroutines` core, kotlinx-datetime, Koin annotations (`org.koin.core.annotation.*` only), `common/domain`, other features' `domain` | `presentation`, `data`, `di`, `android.*`, `androidx.*`, Compose, Ktor, `kotlinx.serialization`, DataStore, Koin beyond `org.koin.core.annotation.*`, `javax.inject` |
+| `data` | own feature's `domain`, `common/domain`, `common/data`, Ktor, kotlinx.serialization, DataStore, Koin annotations, Android framework where needed | `presentation`, `common/ui`, Compose |
 | `presentation` | own feature's `domain`, other features' `domain` (models + use cases), `common/domain`, `common/ui`, Android, Compose, Lifecycle, Coil | any `data` package, DTOs, Ktor, DataStore, repository implementations |
 | `di` | everything in its own feature, `common`, Koin | — |
 
@@ -43,12 +43,12 @@ presentation ──▶ domain ◀── data
 - Android or Compose: `android.*`, `androidx.*`, `@StringRes`, `Parcelable`, `Context`, `Uri`, `Color`, `Dp`, `R.*`
 - Networking or serialization: `io.ktor.*`, `kotlinx.serialization.*` (`@Serializable`, `@SerialName`)
 - Persistence: `androidx.datastore.*`
-- DI: `org.koin.*`, `javax.inject.*`. Domain classes use plain constructors, and Koin wires them in `di/`.
+- DI: `org.koin.*` except the annotations in `org.koin.core.annotation.*`, and `javax.inject.*`. Domain classes use plain constructors; the only Koin touch is the `@Factory` annotation on a use case.
 
 Both commands must print nothing:
 
 ```bash
-grep -rnE "import (android\.|androidx\.|io\.ktor\.|kotlinx\.serialization\.|org\.koin\.|javax\.inject\.)" app/src/main/java/com/zc/vndb/feature/*/domain app/src/main/java/com/zc/vndb/common/domain
+grep -rnE "import (android\.|androidx\.|io\.ktor\.|kotlinx\.serialization\.|org\.koin\.(android|compose|core\.(context|module|parameter|scope))|javax\.inject\.)" app/src/main/java/com/zc/vndb/feature/*/domain app/src/main/java/com/zc/vndb/common/domain
 ```
 
 ```bash
@@ -181,6 +181,6 @@ File templates for State, Intent, Effect, ViewModel, Route and Screen are in `co
 - [ ] `domain` (feature and common) has no Android, Compose, Ktor, serialization, DataStore or DI imports.
 - [ ] `presentation` imports nothing from any `data` package.
 - [ ] ViewModels depend only on use cases, navigation arguments and presentation mappers.
-- [ ] Repository interfaces are in `domain`, implementations in `data`, and they are bound in the feature's Koin module.
+- [ ] Repository interfaces are in `domain`, implementations in `data`, and the implementation is annotated (`@Single`) so `@ComponentScan` binds it to its interface automatically.
 - [ ] DTOs never leave `data`. Domain models never reach a Composable without being mapped.
 - [ ] Each ViewModel has one `StateFlow<State>`, one `Channel`-backed `Flow<Effect>` and one public `onIntent`. No one-off flags in `State`.

@@ -5,11 +5,13 @@ import com.zc.vndb.feature.discover.domain.model.ReleaseKind
 import com.zc.vndb.feature.discover.domain.model.ReleaseNovel
 import com.zc.vndb.feature.discover.domain.model.TrendingRelease
 import com.zc.vndb.feature.discover.domain.repository.DiscoverRepository
+import org.koin.core.annotation.Factory
 
 /**
  * "New & Trending": the newest releases in English or Japanese, one row per visual novel,
  * each labelled with why it is new. Machine-translation-only releases are left out.
  */
+@Factory
 class GetTrendingReleasesUseCase(private val repository: DiscoverRepository) {
     suspend operator fun invoke(): Result<List<TrendingRelease>> =
         repository.getRecentReleases(LANGUAGE_CODES, FETCH_LIMIT).map { releases ->

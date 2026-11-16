@@ -10,7 +10,9 @@ import com.zc.vndb.feature.profile.domain.model.EntryPage
 import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.domain.model.UserProfile
 import com.zc.vndb.feature.profile.domain.repository.ProfileRepository
+import org.koin.core.annotation.Single
 
+@Single
 class ProfileRepositoryImpl(
     private val service: ProfileService,
     private val local: SessionLocalDataSource,

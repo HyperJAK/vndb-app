@@ -22,9 +22,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.InjectedParam
+import org.koin.core.annotation.KoinViewModel
 
-class ReleaseViewModel(private val releaseId: String, private val getRelease: GetReleaseUseCase) :
-    ViewModel() {
+@KoinViewModel
+class ReleaseViewModel(
+    @InjectedParam private val releaseId: String,
+    private val getRelease: GetReleaseUseCase,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(ReleaseState(releaseId = releaseId))
     val state: StateFlow<ReleaseState> = _state.asStateFlow()

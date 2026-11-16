@@ -7,7 +7,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import org.koin.core.annotation.Single
 
+@Single
 class BrowseService(private val client: HttpClient) {
 
     suspend fun queryTag(query: QueryDTO): TagInfoPageDTO = client.post(

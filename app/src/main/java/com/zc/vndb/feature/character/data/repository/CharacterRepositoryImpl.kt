@@ -9,7 +9,9 @@ import com.zc.vndb.feature.character.data.mapper.toVoiceActors
 import com.zc.vndb.feature.character.data.remote.CharacterService
 import com.zc.vndb.feature.character.domain.model.CharacterProfile
 import com.zc.vndb.feature.character.domain.repository.CharacterRepository
+import org.koin.core.annotation.Single
 
+@Single
 class CharacterRepositoryImpl(private val service: CharacterService) : CharacterRepository {
 
     override suspend fun getCharacter(id: String): Result<CharacterProfile> = safeApiCall {

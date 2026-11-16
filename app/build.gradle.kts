@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.vndb.android.application)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.vndb.detekt)
+    alias(libs.plugins.koin.compiler)
 }
 
 android {
@@ -70,6 +71,7 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.annotations)
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.ktor3)

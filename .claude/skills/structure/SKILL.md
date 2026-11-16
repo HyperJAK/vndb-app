@@ -19,7 +19,7 @@ com.zc.vndb/
 │   ├── MainActivity.kt
 │   ├── AppApplication.kt            # Initializes Koin (+ Coil ImageLoader factory)
 │   ├── di/
-│   │   └── AppModule.kt             # Aggregates commonModule and all feature modules
+│   │   └── AppModule.kt             # Aggregates CommonModule and all feature modules (+ AppKoin, the @KoinApplication entry point)
 │   └── navigation/
 │       └── AppNavigation.kt         # Navigation 3: @Serializable NavKeys, back stack, NavDisplay, NavigationSuiteScaffold
 │
@@ -62,7 +62,7 @@ com.zc.vndb/
         │   ├── repository/          # [Name]Repository.kt — interface
         │   └── usecase/             # [Name]UseCase.kt — single responsibility, operator fun invoke
         ├── di/
-        │   └── [Name]Module.kt      # Koin module: data sources, repository, use cases, ViewModels
+        │   └── [Name]Module.kt      # @Module @ComponentScan class; classes carry @Single/@Factory/@KoinViewModel
         └── presentation/
             ├── model/               # Immutable [Name]UIModel.kt (static) & [Name]UIState.kt (dynamic)
             ├── mapper/              # [Name]UIModelMapper.kt (Domain -> UIModel / UIState)

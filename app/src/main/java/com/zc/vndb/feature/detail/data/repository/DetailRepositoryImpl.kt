@@ -23,7 +23,9 @@ import com.zc.vndb.feature.detail.domain.model.ReleaseSummary
 import com.zc.vndb.feature.detail.domain.model.ResultPage
 import com.zc.vndb.feature.detail.domain.model.Screenshot
 import com.zc.vndb.feature.detail.domain.repository.DetailRepository
+import org.koin.core.annotation.Single
 
+@Single
 class DetailRepositoryImpl(private val service: DetailService) : DetailRepository {
 
     override suspend fun getNovel(id: String): Result<NovelDetail> = safeApiCall {

@@ -33,7 +33,7 @@ Rules marked **MUST** / **NEVER** are non-negotiable. Examples use the feature `
 | Nav destination composable | `presentation` | `[Screen]Route` | `NovelDetailRoute` |
 | Stateless screen | `presentation` | `[Screen]Screen` | `NovelDetailScreen` |
 | Reusable widget | `presentation/component/[name]/` or `common/ui/component/[name]/` | `[Name]View` | `component/ratingbadge/RatingBadgeView` |
-| Koin module | `di` | file `[Name]Module.kt`, `val [name]Module` | `NovelModule.kt` → `val novelModule` |
+| Koin module | `di` | file `[Name]Module.kt`, `@Module class [Name]Module` | `NovelModule.kt` → `class NovelModule` |
 
 Acronyms in suffixes are **all caps**: `DTO`, `UI` — never `Dto`, `Ui`, `UiModel`, `UiState`. The one exception is the shared text type `UiText` (`common/ui/text/UiText.kt`, see §2.5).
 
@@ -46,7 +46,7 @@ Acronyms in suffixes are **all caps**: `DTO`, `UI` — never `Dto`, `Ui`, `UiMod
 - File & class: `[Verb][Name]UseCase.kt` — start with a verb: `Get`, `Observe`, `Search`, `Submit`, `Update`, `Delete`, `Toggle`, `Validate`.
 - **Single responsibility**: one business action per class.
 - Expose exactly **one** public method: `operator fun invoke(...)` (`suspend` for one-shot, returning `Result<T>`; non-suspend returning `Flow<T>` for streams).
-- Take repository **interfaces** (or other use cases) as plain constructor parameters — no annotations; registered with `factoryOf(::…UseCase)` in the feature's Koin module.
+- Take repository **interfaces** (or other use cases) as plain constructor parameters — no annotations; annotated with `@Factory` and picked up by the feature module's `@ComponentScan`.
 - No state, no `var`s, no Android types.
 
 ```kotlin
@@ -290,7 +290,7 @@ grep -rnE "R\.(string|plurals)\.|import com\.zc\.vndb\.R$|[^.]stringResource\(|p
 
 - **One mapper file per direction per boundary.** Never bundle unrelated mappers (`Mappers.kt`, `NovelMappers.kt`) or put mappers inside model files.
 - Implement as top-level **extension functions** named `toDomain()`, `toDTO()`, `toUIModel()` / `toUIState()`.
-  - If a presentation mapper needs dependencies (e.g. a locale-aware formatter or `ResourceProvider`), make it a class with the **same file name** — `class VisualNovelUIModelMapper(private val formatter: …) { fun map(novel: VisualNovel): VisualNovelUIModel }` — register it with `factoryOf(::VisualNovelUIModelMapper)` and inject it into the ViewModel.
+  - If a presentation mapper needs dependencies (e.g. a locale-aware formatter or `ResourceProvider`), make it a class with the **same file name** — `class VisualNovelUIModelMapper(private val formatter: …) { fun map(novel: VisualNovel): VisualNovelUIModel }` — annotate it with `@Factory` and inject it into the ViewModel.
 - Mappers are pure: no I/O, no logging side effects, no throwing for missing optional data (choose a sensible default or `null`).
 
 | Direction | Layer | File | Function |
@@ -438,7 +438,7 @@ Rules:
 - State updates **only** via atomic `_state.update { it.copy(...) }`. **NEVER** `_state.value = _state.value.copy(...)` (races) or `_state.value = [Name]State(...)` (loses fields).
 - `onIntent` is the **only** public function. Handlers are `private`. **NEVER** expose `fun refresh()`, `fun onSaveClicked()`, `fun loadNovel(id)`.
 - `onIntent` uses an exhaustive `when` (no `else` branch) so new intents fail compilation until handled.
-- Plain constructor (no annotations), registered with `viewModelOf(::[Name]ViewModel)`. Constructor takes navigation arguments first (supplied by `parametersOf` from the Route), then **use cases** only (plus presentation mappers with dependencies). Map domain → UI **here**.
+- Plain constructor annotated with `@KoinViewModel` (navigation arguments are `@InjectedParam`), picked up by the feature module's `@ComponentScan`. Constructor takes navigation arguments first (supplied by `parametersOf` from the Route), then **use cases** only (plus presentation mappers with dependencies). Map domain → UI **here**.
 - Launch coroutines in `viewModelScope`; never `GlobalScope`, never hold `Context`/`View`/back stack.
 - Long-lived streams (DataStore, observed repositories): `combine(_state, observeX()) { … }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), [Name]State())` becomes the single public `state`. See `best-practices` §3.4. **NEVER** collect them forever in `init`, and never expose extra public flows.
 - Failures become `error.toErrorUIModel()` (`best-practices` §4). Never put `exception.message` in state.

@@ -14,8 +14,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
+import org.koin.core.annotation.Single
 
 /** The signed-in account in the `session` DataStore, with the token encrypted by [cipher]. */
+@Single
 class SessionLocalDataSource(
     private val dataStore: DataStore<Preferences>,
     private val cipher: TokenCipher,

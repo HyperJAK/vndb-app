@@ -5,12 +5,14 @@ import com.zc.vndb.feature.profile.domain.model.ProfileOverview
 import com.zc.vndb.feature.profile.domain.repository.ProfileRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import org.koin.core.annotation.Factory
 
 /**
  * The user's labels (non-empty ones: predefined, then the user's own, then the virtual Voted and
  * No label) and profile, in parallel.
  * Labels are required; the profile line is optional.
  */
+@Factory
 class GetProfileUseCase(private val repository: ProfileRepository) {
 
     suspend operator fun invoke(userId: String): Result<ProfileOverview> = coroutineScope {

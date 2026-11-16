@@ -7,7 +7,9 @@ import com.zc.vndb.feature.release.data.mapper.toDomain
 import com.zc.vndb.feature.release.data.remote.ReleaseService
 import com.zc.vndb.feature.release.domain.model.ReleaseDetail
 import com.zc.vndb.feature.release.domain.repository.ReleaseRepository
+import org.koin.core.annotation.Single
 
+@Single
 class ReleaseRepositoryImpl(private val service: ReleaseService) : ReleaseRepository {
 
     override suspend fun getRelease(id: String): Result<ReleaseDetail> = safeApiCall {

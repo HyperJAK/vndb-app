@@ -23,9 +23,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.InjectedParam
+import org.koin.core.annotation.KoinViewModel
 
+@KoinViewModel
 class CharacterViewModel(
-    private val characterId: String,
+    @InjectedParam private val characterId: String,
     private val getCharacter: GetCharacterUseCase,
 ) : ViewModel() {
 

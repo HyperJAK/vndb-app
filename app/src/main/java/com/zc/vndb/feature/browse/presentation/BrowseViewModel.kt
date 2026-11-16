@@ -25,10 +25,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.InjectedParam
+import org.koin.core.annotation.KoinViewModel
 
+@KoinViewModel
 class BrowseViewModel(
     /** Set for a tag page; null for the Browse tab. */
-    private val tagId: String?,
+    @InjectedParam private val tagId: String?,
     private val searchNovels: SearchNovelsUseCase,
     private val getTag: GetTagUseCase,
 ) : ViewModel() {

@@ -5,11 +5,13 @@ import com.zc.vndb.feature.character.domain.model.CharacterProfile
 import com.zc.vndb.feature.character.domain.repository.CharacterRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import org.koin.core.annotation.Factory
 
 /**
  * The character page. Voice actors load alongside and are optional: if that call fails the page
  * shows without them. Appearances are ordered by role (main first), then oldest first.
  */
+@Factory
 class GetCharacterUseCase(private val repository: CharacterRepository) {
 
     suspend operator fun invoke(id: String): Result<CharacterProfile> = coroutineScope {

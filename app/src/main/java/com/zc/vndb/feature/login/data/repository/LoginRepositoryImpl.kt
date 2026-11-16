@@ -7,7 +7,9 @@ import com.zc.vndb.common.domain.model.Session
 import com.zc.vndb.feature.login.data.mapper.toStoredSession
 import com.zc.vndb.feature.login.data.remote.LoginService
 import com.zc.vndb.feature.login.domain.repository.LoginRepository
+import org.koin.core.annotation.Single
 
+@Single
 class LoginRepositoryImpl(
     private val service: LoginService,
     private val local: SessionLocalDataSource,

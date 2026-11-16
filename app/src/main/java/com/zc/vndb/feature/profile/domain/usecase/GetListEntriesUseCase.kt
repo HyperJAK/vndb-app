@@ -2,7 +2,9 @@ package com.zc.vndb.feature.profile.domain.usecase
 
 import com.zc.vndb.feature.profile.domain.model.EntryPage
 import com.zc.vndb.feature.profile.domain.repository.ProfileRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class GetListEntriesUseCase(private val repository: ProfileRepository) {
 
     suspend operator fun invoke(userId: String, labelId: Int, page: Int): Result<EntryPage> =
