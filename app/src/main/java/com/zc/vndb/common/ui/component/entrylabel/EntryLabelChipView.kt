@@ -6,14 +6,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.NewLabel
+import androidx.compose.material.icons.outlined.PauseCircle
+import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,7 +34,6 @@ import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.profile.domain.model.ListLabel
 
-private val DotSize = 6.dp
 private val IconSize = 12.dp
 private val HorizontalPadding = 8.dp
 private val VerticalPadding = 2.dp
@@ -45,8 +47,17 @@ fun VndbColors.statusColors(id: Int): TintedColors? = when (id) {
     else -> null
 }
 
+/** The icon of a reading status: play, check, pause, cancel; null for other labels. */
+fun statusIcon(id: Int): ImageVector? = when (id) {
+    ListLabel.PLAYING -> Icons.Outlined.PlayCircle
+    ListLabel.FINISHED -> Icons.Outlined.CheckCircle
+    ListLabel.STALLED -> Icons.Outlined.PauseCircle
+    ListLabel.DROPPED -> Icons.Outlined.Cancel
+    else -> null
+}
+
 /**
- * The colored mark for a label in a filter tab: a dot for statuses, the icon for Wishlist and
+ * The colored mark for a label in a filter tab: the status icon for statuses, the icon for Wishlist and
  * Blacklist, a tag icon for your own labels, nothing for Voted and No label.
  * Keeps its color whether or not the tab is selected.
  */
@@ -55,9 +66,7 @@ fun EntryLabelMark(id: Int, modifier: Modifier = Modifier) {
     val colors = VndbTheme.colors
     val status = colors.statusColors(id)
     when {
-        status != null -> Spacer(
-            modifier.size(DotSize).background(status.content, CircleShape),
-        )
+        status != null -> statusIcon(id)?.let { MarkIcon(it, status.content, modifier) }
 
         id == ListLabel.WISHLIST -> MarkIcon(
             Icons.Outlined.BookmarkBorder,
@@ -90,7 +99,7 @@ private fun MarkIcon(icon: ImageVector, tint: Color, modifier: Modifier = Modifi
 }
 
 /**
- * A list label. Statuses are tinted pills with a leading dot, colored by meaning; every other
+ * A list label. Statuses are tinted pills with a leading icon, colored by meaning; every other
  * label is outlined with an icon (Wishlist violet, Blacklist slate, your own labels neutral).
  */
 @Composable
@@ -106,7 +115,14 @@ fun EntryLabelChipView(label: EntryLabelUIModel, modifier: Modifier = Modifier) 
                 .border(VndbTheme.dimens.borderWidth, status.border, CircleShape)
                 .padding(horizontal = HorizontalPadding, vertical = VerticalPadding),
         ) {
-            Spacer(Modifier.size(DotSize).background(status.content, CircleShape))
+            statusIcon(label.id)?.let { icon ->
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = status.content,
+                    modifier = Modifier.size(IconSize),
+                )
+            }
             ChipText(label.name, status.content)
         }
     } else {

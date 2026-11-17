@@ -50,9 +50,9 @@ import com.zc.vndb.feature.listeditor.presentation.component.ListEditorDialogs
 import com.zc.vndb.feature.listeditor.presentation.model.DateField
 import com.zc.vndb.feature.listeditor.presentation.model.LabelOptionUIModel
 import com.zc.vndb.feature.profile.domain.model.MyListEntry
+import kotlin.math.roundToInt
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlin.math.roundToInt
 
 /** Slider stops: every tenth of a point from 1.0 to 10.0. */
 private const val VOTE_STEPS = MyListEntry.MAX_VOTE - MyListEntry.MIN_VOTE - 1
