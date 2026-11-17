@@ -23,7 +23,7 @@ data class ListEditorState(
     val otherLabels: ImmutableList<LabelOptionUIModel> = persistentListOf(),
     /** 10–100, or null without a vote. */
     val vote: Int? = null,
-    /** "8.5", or "No vote". */
+    /** "No vote" until the slider moves, then the vote itself: "8.5". */
     val voteLabel: UiText = UiText.StringValue(""),
     val startedLabel: UiText? = null,
     val finishedLabel: UiText? = null,

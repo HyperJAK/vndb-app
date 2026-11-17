@@ -31,11 +31,7 @@ fun SelectableChipView(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     leading: (@Composable () -> Unit)? = null,
-    selectedColors: TintedColors = TintedColors(
-        container = VndbTheme.colors.chipActiveContainer,
-        content = VndbTheme.colors.chipActiveContent,
-        border = VndbTheme.colors.chipActiveContent,
-    ),
+    selectedColors: TintedColors = SelectableChipDefaults.colors(),
 ) {
     val colors = if (isSelected) {
         selectedColors

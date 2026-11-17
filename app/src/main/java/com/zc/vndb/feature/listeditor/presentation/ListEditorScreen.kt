@@ -37,8 +37,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.zc.vndb.common.ui.component.entrylabel.EntryLabelMark
 import com.zc.vndb.common.ui.component.entrylabel.statusColors
 import com.zc.vndb.common.ui.component.error.ErrorView
+import com.zc.vndb.common.ui.component.selectablechip.SelectableChipDefaults
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -48,16 +50,15 @@ import com.zc.vndb.feature.listeditor.presentation.component.ListEditorDialogs
 import com.zc.vndb.feature.listeditor.presentation.model.DateField
 import com.zc.vndb.feature.listeditor.presentation.model.LabelOptionUIModel
 import com.zc.vndb.feature.profile.domain.model.MyListEntry
-import kotlin.math.roundToInt
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.roundToInt
 
 /** Slider stops: every tenth of a point from 1.0 to 10.0. */
 private const val VOTE_STEPS = MyListEntry.MAX_VOTE - MyListEntry.MIN_VOTE - 1
 
-/** Where the slider rests before the first vote. */
-private const val DEFAULT_VOTE = 70
 private val ProgressSize = 18.dp
+private val VoteRowHeight = 24.dp
 
 /** The list editor's content: status, labels, vote, dates and notes, then Save (and Remove). */
 @Composable
@@ -174,21 +175,15 @@ private fun ChipFlow(options: ImmutableList<LabelOptionUIModel>, onClick: (Int) 
         verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
     ) {
         options.forEach { option ->
-            val statusColors = VndbTheme.colors.statusColors(option.id)
-            if (statusColors != null) {
-                SelectableChipView(
-                    label = option.label,
-                    isSelected = option.isSelected,
-                    onClick = { onClick(option.id) },
-                    selectedColors = statusColors,
-                )
-            } else {
-                SelectableChipView(
-                    label = option.label,
-                    isSelected = option.isSelected,
-                    onClick = { onClick(option.id) },
-                )
-            }
+            SelectableChipView(
+                label = option.label,
+                isSelected = option.isSelected,
+                onClick = { onClick(option.id) },
+                // The same dot / icon as the status and label pills elsewhere.
+                leading = { EntryLabelMark(option.id) },
+                selectedColors = VndbTheme.colors.statusColors(option.id)
+                    ?: SelectableChipDefaults.colors(),
+            )
         }
     }
 }
@@ -196,7 +191,12 @@ private fun ChipFlow(options: ImmutableList<LabelOptionUIModel>, onClick: (Int) 
 @Composable
 private fun VoteField(state: ListEditorState, onIntent: (ListEditorIntent) -> Unit) {
     Field(UiText.StringResource(StringResource.list_editor_vote)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // One line that reads "No vote" and turns into the vote as the slider moves. Its height
+        // is fixed, so Clear vote appearing doesn't push the slider down.
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.heightIn(min = VoteRowHeight),
+        ) {
             Text(
                 text = state.voteLabel.asString(),
                 style = MaterialTheme.typography.headlineSmall,
@@ -208,8 +208,8 @@ private fun VoteField(state: ListEditorState, onIntent: (ListEditorIntent) -> Un
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
+                modifier = Modifier.weight(1f),
             )
-            Spacer(Modifier.weight(1f))
             if (state.vote != null) {
                 TextButton(onClick = { onIntent(ListEditorIntent.VoteCleared) }) {
                     Text(UiText.StringResource(StringResource.list_editor_clear_vote).asString())
@@ -217,7 +217,7 @@ private fun VoteField(state: ListEditorState, onIntent: (ListEditorIntent) -> Un
             }
         }
         Slider(
-            value = (state.vote ?: DEFAULT_VOTE).toFloat(),
+            value = (state.vote ?: MyListEntry.MIN_VOTE).toFloat(), // No vote rests at 1.0
             onValueChange = { onIntent(ListEditorIntent.VoteChanged(it.roundToInt())) },
             valueRange = MyListEntry.MIN_VOTE.toFloat()..MyListEntry.MAX_VOTE.toFloat(),
             steps = VOTE_STEPS,
