@@ -51,7 +51,7 @@
     <string name="browse_clear_search">Clear search</string>
     <string name="browse_age_all">All Ages</string>
     <string name="browse_age_adult">18+</string>
-    <string name="browse_age_any">Both</string>
+    <string name="browse_age_any">Any Age</string>
     <string name="browse_sort_relevance">Relevance</string>
     <string name="browse_sort_popularity">Popularity</string>
     <string name="browse_sort_rating">Rating</string>
