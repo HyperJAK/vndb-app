@@ -99,6 +99,7 @@ Compose:
     allowedCompositionLocals:
       - LocalVndbColors
       - LocalVndbShapes
+      - LocalVndbWallpaper
       - LocalShowSensitiveContent
       - LocalVndbSpacing
       - LocalVndbDimens

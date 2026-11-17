@@ -30,6 +30,7 @@ import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.TintedColors
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.detail.domain.model.PlatformFamily
 import com.zc.vndb.feature.detail.presentation.component.editionrow.model.EditionRowUIModel
@@ -43,7 +44,7 @@ fun EditionRowView(model: EditionRowUIModel, onClick: () -> Unit, modifier: Modi
     Row(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
-            .background(VndbTheme.colors.surfaceInset)
+            .cardBackground(VndbTheme.colors.surfaceInset)
             .clickable(onClick = onClick)
             .padding(VndbTheme.spacing.sm),
         horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),

@@ -1,6 +1,5 @@
 package com.zc.vndb.common.ui.component.sectioncard
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
 /** A bordered card with an optional title row (title + [trailing]) above [content]. */
@@ -31,7 +31,7 @@ fun SectionCardView(
     Column(
         modifier = modifier
             .clip(shape)
-            .background(VndbTheme.colors.surfaceCard)
+            .cardBackground()
             .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape)
             .padding(VndbTheme.spacing.md),
         verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),

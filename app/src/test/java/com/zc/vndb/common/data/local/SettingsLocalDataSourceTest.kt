@@ -4,6 +4,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.zc.vndb.common.domain.model.AppSettings
+import com.zc.vndb.common.domain.model.AppTheme
 import com.zc.vndb.common.domain.model.ListSort
 import com.zc.vndb.common.domain.model.SpoilerPreference
 import com.zc.vndb.common.domain.model.TitleLanguage
@@ -42,6 +43,7 @@ class SettingsLocalDataSourceTest {
             trendingLanguages = listOf("en", "zh-Hans", "ko"),
             listSort = ListSort.Vote,
             isListSortReversed = true,
+            theme = AppTheme.AngelicSerenade,
         )
 
         local.update { changed }
@@ -55,11 +57,13 @@ class SettingsLocalDataSourceTest {
         store.edit {
             it[stringPreferencesKey("title_language")] = "Klingon"
             it[stringPreferencesKey("trending_languages")] = "xx,yy"
+            it[stringPreferencesKey("theme")] = "Neon"
         }
 
         val settings = SettingsLocalDataSource(store).settings.first()
 
         assertEquals(TitleLanguage.Romanized, settings.titleLanguage)
         assertEquals(AppSettings.DEFAULT_TRENDING_LANGUAGES, settings.trendingLanguages)
+        assertEquals(AppTheme.Original, settings.theme)
     }
 }

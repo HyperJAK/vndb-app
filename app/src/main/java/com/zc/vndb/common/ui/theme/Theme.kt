@@ -1,61 +1,25 @@
 package com.zc.vndb.common.ui.theme
 
+import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
-// Nocturne VN is a dark-only, OLED-tuned palette, so there is no light scheme and no dynamic color.
-private val NocturneColorScheme = darkColorScheme(
-    primary = Primary,
-    onPrimary = OnPrimary,
-    primaryContainer = PrimaryContainer,
-    onPrimaryContainer = OnPrimaryContainer,
-    inversePrimary = InversePrimary,
-    secondary = Secondary,
-    onSecondary = OnSecondary,
-    secondaryContainer = SecondaryContainer,
-    onSecondaryContainer = OnSecondaryContainer,
-    tertiary = Tertiary,
-    onTertiary = OnTertiary,
-    tertiaryContainer = TertiaryContainer,
-    onTertiaryContainer = OnTertiaryContainer,
-    background = Background,
-    onBackground = OnBackground,
-    surface = Surface,
-    onSurface = OnSurface,
-    surfaceVariant = SurfaceVariant,
-    onSurfaceVariant = OnSurfaceVariant,
-    surfaceTint = SurfaceTint,
-    inverseSurface = InverseSurface,
-    inverseOnSurface = InverseOnSurface,
-    error = Error,
-    onError = OnError,
-    errorContainer = ErrorContainer,
-    onErrorContainer = OnErrorContainer,
-    outline = Outline,
-    outlineVariant = OutlineVariant,
-    scrim = Scrim,
-    surfaceBright = SurfaceBright,
-    surfaceDim = SurfaceDim,
-    surfaceContainerLowest = SurfaceContainerLowest,
-    surfaceContainerLow = SurfaceContainerLow,
-    surfaceContainer = SurfaceContainer,
-    surfaceContainerHigh = SurfaceContainerHigh,
-    surfaceContainerHighest = SurfaceContainerHighest,
-)
-
+/** Applies [spec]: Material colors, the extra design tokens and the wallpaper. */
 @Composable
-fun VndbTheme(content: @Composable () -> Unit) {
+fun VndbTheme(spec: VndbThemeSpec = OriginalThemeSpec, content: @Composable () -> Unit) {
     CompositionLocalProvider(
-        LocalVndbColors provides VndbColors(),
+        LocalVndbColors provides spec.colors,
+        LocalVndbWallpaper provides spec.wallpaper,
         LocalVndbShapes provides VndbExtraShapes(),
         LocalVndbSpacing provides VndbSpacing(),
         LocalVndbDimens provides VndbDimens(),
     ) {
         MaterialTheme(
-            colorScheme = NocturneColorScheme,
+            colorScheme = spec.colorScheme,
             typography = VndbTypography,
             shapes = VndbShapes,
             content = content,
@@ -63,11 +27,25 @@ fun VndbTheme(content: @Composable () -> Unit) {
     }
 }
 
+/**
+ * A card's background: [color] at the theme's card opacity, so the wallpaper shows slightly through
+ * it. Solid when the theme has no wallpaper. For on-page cards only: dialogs, sheets and menus stay
+ * solid, so they use the plain color tokens.
+ */
+@Composable
+fun Modifier.cardBackground(color: Color = VndbTheme.colors.surfaceCard): Modifier =
+    background(color.copy(alpha = VndbTheme.wallpaper?.cardAlpha ?: 1f))
+
 /** Design tokens that extend [MaterialTheme]. */
 object VndbTheme {
     val colors: VndbColors
         @Composable @ReadOnlyComposable
         get() = LocalVndbColors.current
+
+    /** The wallpaper behind the app; null for a plain background. */
+    val wallpaper: WallpaperSpec?
+        @Composable @ReadOnlyComposable
+        get() = LocalVndbWallpaper.current
 
     val shapes: VndbExtraShapes
         @Composable @ReadOnlyComposable

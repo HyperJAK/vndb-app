@@ -1,6 +1,5 @@
 package com.zc.vndb.common.ui.component.linksrow
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -55,7 +55,7 @@ private fun LinkPill(link: LinkUIModel, onClick: () -> Unit) {
         modifier = Modifier
             .heightIn(min = VndbTheme.dimens.filterChipHeight)
             .clip(shape)
-            .background(VndbTheme.colors.surfaceCard)
+            .cardBackground()
             .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape)
             .clickable(onClick = onClick)
             .padding(horizontal = VndbTheme.spacing.md, vertical = VndbTheme.spacing.xs),

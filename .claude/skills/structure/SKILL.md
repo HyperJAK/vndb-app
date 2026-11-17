@@ -44,7 +44,8 @@ com.zc.vndb/
 │   ├── di/
 │   │   └── CommonModule.kt          # @Module @ComponentScan(common) + @Single providers for Json, HttpClient, Clock, DataStore
 │   └── ui/
-│       ├── theme/                   # Material 3 Color.kt, Type.kt, Theme.kt
+│       ├── theme/                   # Material 3 Color.kt, Type.kt, Theme.kt, Themes.kt (every theme's spec)
+│       │   └── schemes/             # One file per color scheme (NocturneScheme.kt, SayaNoUtaScheme.kt, …)
 │       ├── util/                    # ObserveAsEvents.kt, AdaptivePreviews.kt (non-visual Compose helpers)
 │       ├── mapper/                  # common/domain -> UiText/UI model mappers used by 2+ features (e.g. NovelLength labels)
 │       └── component/               # Shared UI widgets & adaptive scaffolds — same recursive shape as §1.1

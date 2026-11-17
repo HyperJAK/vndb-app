@@ -208,4 +208,20 @@ class SettingsViewModelTest {
 
         assertNull(viewModel.state.value.accountLabel)
     }
+
+    @Test
+    fun `the Theme row shows the current theme and opens the Theme screen`() = runTest {
+        val viewModel = createViewModel()
+        collect(viewModel.state)
+        advanceUntilIdle()
+
+        assertEquals(
+            UiText.StringResource(StringResource.theme_original),
+            viewModel.state.value.themeLabel,
+        )
+        viewModel.effect.test {
+            viewModel.onIntent(SettingsIntent.ThemeClicked)
+            assertEquals(SettingsEffect.OpenTheme, awaitItem())
+        }
+    }
 }

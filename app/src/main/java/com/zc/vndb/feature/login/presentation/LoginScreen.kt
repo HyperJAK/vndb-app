@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -50,7 +51,7 @@ fun LoginScreen(state: LoginState, onIntent: (LoginIntent) -> Unit, modifier: Mo
     Scaffold(
         modifier = modifier,
         topBar = { AppTopBarView(onBack = { onIntent(LoginIntent.BackClicked) }) },
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = Color.Transparent,
     ) { padding ->
         Box(
             modifier = Modifier

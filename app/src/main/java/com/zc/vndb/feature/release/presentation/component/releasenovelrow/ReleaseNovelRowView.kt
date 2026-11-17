@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.release.presentation.component.releasenovelrow
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.release.presentation.component.releasenovelrow.model.ReleaseNovelRowUIModel
 
@@ -36,7 +36,7 @@ fun ReleaseNovelRowView(
     Row(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
-            .background(VndbTheme.colors.surfaceInset)
+            .cardBackground(VndbTheme.colors.surfaceInset)
             .clickable(onClick = onClick)
             .padding(VndbTheme.spacing.sm),
         horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),

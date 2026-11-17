@@ -10,6 +10,7 @@ import com.zc.vndb.feature.login.di.LoginModule
 import com.zc.vndb.feature.profile.di.ProfileModule
 import com.zc.vndb.feature.release.di.ReleaseModule
 import com.zc.vndb.feature.settings.di.SettingsModule
+import com.zc.vndb.feature.theme.di.ThemeModule
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 
@@ -26,6 +27,7 @@ import org.koin.core.annotation.Module
         ProfileModule::class,
         LoginModule::class,
         SettingsModule::class,
+        ThemeModule::class,
         ListEditorModule::class,
     ],
 )

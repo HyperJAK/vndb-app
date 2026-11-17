@@ -34,6 +34,7 @@ import com.zc.vndb.common.ui.component.ratingbadge.RatingBadgeView
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.discover.presentation.component.featurednovel.model.FeaturedNovelUIModel
 import kotlinx.collections.immutable.persistentListOf
@@ -54,7 +55,7 @@ fun FeaturedNovelView(
     Column(
         modifier = modifier
             .clip(shape)
-            .background(VndbTheme.colors.surfaceCard)
+            .cardBackground()
             .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape),
     ) {
         HeroArt(model)

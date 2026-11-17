@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.browse.presentation.component.browsenovelcard
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +25,7 @@ import com.zc.vndb.common.ui.component.coverimage.CoverImageView
 import com.zc.vndb.common.ui.component.ratingbadge.RatingBadgeView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.BrowseNovelCardUIModel
 import kotlinx.collections.immutable.persistentListOf
@@ -44,7 +44,7 @@ fun BrowseNovelCardView(
     Row(
         modifier = modifier
             .clip(shape)
-            .background(VndbTheme.colors.surfaceCard)
+            .cardBackground()
             .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape)
             .clickable(onClick = onClick)
             .padding(VndbTheme.spacing.sm),

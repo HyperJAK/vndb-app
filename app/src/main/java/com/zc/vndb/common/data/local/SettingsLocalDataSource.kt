@@ -48,6 +48,7 @@ class SettingsLocalDataSource(
                 ?: defaults.trendingLanguages,
             listSort = this[LIST_SORT].toEnumOr(defaults.listSort),
             isListSortReversed = this[LIST_SORT_REVERSED] ?: defaults.isListSortReversed,
+            theme = this[THEME].toEnumOr(defaults.theme),
         )
     }
 
@@ -60,6 +61,7 @@ class SettingsLocalDataSource(
         this[TRENDING_LANGUAGES] = settings.trendingLanguages.joinToString(SEPARATOR)
         this[LIST_SORT] = settings.listSort.name
         this[LIST_SORT_REVERSED] = settings.isListSortReversed
+        this[THEME] = settings.theme.name
     }
 
     private inline fun <reified E : Enum<E>> String?.toEnumOr(default: E): E =
@@ -76,5 +78,6 @@ class SettingsLocalDataSource(
         private val TRENDING_LANGUAGES = stringPreferencesKey("trending_languages")
         private val LIST_SORT = stringPreferencesKey("list_sort")
         private val LIST_SORT_REVERSED = booleanPreferencesKey("list_sort_reversed")
+        private val THEME = stringPreferencesKey("theme")
     }
 }

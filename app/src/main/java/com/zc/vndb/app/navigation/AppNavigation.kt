@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
@@ -35,6 +36,7 @@ import com.zc.vndb.feature.login.presentation.LoginRoute
 import com.zc.vndb.feature.profile.presentation.ProfileRoute
 import com.zc.vndb.feature.release.presentation.ReleaseRoute
 import com.zc.vndb.feature.settings.presentation.SettingsRoute
+import com.zc.vndb.feature.theme.presentation.ThemeRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -52,6 +54,10 @@ interface FullScreenNavKey : NavKey
 /** Preferences and app info (pushed on the Profile tab). */
 @Serializable
 data object SettingsNavKey : FullScreenNavKey
+
+/** Choose the app's colors and wallpaper (pushed from Settings). */
+@Serializable
+data object ThemeNavKey : FullScreenNavKey
 
 /** Log in with a VNDB API token (pushed on the Profile tab). */
 @Serializable
@@ -119,6 +125,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     NavigationSuiteScaffold(
         modifier = modifier,
         state = scaffoldState,
+        containerColor = Color.Transparent,
         navigationSuiteColors = NavigationSuiteDefaults.colors(
             navigationBarContainerColor = VndbTheme.colors.surfaceInset,
             navigationRailContainerColor = VndbTheme.colors.surfaceInset,
@@ -202,7 +209,13 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
         )
     }
     entry<SettingsNavKey> {
-        SettingsRoute(onNavigateBack = navigator::goBack)
+        SettingsRoute(
+            onNavigateBack = navigator::goBack,
+            onOpenTheme = { navigator.navigate(ThemeNavKey) },
+        )
+    }
+    entry<ThemeNavKey> {
+        ThemeRoute(onNavigateBack = navigator::goBack)
     }
     entry<LoginNavKey> {
         LoginRoute(onNavigateBack = navigator::goBack)

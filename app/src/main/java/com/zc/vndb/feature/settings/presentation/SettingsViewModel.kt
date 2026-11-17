@@ -73,6 +73,8 @@ class SettingsViewModel(
 
             SettingsIntent.DialogDismissed -> closeDialog()
 
+            SettingsIntent.ThemeClicked -> sendEffect(SettingsEffect.OpenTheme)
+
             is SettingsIntent.OptionSelected -> selectOption(intent.dialog, intent.key)
 
             is SettingsIntent.LanguagesConfirmed -> {

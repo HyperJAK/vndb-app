@@ -14,6 +14,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SettingsRoute(
     onNavigateBack: () -> Unit,
+    onOpenTheme: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
@@ -25,6 +26,8 @@ fun SettingsRoute(
     ObserveAsEvents(viewModel.effect) { effect ->
         when (effect) {
             SettingsEffect.NavigateBack -> onNavigateBack()
+
+            SettingsEffect.OpenTheme -> onOpenTheme()
 
             is SettingsEffect.OpenUrl -> uriHandler.openUri(effect.url)
 

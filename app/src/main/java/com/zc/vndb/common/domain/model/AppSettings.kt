@@ -17,6 +17,8 @@ data class AppSettings(
     val listSort: ListSort = ListSort.Title,
     /** The Profile lists run opposite to [listSort]'s natural order (Z to A, oldest, lowest vote). */
     val isListSortReversed: Boolean = false,
+    /** The app's colors and wallpaper. */
+    val theme: AppTheme = AppTheme.Original,
 ) {
     companion object {
         val DEFAULT_TRENDING_LANGUAGES = listOf("en", "ja")
@@ -42,4 +44,22 @@ enum class SpoilerPreference {
     None,
     Minor,
     Major,
+}
+
+/** A look for the whole app: its colors and wallpaper. */
+enum class AppTheme {
+    /** The Nocturne VN palette on a plain background. */
+    Original,
+
+    /** The Nocturne VN palette over the Angelic Serenade wallpaper. */
+    AngelicSerenade,
+
+    /** A wine-and-teal palette taken from the Saya no Uta wallpaper. */
+    SayaNoUta,
+
+    /** A warm near-black and gold palette over the House in Fata Morgana wallpaper. */
+    HouseInFataMorgana,
+
+    /** A midnight-blue and crimson palette over the Tsukihime wallpaper. */
+    Tsukihime,
 }

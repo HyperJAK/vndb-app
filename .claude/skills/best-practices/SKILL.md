@@ -455,6 +455,7 @@ private fun NovelDetailScreenPreview(
 ### 5.2 Theme tokens, adaptive layout & accessibility
 
 - Colors and type come from `MaterialTheme.colorScheme` / `MaterialTheme.typography` / `MaterialTheme.shapes`. **NEVER** hardcode `Color(0xFF…)`, `fontSize = 18.sp` or `FontWeight` in Screens or Views.
+- **Cards use `Modifier.cardBackground()`** (`common/ui/theme/Theme.kt`), never `.background(VndbTheme.colors.surfaceCard)` or `…surfaceInset`. It draws the card color at the theme's card opacity, so the wallpaper shows slightly through it, and stays solid for a theme without a wallpaper. A normal card is `.cardBackground()`; an inset-style card passes its color: `.cardBackground(VndbTheme.colors.surfaceInset)`. Only on-page cards use it. Dialogs, bottom sheets, menus, the nav bar, chips and inputs keep the plain color tokens, so they stay solid.
 - Responsive layout uses Material 3 Adaptive (`tech-stack` §4). Window size is read in the composable, never stored in `State`.
 - Every interactive element has a touch target of at least **48.dp**. Material components (`IconButton`, `Button`, `Checkbox`) already do this; custom clickables add `Modifier.minimumInteractiveComponentSize()`.
 - `contentDescription` is a meaningful localized string (`UiText.StringResource(StringResource.x).asString()`) for informative images and icons, and `null` only for decorative ones. Clickable rows that merge text use `Modifier.semantics(mergeDescendants = true) {}`.
@@ -469,6 +470,17 @@ IconButton(onClick = onFavoriteClick) {
         ).asString(),
     )
 }
+
+// ✅ a card: translucent over the wallpaper
+Column(
+    modifier = Modifier
+        .clip(MaterialTheme.shapes.large)
+        .cardBackground()
+        .padding(VndbTheme.spacing.md),
+) { /* … */ }
+
+// ❌ a card with a solid background: the wallpaper never shows through it
+Column(modifier = Modifier.clip(MaterialTheme.shapes.large).background(VndbTheme.colors.surfaceCard)) { /* … */ }
 
 // ❌ hardcoded color, 24dp touch target, no description
 Icon(Icons.Filled.Favorite, null, tint = Color(0xFFE91E63), modifier = Modifier.size(24.dp).clickable { … })
@@ -673,5 +685,5 @@ The last `grep` must print nothing for Screens and Views.
 - [ ] No hardcoded dispatchers (only `DispatcherProvider`); `CancellationException` is never swallowed; Flows reach the ViewModel through `stateIn(WhileSubscribed(5_000))`.
 - [ ] Network failures go through `safeApiCall` → `DomainError` → `ErrorUIModel`; DataStore reads `.catch` `IOException`.
 - [ ] User-visible text in State/UIModel/UIState/Effect is `UiText`, resolved with `asString()`; strings are referenced as `StringResource.x` / `PluralResource.x` (never `R.string` / `R.plurals`), and nothing outside `UiText` calls `stringResource()` / `getString()` or carries a raw resource id.
-- [ ] Screens and Views are stateless, with `@AdaptivePreviews`; theme tokens only; 48.dp touch targets; meaningful `contentDescription`s.
+- [ ] Screens and Views are stateless, with `@AdaptivePreviews`; theme tokens only; cards use `Modifier.cardBackground()`; 48.dp touch targets; meaningful `contentDescription`s.
 - [ ] Tests exist for every new use case, service, mapper and ViewModel, and they pass.

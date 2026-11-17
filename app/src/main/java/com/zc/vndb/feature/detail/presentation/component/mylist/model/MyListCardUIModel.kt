@@ -14,7 +14,7 @@ data class MyListCardUIModel(
     val canEdit: Boolean,
     /** Status first, then the other labels. */
     val labels: ImmutableList<EntryLabelUIModel> = persistentListOf(),
-    /** "My vote 8.5". */
+    /** The user's vote, e.g. "8.5". */
     val voteLabel: UiText? = null,
     /** "Started 2024-10-15", "Finished 2024-11-02". */
     val dates: ImmutableList<UiText> = persistentListOf(),

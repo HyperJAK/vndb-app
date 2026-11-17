@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -43,7 +44,8 @@ fun SpoilerFilterView(
 ) {
     SectionCardView(modifier = modifier) {
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
             itemVerticalAlignment = Alignment.CenterVertically,
         ) {
@@ -65,11 +67,10 @@ fun SpoilerFilterView(
                     softWrap = false,
                 )
             }
-            // Fills the rest of the line (options on the right), or a line of its own when wrapped.
+            // No weight: a weighted child never wraps and gets clipped at large font/display scales.
             Row(
-                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs, Alignment.End),
+                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f),
             ) {
                 SpoilerLevel.entries.forEach { option ->
                     LevelOption(

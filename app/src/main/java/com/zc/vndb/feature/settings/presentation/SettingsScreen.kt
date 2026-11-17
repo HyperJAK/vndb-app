@@ -18,6 +18,7 @@ import androidx.compose.material.icons.outlined.Explicit
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material.icons.outlined.Translate
@@ -37,6 +38,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -77,7 +79,7 @@ fun SettingsScreen(
         modifier = modifier,
         topBar = { AppTopBarView(onBack = { onIntent(SettingsIntent.BackClicked) }) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = Color.Transparent,
     ) { padding ->
         Box(
             modifier = Modifier
@@ -134,6 +136,15 @@ private fun LazyListScope.sectionHeader(key: String, title: UiText) {
 
 private fun LazyListScope.displaySection(state: SettingsState, actions: SettingsActions) {
     sectionHeader("display", UiText.StringResource(StringResource.settings_section_display))
+    item(key = "theme", contentType = "row") {
+        SettingRowView(
+            icon = Icons.Outlined.Palette,
+            title = UiText.StringResource(StringResource.settings_theme),
+            body = UiText.StringResource(StringResource.settings_theme_body),
+            onClick = { actions.onIntent(SettingsIntent.ThemeClicked) },
+            modifier = Modifier.fillMaxWidth(),
+        ) { state.themeLabel?.let { SettingValueView(it) } }
+    }
     item(key = "title-language", contentType = "row") {
         SettingRowView(
             icon = Icons.Outlined.Translate,
