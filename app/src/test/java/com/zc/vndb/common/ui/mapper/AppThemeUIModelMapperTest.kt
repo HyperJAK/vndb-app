@@ -5,6 +5,7 @@ import com.zc.vndb.common.ui.theme.AngelicSerenadeThemeSpec
 import com.zc.vndb.common.ui.theme.DarkThemeSpec
 import com.zc.vndb.common.ui.theme.HouseInFataMorganaThemeSpec
 import com.zc.vndb.common.ui.theme.LightThemeSpec
+import com.zc.vndb.common.ui.theme.MeikeiNoLupercaliaThemeSpec
 import com.zc.vndb.common.ui.theme.NeonThemeSpec
 import com.zc.vndb.common.ui.theme.OriginalThemeSpec
 import com.zc.vndb.common.ui.theme.SayaNoUtaThemeSpec
@@ -27,6 +28,7 @@ class AppThemeUIModelMapperTest {
         assertEquals(SayaNoUtaThemeSpec, AppTheme.SayaNoUta.toSpec())
         assertEquals(HouseInFataMorganaThemeSpec, AppTheme.HouseInFataMorgana.toSpec())
         assertEquals(TsukihimeThemeSpec, AppTheme.Tsukihime.toSpec())
+        assertEquals(MeikeiNoLupercaliaThemeSpec, AppTheme.MeikeiNoLupercalia.toSpec())
     }
 
     @Test

@@ -7,6 +7,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.schemes.DarkScheme
 import com.zc.vndb.common.ui.theme.schemes.HouseInFataMorganaScheme
 import com.zc.vndb.common.ui.theme.schemes.LightScheme
+import com.zc.vndb.common.ui.theme.schemes.MeikeiNoLupercaliaScheme
 import com.zc.vndb.common.ui.theme.schemes.NeonScheme
 import com.zc.vndb.common.ui.theme.schemes.NocturneScheme
 import com.zc.vndb.common.ui.theme.schemes.SayaNoUtaScheme
@@ -72,4 +73,10 @@ val HouseInFataMorganaThemeSpec = HouseInFataMorganaScheme.toSpec(
 val TsukihimeThemeSpec = TsukihimeScheme.toSpec(
     name = UiText.StringResource(StringResource.theme_tsukihime),
     wallpaper = wallpaper(DrawableResource.wallpaper_tsukihime),
+)
+
+/** Violet-black and gold with rose-crimson over the Meikei no Lupercalia wallpaper. */
+val MeikeiNoLupercaliaThemeSpec = MeikeiNoLupercaliaScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_meikei_no_lupercalia),
+    wallpaper = wallpaper(DrawableResource.wallpaper_meikei_no_lupercalia),
 )

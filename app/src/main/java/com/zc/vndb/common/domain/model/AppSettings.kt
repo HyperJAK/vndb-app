@@ -71,4 +71,7 @@ enum class AppTheme {
 
     /** A midnight-blue and crimson palette over the Tsukihime wallpaper. */
     Tsukihime,
+
+    /** A violet-black, gold and rose-crimson palette over the Meikei no Lupercalia wallpaper. */
+    MeikeiNoLupercalia,
 }
