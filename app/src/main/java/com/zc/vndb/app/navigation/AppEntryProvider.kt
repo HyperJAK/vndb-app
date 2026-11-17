@@ -1,114 +1,85 @@
 package com.zc.vndb.app.navigation
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import com.zc.vndb.common.ui.navigation.BottomSheetSceneStrategy
 import com.zc.vndb.common.ui.navigation.Navigator
-import com.zc.vndb.feature.browse.domain.model.BrowseScope
-import com.zc.vndb.feature.browse.presentation.BrowseRoute
-import com.zc.vndb.feature.character.presentation.CharacterRoute
-import com.zc.vndb.feature.detail.presentation.DetailRoute
-import com.zc.vndb.feature.discover.presentation.DiscoverRoute
-import com.zc.vndb.feature.listeditor.presentation.ListEditorRoute
-import com.zc.vndb.feature.login.presentation.LoginRoute
-import com.zc.vndb.feature.profile.presentation.ProfileRoute
-import com.zc.vndb.feature.release.presentation.ReleaseRoute
-import com.zc.vndb.feature.settings.presentation.SettingsRoute
-import com.zc.vndb.feature.theme.presentation.ThemeRoute
+import com.zc.vndb.feature.browse.presentation.navigation.BrowseNavKey
+import com.zc.vndb.feature.browse.presentation.navigation.ProducerNavKey
+import com.zc.vndb.feature.browse.presentation.navigation.StaffNavKey
+import com.zc.vndb.feature.browse.presentation.navigation.TagNavKey
+import com.zc.vndb.feature.browse.presentation.navigation.browseEntry
+import com.zc.vndb.feature.browse.presentation.navigation.browseScopedEntries
+import com.zc.vndb.feature.character.presentation.navigation.CharacterNavKey
+import com.zc.vndb.feature.character.presentation.navigation.characterEntry
+import com.zc.vndb.feature.detail.presentation.navigation.DetailNavActions
+import com.zc.vndb.feature.detail.presentation.navigation.DetailNavKey
+import com.zc.vndb.feature.detail.presentation.navigation.detailEntry
+import com.zc.vndb.feature.discover.presentation.navigation.discoverEntry
+import com.zc.vndb.feature.listeditor.presentation.navigation.ListEditorNavKey
+import com.zc.vndb.feature.listeditor.presentation.navigation.listEditorEntry
+import com.zc.vndb.feature.login.presentation.navigation.LoginNavKey
+import com.zc.vndb.feature.login.presentation.navigation.loginEntry
+import com.zc.vndb.feature.profile.presentation.navigation.profileEntry
+import com.zc.vndb.feature.release.presentation.navigation.ReleaseNavKey
+import com.zc.vndb.feature.release.presentation.navigation.releaseEntry
+import com.zc.vndb.feature.settings.presentation.navigation.SettingsNavKey
+import com.zc.vndb.feature.settings.presentation.navigation.settingsEntry
+import com.zc.vndb.feature.theme.presentation.navigation.ThemeNavKey
+import com.zc.vndb.feature.theme.presentation.navigation.themeEntry
 
-internal fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
-    entry<DiscoverNavKey> {
-        DiscoverRoute(
-            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+/**
+ * Registers every feature's entries. The only place that knows all the features: each one gets
+ * the lambdas that open the others' screens, so features never depend on each other.
+ */
+internal fun appEntryProvider(navigator: Navigator): (NavKey) -> NavEntry<NavKey> {
+    val openNovel: (String) -> Unit = { navigator.navigate(DetailNavKey(it)) }
+    val openStaff: (String) -> Unit = { navigator.navigate(StaffNavKey(it)) }
+    val openProducer: (String) -> Unit = { navigator.navigate(ProducerNavKey(it)) }
+    val openListEditor: (String, String) -> Unit = { id, title ->
+        navigator.navigate(ListEditorNavKey(id, title))
+    }
+    return entryProvider {
+        discoverEntry(
+            onOpenNovel = openNovel,
             onOpenBrowse = { navigator.navigate(BrowseNavKey) },
         )
-    }
-    entry<BrowseNavKey> {
-        BrowseRoute(onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) })
-    }
-    entry<ProfileNavKey> {
-        ProfileRoute(
+        browseEntry(onOpenNovel = openNovel)
+        browseScopedEntries(onNavigateBack = navigator::goBack, onOpenNovel = openNovel)
+        profileEntry(
             onOpenLogin = { navigator.navigate(LoginNavKey) },
             onOpenSettings = { navigator.navigate(SettingsNavKey) },
-            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
-            onOpenListEditor = { id, title -> navigator.navigate(ListEditorNavKey(id, title)) },
+            onOpenNovel = openNovel,
+            onOpenListEditor = openListEditor,
         )
-    }
-    entry<SettingsNavKey> {
-        SettingsRoute(
+        settingsEntry(
             onNavigateBack = navigator::goBack,
             onOpenTheme = { navigator.navigate(ThemeNavKey) },
         )
-    }
-    entry<ThemeNavKey> {
-        ThemeRoute(onNavigateBack = navigator::goBack)
-    }
-    entry<LoginNavKey> {
-        LoginRoute(onNavigateBack = navigator::goBack)
-    }
-    entry<NovelDetailNavKey> { key ->
-        DetailRoute(
-            novelId = key.id,
-            onNavigateBack = { navigator.goBack() },
-            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
-            onOpenCharacter = { id -> navigator.navigate(CharacterNavKey(id)) },
-            onOpenTag = { id -> navigator.navigate(TagNavKey(id)) },
-            onOpenProducer = { id -> navigator.navigate(ProducerNavKey(id)) },
-            onOpenStaff = { id -> navigator.navigate(StaffNavKey(id)) },
-            onOpenRelease = { id -> navigator.navigate(ReleaseNavKey(id)) },
-            onOpenListEditor = { id, title -> navigator.navigate(ListEditorNavKey(id, title)) },
+        themeEntry(onNavigateBack = navigator::goBack)
+        loginEntry(onNavigateBack = navigator::goBack)
+        detailEntry(
+            DetailNavActions(
+                onNavigateBack = navigator::goBack,
+                onOpenNovel = openNovel,
+                onOpenCharacter = { navigator.navigate(CharacterNavKey(it)) },
+                onOpenTag = { navigator.navigate(TagNavKey(it)) },
+                onOpenProducer = openProducer,
+                onOpenStaff = openStaff,
+                onOpenRelease = { navigator.navigate(ReleaseNavKey(it)) },
+                onOpenListEditor = openListEditor,
+            ),
         )
-    }
-    pageEntries(navigator)
-}
-
-/** Pages opened from a VN or a tab, and the list editor sheet. */
-@OptIn(ExperimentalMaterial3Api::class) // The list editor's bottom sheet.
-private fun EntryProviderScope<NavKey>.pageEntries(navigator: Navigator) {
-    entry<ListEditorNavKey>(metadata = BottomSheetSceneStrategy.bottomSheet()) { key ->
-        ListEditorRoute(
-            novelId = key.novelId,
-            novelTitle = key.novelTitle,
-            onClose = navigator::goBack,
+        releaseEntry(
+            onNavigateBack = navigator::goBack,
+            onOpenNovel = openNovel,
+            onOpenProducer = openProducer,
         )
-    }
-    entry<ReleaseNavKey> { key ->
-        ReleaseRoute(
-            releaseId = key.id,
-            onNavigateBack = { navigator.goBack() },
-            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
-            onOpenProducer = { id -> navigator.navigate(ProducerNavKey(id)) },
+        characterEntry(
+            onNavigateBack = navigator::goBack,
+            onOpenNovel = openNovel,
+            onOpenStaff = openStaff,
         )
-    }
-    entry<TagNavKey> { key ->
-        BrowseRoute(
-            scope = BrowseScope.Tag(key.id),
-            onNavigateBack = { navigator.goBack() },
-            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
-        )
-    }
-    entry<ProducerNavKey> { key ->
-        BrowseRoute(
-            scope = BrowseScope.Producer(key.id),
-            onNavigateBack = { navigator.goBack() },
-            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
-        )
-    }
-    entry<StaffNavKey> { key ->
-        BrowseRoute(
-            scope = BrowseScope.Staff(key.id),
-            onNavigateBack = { navigator.goBack() },
-            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
-        )
-    }
-    entry<CharacterNavKey> { key ->
-        CharacterRoute(
-            characterId = key.id,
-            onNavigateBack = { navigator.goBack() },
-            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
-            onOpenStaff = { id -> navigator.navigate(StaffNavKey(id)) },
-        )
+        listEditorEntry(onClose = navigator::goBack)
     }
 }

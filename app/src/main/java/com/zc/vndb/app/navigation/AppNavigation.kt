@@ -1,10 +1,5 @@
 package com.zc.vndb.app.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Explore
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Tune
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -19,81 +14,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.navigation.BottomSheetSceneStrategy
 import com.zc.vndb.common.ui.navigation.FullScreenNavKey
 import com.zc.vndb.common.ui.navigation.NavigationState
 import com.zc.vndb.common.ui.navigation.Navigator
 import com.zc.vndb.common.ui.navigation.OverlayNavKey
 import com.zc.vndb.common.ui.navigation.rememberNavigationState
-import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
-import com.zc.vndb.feature.browse.domain.model.BrowseScope
-import com.zc.vndb.feature.browse.presentation.BrowseRoute
-import com.zc.vndb.feature.character.presentation.CharacterRoute
-import com.zc.vndb.feature.detail.presentation.DetailRoute
-import com.zc.vndb.feature.discover.presentation.DiscoverRoute
-import com.zc.vndb.feature.listeditor.presentation.ListEditorRoute
-import com.zc.vndb.feature.login.presentation.LoginRoute
-import com.zc.vndb.feature.profile.presentation.ProfileRoute
-import com.zc.vndb.feature.release.presentation.ReleaseRoute
-import com.zc.vndb.feature.settings.presentation.SettingsRoute
-import com.zc.vndb.feature.theme.presentation.ThemeRoute
-import kotlinx.serialization.Serializable
-
-@Serializable
-data object DiscoverNavKey : NavKey
-
-@Serializable
-data object BrowseNavKey : NavKey
-
-@Serializable
-data object ProfileNavKey : NavKey
-
-/** Preferences and app info (pushed on the Profile tab). */
-@Serializable
-data object SettingsNavKey : FullScreenNavKey
-
-/** Choose the app's colors and wallpaper (pushed from Settings). */
-@Serializable
-data object ThemeNavKey : FullScreenNavKey
-
-/** Log in with a VNDB API token (pushed on the Profile tab). */
-@Serializable
-data object LoginNavKey : NavKey
-
-/** A release's page. */
-@Serializable
-data class ReleaseNavKey(val id: String) : FullScreenNavKey
-
-/** Browse scoped to one VNDB tag. */
-@Serializable
-data class TagNavKey(val id: String) : FullScreenNavKey
-
-/** Browse scoped to one VNDB producer (developer). */
-@Serializable
-data class ProducerNavKey(val id: String) : FullScreenNavKey
-
-/** Browse scoped to one VNDB staff member (writer, artist, voice actor…). */
-@Serializable
-data class StaffNavKey(val id: String) : FullScreenNavKey
-
-/** A character's page. */
-@Serializable
-data class CharacterNavKey(val id: String) : FullScreenNavKey
-
-/** The signed-in user's list entry for a VN, edited in a bottom sheet. */
-@Serializable
-data class ListEditorNavKey(val novelId: String, val novelTitle: String) : OverlayNavKey
-
-/** A visual novel's detail page. */
-@Serializable
-data class NovelDetailNavKey(val id: String) : FullScreenNavKey
+import com.zc.vndb.feature.discover.presentation.navigation.DiscoverNavKey
 
 /** App root: adaptive navigation suite (bar / rail / drawer) around the Navigation 3 back stack. */
 @Composable
@@ -175,8 +105,9 @@ private fun navigationItemColors(): NavigationSuiteItemColors {
 @Composable
 private fun AppNavDisplay(navigationState: NavigationState, navigator: Navigator) {
     val bottomSheetStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
+    val entryProvider = remember(navigator) { appEntryProvider(navigator) }
     NavDisplay(
-        entries = navigationState.toDecoratedEntries(appEntryProvider(navigator)),
+        entries = navigationState.toDecoratedEntries(entryProvider),
         onBack = navigator::goBack,
         sceneStrategies = listOf(bottomSheetStrategy),
     )

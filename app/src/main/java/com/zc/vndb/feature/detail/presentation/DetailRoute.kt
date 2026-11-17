@@ -10,20 +10,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.util.ObserveAsEvents
+import com.zc.vndb.feature.detail.presentation.navigation.DetailNavActions
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun DetailRoute(
     novelId: String,
-    onNavigateBack: () -> Unit,
-    onOpenNovel: (String) -> Unit,
-    onOpenCharacter: (String) -> Unit,
-    onOpenTag: (String) -> Unit,
-    onOpenProducer: (String) -> Unit,
-    onOpenStaff: (String) -> Unit,
-    onOpenRelease: (String) -> Unit,
-    onOpenListEditor: (novelId: String, title: String) -> Unit,
+    actions: DetailNavActions,
     modifier: Modifier = Modifier,
     viewModel: DetailViewModel = koinViewModel { parametersOf(novelId) },
 ) {
@@ -33,21 +27,21 @@ fun DetailRoute(
 
     ObserveAsEvents(viewModel.effect) { effect ->
         when (effect) {
-            DetailEffect.NavigateBack -> onNavigateBack()
+            DetailEffect.NavigateBack -> actions.onNavigateBack()
 
-            is DetailEffect.NavigateToNovel -> onOpenNovel(effect.id)
+            is DetailEffect.NavigateToNovel -> actions.onOpenNovel(effect.id)
 
-            is DetailEffect.NavigateToCharacter -> onOpenCharacter(effect.id)
+            is DetailEffect.NavigateToCharacter -> actions.onOpenCharacter(effect.id)
 
-            is DetailEffect.NavigateToTag -> onOpenTag(effect.id)
+            is DetailEffect.NavigateToTag -> actions.onOpenTag(effect.id)
 
-            is DetailEffect.NavigateToProducer -> onOpenProducer(effect.id)
+            is DetailEffect.NavigateToProducer -> actions.onOpenProducer(effect.id)
 
-            is DetailEffect.NavigateToStaff -> onOpenStaff(effect.id)
+            is DetailEffect.NavigateToStaff -> actions.onOpenStaff(effect.id)
 
-            is DetailEffect.NavigateToRelease -> onOpenRelease(effect.id)
+            is DetailEffect.NavigateToRelease -> actions.onOpenRelease(effect.id)
 
-            is DetailEffect.OpenListEditor -> onOpenListEditor(effect.novelId, effect.title)
+            is DetailEffect.OpenListEditor -> actions.onOpenListEditor(effect.novelId, effect.title)
 
             is DetailEffect.OpenUrl -> uriHandler.openUri(effect.url)
 
