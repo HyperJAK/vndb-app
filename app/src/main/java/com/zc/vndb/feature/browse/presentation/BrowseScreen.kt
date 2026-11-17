@@ -58,7 +58,8 @@ import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.BrowseNovelCardView
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.BrowseNovelCardUIModel
-import com.zc.vndb.feature.browse.presentation.component.filterbar.FilterBarView
+import com.zc.vndb.feature.browse.presentation.component.filterbar.AgeRatingRowView
+import com.zc.vndb.feature.browse.presentation.component.filterbar.SortRowView
 import com.zc.vndb.feature.browse.presentation.component.scopeheader.ScopeHeaderView
 import com.zc.vndb.feature.browse.presentation.component.searchfield.SearchFieldView
 import com.zc.vndb.feature.browse.presentation.model.GenreChipUIState
@@ -80,6 +81,7 @@ private class BrowseActions(
     val onClear: () -> Unit,
     val onAgeRatingSelect: (AgeRating) -> Unit,
     val onSortSelect: (BrowseSort) -> Unit,
+    val onSortDirectionToggle: () -> Unit,
     val onGenreToggle: (Genre) -> Unit,
     val onNovelClick: (String) -> Unit,
     val onRetry: () -> Unit,
@@ -119,6 +121,7 @@ fun BrowseScreen(
             onClear = { onIntent(BrowseIntent.QueryCleared) },
             onAgeRatingSelect = { onIntent(BrowseIntent.AgeRatingSelected(it)) },
             onSortSelect = { onIntent(BrowseIntent.SortSelected(it)) },
+            onSortDirectionToggle = { onIntent(BrowseIntent.SortDirectionToggled) },
             onGenreToggle = { onIntent(BrowseIntent.GenreToggled(it)) },
             onNovelClick = { onIntent(BrowseIntent.NovelClicked(it)) },
             onRetry = { onIntent(BrowseIntent.Retry) },
@@ -205,19 +208,20 @@ private fun LazyGridScope.filters(state: BrowseState, actions: BrowseActions) {
             modifier = Modifier.fillMaxWidth(),
         )
     }
-    fullWidthItem("filter-bar") {
-        FilterBarView(
-            ageRating = state.ageRating,
-            sort = state.sort,
-            sortOptions = state.sortOptions,
-            onAgeRatingSelect = actions.onAgeRatingSelect,
-            onSortSelect = actions.onSortSelect,
-            modifier = Modifier.fillMaxWidth(),
-        )
+    fullWidthItem("age-rating") {
+        AgeRatingRowView(ageRating = state.ageRating, onAgeRatingSelect = actions.onAgeRatingSelect)
     }
     fullWidthItem("genres") { GenreRow(genres = state.genres, onToggle = actions.onGenreToggle) }
-    state.resultCountLabel?.let { label ->
-        fullWidthItem("count") { ResultCountHeader(label) }
+    fullWidthItem("sort") {
+        SortRowView(
+            resultCountLabel = state.resultCountLabel,
+            sort = state.sort,
+            isAscending = state.isSortAscending,
+            sortOptions = state.sortOptions,
+            onSortSelect = actions.onSortSelect,
+            onDirectionToggle = actions.onSortDirectionToggle,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -298,18 +302,6 @@ private fun GenreRow(genres: ImmutableList<GenreChipUIState>, onToggle: (Genre) 
             )
         }
     }
-}
-
-@Composable
-private fun ResultCountHeader(label: UiText) {
-    Text(
-        text = label.asString(),
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = VndbTheme.spacing.sm),
-    )
 }
 
 @Composable

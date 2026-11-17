@@ -155,6 +155,30 @@ class BrowseViewModelTest {
     }
 
     @Test
+    fun `the direction toggle reverses the sort and picking a sort resets it`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        assertFalse(viewModel.state.value.isSortAscending)
+
+        viewModel.onIntent(BrowseIntent.SortDirectionToggled)
+        advanceUntilIdle()
+
+        assertTrue(repository.requests.last().filter.isReversed)
+        assertTrue(viewModel.state.value.isSortAscending)
+
+        viewModel.onIntent(BrowseIntent.SortSelected(BrowseSort.Title))
+        advanceUntilIdle()
+
+        assertFalse(repository.requests.last().filter.isReversed)
+        assertTrue(viewModel.state.value.isSortAscending)
+
+        viewModel.onIntent(BrowseIntent.SortDirectionToggled)
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.isSortAscending)
+    }
+
+    @Test
     fun `reaching the end appends pages until there are no more`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()

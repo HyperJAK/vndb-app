@@ -5,8 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -31,8 +31,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
+import com.zc.vndb.common.ui.component.sortdirection.SortDirectionButtonView
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.TintedColors
@@ -46,14 +48,52 @@ import kotlinx.collections.immutable.persistentListOf
 
 private val SortIconSize = 16.dp
 
-/** All Ages / 18+ / Both chips on the left, sort menu on the right. */
+private val AgeOptions = listOf(
+    AgeRating.AllAges to StringResource.browse_age_all,
+    AgeRating.Adult to StringResource.browse_age_adult,
+    AgeRating.Any to StringResource.browse_age_any,
+)
+
+/** The age rating chips: All Ages / 18+ / Any Age. */
 @Composable
-fun FilterBarView(
+fun AgeRatingRowView(
     ageRating: AgeRating,
-    sort: BrowseSort,
-    sortOptions: ImmutableList<SortOptionUIModel>,
     onAgeRatingSelect: (AgeRating) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+    ) {
+        val selectedColors = TintedColors(
+            container = VndbTheme.colors.accent,
+            content = VndbTheme.colors.onAccent,
+            border = VndbTheme.colors.accent,
+        )
+        AgeOptions.forEach { (option, label) ->
+            SelectableChipView(
+                label = UiText.StringResource(label),
+                isSelected = ageRating == option,
+                onClick = { onAgeRatingSelect(option) },
+                selectedColors = selectedColors,
+            )
+        }
+    }
+}
+
+/**
+ * The result count on the left, the sort menu with a direction button on the right. The count
+ * shrinks (one line, ellipsis) before the sort controls do. Relevance has no direction button:
+ * reversing a text match is not useful.
+ */
+@Composable
+fun SortRowView(
+    resultCountLabel: UiText?,
+    sort: BrowseSort,
+    isAscending: Boolean,
+    sortOptions: ImmutableList<SortOptionUIModel>,
     onSortSelect: (BrowseSort) -> Unit,
+    onDirectionToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -61,31 +101,19 @@ fun FilterBarView(
         horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val ageSelected = TintedColors(
-            container = VndbTheme.colors.accent,
-            content = VndbTheme.colors.onAccent,
-            border = VndbTheme.colors.accent,
+        // Always in the row, so its height doesn't change while the count is loading.
+        Text(
+            text = resultCountLabel?.asString().orEmpty(),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
         )
-        SelectableChipView(
-            label = UiText.StringResource(StringResource.browse_age_all),
-            isSelected = ageRating == AgeRating.AllAges,
-            onClick = { onAgeRatingSelect(AgeRating.AllAges) },
-            selectedColors = ageSelected,
-        )
-        SelectableChipView(
-            label = UiText.StringResource(StringResource.browse_age_adult),
-            isSelected = ageRating == AgeRating.Adult,
-            onClick = { onAgeRatingSelect(AgeRating.Adult) },
-            selectedColors = ageSelected,
-        )
-        SelectableChipView(
-            label = UiText.StringResource(StringResource.browse_age_any),
-            isSelected = ageRating == AgeRating.Any,
-            onClick = { onAgeRatingSelect(AgeRating.Any) },
-            selectedColors = ageSelected,
-        )
-        Spacer(Modifier.weight(1f))
         SortMenu(sort = sort, options = sortOptions, onSelect = onSortSelect)
+        if (sort != BrowseSort.Relevance) {
+            SortDirectionButtonView(isAscending = isAscending, onClick = onDirectionToggle)
+        }
     }
 }
 
@@ -173,17 +201,24 @@ private fun SortMenuAnchor(label: UiText?, onClick: () -> Unit) {
 
 @AdaptivePreviews
 @Composable
-private fun FilterBarViewPreview() {
+private fun FilterRowsPreview() {
     VndbTheme {
-        FilterBarView(
-            ageRating = AgeRating.AllAges,
-            sort = BrowseSort.Popularity,
-            sortOptions = persistentListOf(
-                SortOptionUIModel(BrowseSort.Popularity, UiText.StringValue("Popularity")),
-            ),
-            onAgeRatingSelect = {},
-            onSortSelect = {},
+        Column(
+            verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
             modifier = Modifier.fillMaxWidth().padding(VndbTheme.spacing.lg),
-        )
+        ) {
+            AgeRatingRowView(ageRating = AgeRating.AllAges, onAgeRatingSelect = {})
+            SortRowView(
+                resultCountLabel = UiText.StringValue("Found 142 titles"),
+                sort = BrowseSort.Popularity,
+                isAscending = false,
+                sortOptions = persistentListOf(
+                    SortOptionUIModel(BrowseSort.Popularity, UiText.StringValue("Popularity")),
+                ),
+                onSortSelect = {},
+                onDirectionToggle = {},
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }

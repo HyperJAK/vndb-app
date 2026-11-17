@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Sort
-import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -34,6 +31,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.domain.model.ListSort
+import com.zc.vndb.common.ui.component.sortdirection.SortDirectionButtonView
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
@@ -43,7 +41,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 private val SortIconSize = 16.dp
-private val DirectionButtonSize = 32.dp
 
 /**
  * The current list order as a pill (same look as Browse's sort menu) that opens the choices, and a
@@ -63,7 +60,7 @@ fun ListSortMenuView(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SortMenu(options, onSelect)
-        DirectionButton(isAscending, onDirectionToggle)
+        SortDirectionButtonView(isAscending, onDirectionToggle)
     }
 }
 
@@ -106,30 +103,6 @@ private fun SortMenu(options: ImmutableList<SortOptionUIModel>, onSelect: (ListS
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun DirectionButton(isAscending: Boolean, onClick: () -> Unit) {
-    val description = UiText.StringResource(
-        if (isAscending) StringResource.cd_sort_ascending else StringResource.cd_sort_descending,
-    ).asString()
-    Box(
-        modifier = Modifier
-            .size(DirectionButtonSize)
-            .clip(CircleShape)
-            .background(VndbTheme.colors.surfaceCard)
-            .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, CircleShape)
-            .clickable(role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = description },
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            imageVector = if (isAscending) Icons.Filled.ArrowUpward else Icons.Filled.ArrowDownward,
-            contentDescription = null,
-            tint = VndbTheme.colors.accent,
-            modifier = Modifier.size(SortIconSize),
-        )
     }
 }
 

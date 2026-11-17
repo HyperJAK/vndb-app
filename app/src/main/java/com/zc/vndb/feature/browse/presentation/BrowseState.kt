@@ -22,6 +22,8 @@ data class BrowseState(
     val query: String = "",
     val ageRating: AgeRating = AgeRating.AllAges,
     val sort: BrowseSort = BrowseSort.Popularity,
+    /** Up arrow on the direction button; Popularity starts with the highest, so it is descending. */
+    val isSortAscending: Boolean = false,
     val sortOptions: ImmutableList<SortOptionUIModel> = persistentListOf(),
     val genres: ImmutableList<GenreChipUIState> = persistentListOf(),
     val results: ImmutableList<BrowseNovelCardUIModel> = persistentListOf(),

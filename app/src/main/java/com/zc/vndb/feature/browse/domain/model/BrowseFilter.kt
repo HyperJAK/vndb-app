@@ -5,6 +5,11 @@ data class BrowseFilter(
     val ageRating: AgeRating = AgeRating.AllAges,
     val genres: Set<Genre> = emptySet(),
     val sort: BrowseSort = BrowseSort.Popularity,
+    /** The sort runs against its natural direction (see [BrowseSort.isNaturallyDescending]). */
+    val isReversed: Boolean = false,
     /** A tag or producer page limits the list to it, on top of [genres]. */
     val scope: BrowseScope = BrowseScope.None,
 )
+
+/** The order the results come in: the sort's natural direction, flipped when [BrowseFilter.isReversed]. */
+val BrowseFilter.isDescending: Boolean get() = sort.isNaturallyDescending != isReversed

@@ -33,7 +33,12 @@ class SearchNovelsUseCase(private val repository: BrowseRepository) {
         } else {
             sort
         }
-        return copy(query = trimmed, sort = effectiveSort)
+        // A fallback to the default sort starts in that sort's own direction.
+        return copy(
+            query = trimmed,
+            sort = effectiveSort,
+            isReversed = isReversed && effectiveSort == sort,
+        )
     }
 
     private fun BrowseNovel.withCardTags(): BrowseNovel = copy(

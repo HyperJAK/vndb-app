@@ -68,8 +68,8 @@
     <string name="browse_genre_comedy">Comedy</string>
     <string name="browse_genre_action">Action</string>
     <plurals name="browse_found_titles">
-        <item quantity="one">Found %1$s title</item>
-        <item quantity="other">Found %1$s titles</item>
+        <item quantity="one">%1$s title</item>
+        <item quantity="other">%1$s titles</item>
     </plurals>
     <string name="browse_no_results">No visual novels match these filters.</string>
     <string name="browse_load_more_failed">Couldn\'t load more results.</string>

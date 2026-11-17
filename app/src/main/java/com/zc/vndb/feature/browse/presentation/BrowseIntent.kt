@@ -16,6 +16,9 @@ sealed interface BrowseIntent {
     data class AgeRatingSelected(val ageRating: AgeRating) : BrowseIntent
     data class GenreToggled(val genre: Genre) : BrowseIntent
     data class SortSelected(val sort: BrowseSort) : BrowseIntent
+
+    /** Reverses the current sort between ascending and descending. */
+    data object SortDirectionToggled : BrowseIntent
     data object EndReached : BrowseIntent
     data object LoadMoreRetried : BrowseIntent
     data class NovelClicked(val id: String) : BrowseIntent

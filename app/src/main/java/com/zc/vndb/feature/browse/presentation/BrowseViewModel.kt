@@ -10,6 +10,7 @@ import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
+import com.zc.vndb.feature.browse.domain.model.isDescending
 import com.zc.vndb.feature.browse.domain.usecase.GetProducerUseCase
 import com.zc.vndb.feature.browse.domain.usecase.GetStaffUseCase
 import com.zc.vndb.feature.browse.domain.usecase.GetTagUseCase
@@ -90,7 +91,14 @@ class BrowseViewModel(
 
             is BrowseIntent.GenreToggled -> toggleGenre(intent.genre)
 
-            is BrowseIntent.SortSelected -> applyFilter(filter.copy(sort = intent.sort))
+            // A newly picked sort starts in its own natural direction.
+            is BrowseIntent.SortSelected -> applyFilter(
+                filter.copy(sort = intent.sort, isReversed = false),
+            )
+
+            BrowseIntent.SortDirectionToggled -> applyFilter(
+                filter.copy(isReversed = !filter.isReversed),
+            )
 
             BrowseIntent.EndReached -> onEndReached()
 
@@ -172,6 +180,7 @@ class BrowseViewModel(
             it.copy(
                 ageRating = filter.ageRating,
                 sort = filter.sort,
+                isSortAscending = !filter.isDescending,
                 sortOptions = filter.toSortOptions(),
                 genres = filter.toGenreChips(),
                 results = persistentListOf(),
@@ -296,7 +305,7 @@ class BrowseViewModel(
             newQuery.isEmpty() && sort == BrowseSort.Relevance -> scope.defaultSort
             else -> sort
         }
-        return copy(query = newQuery, sort = newSort)
+        return copy(query = newQuery, sort = newSort, isReversed = isReversed && newSort == sort)
     }
 
     private companion object {

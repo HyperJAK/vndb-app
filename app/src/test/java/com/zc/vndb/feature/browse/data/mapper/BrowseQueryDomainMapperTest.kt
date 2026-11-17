@@ -72,6 +72,15 @@ class BrowseQueryDomainMapperTest {
     }
 
     @Test
+    fun `a reversed filter flips the sort direction`() {
+        assertEquals(json("false"), BrowseFilter(isReversed = true).body()["reverse"])
+        assertEquals(
+            json("true"),
+            BrowseFilter(sort = BrowseSort.Title, isReversed = true).body()["reverse"],
+        )
+    }
+
+    @Test
     fun `later pages omit count`() {
         val body = BrowseFilter().body(page = 3, withCount = false)
 

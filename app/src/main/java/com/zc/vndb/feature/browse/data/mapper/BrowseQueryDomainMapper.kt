@@ -5,6 +5,7 @@ import com.zc.vndb.feature.browse.domain.model.AgeRating
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
+import com.zc.vndb.feature.browse.domain.model.isDescending
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
@@ -22,7 +23,7 @@ fun BrowseFilter.toQueryDTO(page: Int, pageSize: Int, withCount: Boolean): Query
     filters = toFilters(),
     fields = BROWSE_FIELDS,
     sort = sort.apiField,
-    reverse = sort.isDescending,
+    reverse = isDescending,
     results = pageSize,
     page = page,
     count = withCount.takeIf { it },
@@ -79,9 +80,6 @@ private val BrowseSort.apiField: String
         BrowseSort.Newest -> "released"
         BrowseSort.Title -> "title"
     }
-
-private val BrowseSort.isDescending: Boolean
-    get() = this == BrowseSort.Popularity || this == BrowseSort.Rating || this == BrowseSort.Newest
 
 private fun predicate(name: String, operator: String, value: JsonElement): JsonArray =
     buildJsonArray {
