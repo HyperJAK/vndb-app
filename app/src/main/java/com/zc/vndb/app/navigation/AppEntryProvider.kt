@@ -32,54 +32,49 @@ import com.zc.vndb.feature.theme.presentation.navigation.themeEntry
  * Registers every feature's entries. The only place that knows all the features: each one gets
  * the lambdas that open the others' screens, so features never depend on each other.
  */
-internal fun appEntryProvider(navigator: Navigator): (NavKey) -> NavEntry<NavKey> {
-    val openNovel: (String) -> Unit = { navigator.navigateToDetail(it) }
-    val openStaff: (String) -> Unit = { navigator.navigateToStaff(it) }
-    val openProducer: (String) -> Unit = { navigator.navigateToProducer(it) }
-    val openListEditor: (String, String) -> Unit = { id, title ->
-        navigator.navigateToListEditor(id, title)
-    }
-    return entryProvider {
-        discoverEntry(
-            onOpenNovel = openNovel,
-            onOpenBrowse = { navigator.navigateToBrowse() },
-        )
-        browseEntry(onOpenNovel = openNovel)
-        browseScopedEntries(onNavigateBack = navigator::goBack, onOpenNovel = openNovel)
-        profileEntry(
-            onOpenLogin = { navigator.navigateToLogin() },
-            onOpenSettings = { navigator.navigateToSettings() },
-            onOpenNovel = openNovel,
-            onOpenListEditor = openListEditor,
-        )
-        settingsEntry(
-            onNavigateBack = navigator::goBack,
-            onOpenTheme = { navigator.navigateToTheme() },
-        )
-        themeEntry(onNavigateBack = navigator::goBack)
-        loginEntry(onNavigateBack = navigator::goBack)
-        detailEntry(
-            DetailNavActions(
-                onNavigateBack = navigator::goBack,
-                onOpenNovel = openNovel,
-                onOpenCharacter = { navigator.navigateToCharacter(it) },
-                onOpenTag = { navigator.navigateToTag(it) },
-                onOpenProducer = openProducer,
-                onOpenStaff = openStaff,
-                onOpenRelease = { navigator.navigateToRelease(it) },
-                onOpenListEditor = openListEditor,
-            ),
-        )
-        releaseEntry(
-            onNavigateBack = navigator::goBack,
-            onOpenNovel = openNovel,
-            onOpenProducer = openProducer,
-        )
-        characterEntry(
-            onNavigateBack = navigator::goBack,
-            onOpenNovel = openNovel,
-            onOpenStaff = openStaff,
-        )
-        listEditorEntry(onClose = navigator::goBack)
-    }
+internal fun appEntryProvider(navigator: Navigator): (NavKey) -> NavEntry<NavKey> = entryProvider {
+    discoverEntry(
+        onOpenNovel = navigator::navigateToDetail,
+        onOpenBrowse = navigator::navigateToBrowse,
+    )
+    browseEntry(onOpenNovel = navigator::navigateToDetail)
+    browseScopedEntries(
+        onNavigateBack = navigator::navigateBack,
+        onOpenNovel = navigator::navigateToDetail,
+    )
+    profileEntry(
+        onOpenLogin = navigator::navigateToLogin,
+        onOpenSettings = navigator::navigateToSettings,
+        onOpenNovel = navigator::navigateToDetail,
+        onOpenListEditor = navigator::navigateToListEditor,
+    )
+    settingsEntry(
+        onNavigateBack = navigator::navigateBack,
+        onOpenTheme = navigator::navigateToTheme,
+    )
+    themeEntry(onNavigateBack = navigator::navigateBack)
+    loginEntry(onNavigateBack = navigator::navigateBack)
+    detailEntry(
+        DetailNavActions(
+            onNavigateBack = navigator::navigateBack,
+            onOpenNovel = navigator::navigateToDetail,
+            onOpenCharacter = navigator::navigateToCharacter,
+            onOpenTag = navigator::navigateToTag,
+            onOpenProducer = navigator::navigateToProducer,
+            onOpenStaff = navigator::navigateToStaff,
+            onOpenRelease = navigator::navigateToRelease,
+            onOpenListEditor = navigator::navigateToListEditor,
+        ),
+    )
+    releaseEntry(
+        onNavigateBack = navigator::navigateBack,
+        onOpenNovel = navigator::navigateToDetail,
+        onOpenProducer = navigator::navigateToProducer,
+    )
+    characterEntry(
+        onNavigateBack = navigator::navigateBack,
+        onOpenNovel = navigator::navigateToDetail,
+        onOpenStaff = navigator::navigateToStaff,
+    )
+    listEditorEntry(onClose = navigator::navigateBack)
 }
