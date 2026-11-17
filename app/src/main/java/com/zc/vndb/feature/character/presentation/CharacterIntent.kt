@@ -11,4 +11,5 @@ sealed interface CharacterIntent {
     data class SpoilerLevelSelected(val level: SpoilerLevel) : CharacterIntent
     data object DescriptionToggled : CharacterIntent
     data class NovelClicked(val id: String) : CharacterIntent
+    data class StaffClicked(val id: String) : CharacterIntent
 }

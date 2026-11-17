@@ -11,7 +11,7 @@ private const val RELEASE_FIELDS =
         "languages.lang, languages.title, languages.main, languages.mtl, " +
         "vns.id, vns.title, vns.alttitle, vns.rtype, vns.released, " +
         "vns.image.url, vns.image.thumbnail, vns.image.sexual, " +
-        "vns.image.violence, producers.name, producers.developer, producers.publisher, " +
+        "vns.image.violence, producers.id, producers.name, producers.developer, producers.publisher, " +
         "images.type, images.url, images.thumbnail, images.sexual, images.violence, extlinks.label, extlinks.url"
 
 fun releaseQuery(id: String) = QueryDTO(

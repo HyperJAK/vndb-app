@@ -21,9 +21,10 @@ fun CharacterAppearance.toRowUIModel(
     voiceActorLabel = voiceActor?.let {
         UiText.StringResource(
             StringResource.detail_cv,
-            listOf(it),
+            listOf(it.name),
         )
     },
+    voiceActorId = voiceActor?.id,
     ratingLabel = rating?.toRatingLabel(),
     thumbnailUrl = cover?.thumbnailUrl ?: cover?.url,
     isCoverSensitive = cover?.isSensitive ?: false,

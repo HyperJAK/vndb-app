@@ -13,14 +13,14 @@ private const val MAX_RESULTS = 100
 
 private const val NOVEL_FIELDS =
     "title, alttitle, released, rating, average, votecount, length, length_minutes, length_votes, " +
-        "image.url, image.thumbnail, image.sexual, image.violence, developers.name, description, " +
+        "image.url, image.thumbnail, image.sexual, image.violence, developers.id, developers.name, description, " +
         "tags.name, tags.rating, tags.spoiler, tags.category, extlinks.label, extlinks.url, " +
         "relations.id, relations.title, relations.alttitle, relations.relation, relations.relation_official, " +
         "relations.released, " +
         "relations.rating, titles.lang, titles.title, titles.latin, titles.official, titles.main, aliases"
 
 private const val CREDIT_FIELDS = "staff.id, staff.name, staff.role, staff.note, staff.eid, " +
-    "editions.eid, editions.lang, editions.name, editions.official, va.character.id, va.staff.name"
+    "editions.eid, editions.lang, editions.name, editions.official, va.character.id, va.staff.id, va.staff.name"
 
 private const val SCREENSHOT_FIELDS =
     "screenshots.url, screenshots.thumbnail, screenshots.sexual, " +

@@ -2,6 +2,7 @@ package com.zc.vndb.feature.character.domain.usecase
 
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.feature.character.domain.model.CharacterSamples.appearance
 import com.zc.vndb.feature.character.domain.model.CharacterSamples.profile
 import com.zc.vndb.feature.character.domain.repository.FakeCharacterRepository
@@ -25,7 +26,7 @@ class GetCharacterUseCaseTest {
                 appearance("v-primary-old", CharacterRole.Primary, year = 2009),
             ),
         )
-        repository.voiceActors = mapOf("v-primary-old" to "Imai Asami")
+        repository.voiceActors = mapOf("v-primary-old" to VoiceActor("s240", "Imai Asami"))
 
         val appearances = useCase("c1").getOrThrow().appearances
 
@@ -33,7 +34,7 @@ class GetCharacterUseCaseTest {
             listOf("v-main", "v-primary-old", "v-primary-new", "v-appears"),
             appearances.map { it.novelId },
         )
-        assertEquals("Imai Asami", appearances[1].voiceActor)
+        assertEquals(VoiceActor("s240", "Imai Asami"), appearances[1].voiceActor)
         assertNull(appearances[0].voiceActor)
     }
 

@@ -1,12 +1,16 @@
 package com.zc.vndb.feature.character.presentation.component.characterhero.mapper
 
+import com.zc.vndb.common.domain.model.CharacterRole
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.feature.character.domain.model.CharacterSamples.appearance
 import com.zc.vndb.feature.character.domain.model.CharacterSamples.profile
 import com.zc.vndb.feature.character.domain.model.Gender
 import com.zc.vndb.feature.character.domain.model.Measurements
 import com.zc.vndb.feature.character.domain.model.Sex
+import com.zc.vndb.feature.character.presentation.component.characterhero.model.HeroVoiceActorUIModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -85,5 +89,29 @@ class CharacterHeroUIModelMapperTest {
             ),
             twist.toHeroUIModel(SpoilerLevel.Major).spoilerIdentity,
         )
+    }
+
+    @Test
+    fun `voice actors are distinct across VNs, in order of first appearance`() {
+        val withActors = profile().copy(
+            appearances = listOf(
+                appearance("v1", CharacterRole.Primary)
+                    .copy(voiceActor = VoiceActor("s240", "Imai Asami")),
+                appearance("v2", CharacterRole.Appears).copy(voiceActor = null),
+                appearance("v3", CharacterRole.Appears)
+                    .copy(voiceActor = VoiceActor("s240", "Imai Asami")),
+                appearance("v4", CharacterRole.Appears)
+                    .copy(voiceActor = VoiceActor("s7", "Other Actor")),
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                HeroVoiceActorUIModel("s240", "Imai Asami"),
+                HeroVoiceActorUIModel("s7", "Other Actor"),
+            ),
+            withActors.toHeroUIModel(SpoilerLevel.None).voiceActors,
+        )
+        assertTrue(profile().toHeroUIModel(SpoilerLevel.None).voiceActors.isEmpty())
     }
 }

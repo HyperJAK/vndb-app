@@ -10,6 +10,7 @@ import com.zc.vndb.feature.character.domain.model.Gender
 import com.zc.vndb.feature.character.domain.model.Measurements
 import com.zc.vndb.feature.character.domain.model.Sex
 import com.zc.vndb.feature.character.presentation.component.characterhero.model.CharacterHeroUIModel
+import com.zc.vndb.feature.character.presentation.component.characterhero.model.HeroVoiceActorUIModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Month
@@ -36,6 +37,10 @@ fun CharacterProfile.toHeroUIModel(level: SpoilerLevel): CharacterHeroUIModel =
         } else {
             persistentListOf()
         },
+        voiceActors = appearances.mapNotNull { it.voiceActor }
+            .distinctBy { it.id }
+            .map { HeroVoiceActorUIModel(id = it.id, name = it.name) }
+            .toImmutableList(),
         facts = facts().toImmutableList(),
     )
 

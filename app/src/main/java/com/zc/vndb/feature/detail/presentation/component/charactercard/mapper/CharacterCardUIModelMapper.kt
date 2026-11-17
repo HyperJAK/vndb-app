@@ -22,9 +22,10 @@ fun NovelCharacter.toCardUIModel(): CharacterCardUIModel = CharacterCardUIModel(
     voiceActorLabel = voiceActor?.let {
         UiText.StringResource(
             StringResource.detail_cv,
-            listOf(it),
+            listOf(it.name),
         )
     },
+    voiceActorId = voiceActor?.id,
     imageUrl = image?.url,
     isImageSensitive = image?.isSensitive ?: false,
 )

@@ -11,6 +11,8 @@ data class AppearanceRowUIModel(
     val roleLabel: UiText,
     val isMajorRole: Boolean,
     val voiceActorLabel: UiText?,
+    /** The voice actor's staff id; the "CV:" line opens their page. */
+    val voiceActorId: String? = null,
     val ratingLabel: UiText?,
     val thumbnailUrl: String?,
     val isCoverSensitive: Boolean,

@@ -8,6 +8,7 @@ import com.zc.vndb.common.domain.model.ExternalLink
 import com.zc.vndb.feature.detail.data.dto.DetailNovelDTO
 import com.zc.vndb.feature.detail.data.dto.RelationDTO
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
+import com.zc.vndb.feature.detail.domain.model.NovelDeveloper
 import com.zc.vndb.feature.detail.domain.model.NovelTitle
 import com.zc.vndb.feature.detail.domain.model.RelatedNovel
 import com.zc.vndb.feature.detail.domain.model.RelationType
@@ -21,7 +22,7 @@ fun DetailNovelDTO.toDomain(): NovelDetail = NovelDetail(
     average = average,
     voteCount = votecount ?: 0,
     cover = image?.toCover(),
-    developerNames = developers.orEmpty().map { it.name },
+    developers = developers.orEmpty().map { NovelDeveloper(id = it.id, name = it.name) },
     description = description?.takeIf { it.isNotBlank() },
     length = toNovelLength(lengthMinutes = lengthMinutes, estimate = length),
     averagePlayMinutes = lengthMinutes,

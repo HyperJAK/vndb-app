@@ -5,4 +5,5 @@ sealed interface ReleaseEffect {
     data class Share(val title: String, val url: String) : ReleaseEffect
     data class OpenUrl(val url: String) : ReleaseEffect
     data class NavigateToNovel(val id: String) : ReleaseEffect
+    data class NavigateToProducer(val id: String) : ReleaseEffect
 }

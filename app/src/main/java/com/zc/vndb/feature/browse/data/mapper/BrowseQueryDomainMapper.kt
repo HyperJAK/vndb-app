@@ -3,6 +3,7 @@ package com.zc.vndb.feature.browse.data.mapper
 import com.zc.vndb.common.data.dto.QueryDTO
 import com.zc.vndb.feature.browse.domain.model.AgeRating
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
+import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -43,7 +44,7 @@ private fun BrowseFilter.toFilters(): JsonElement {
                 predicate("tag", "=", JsonPrimitive(it.tagId)),
             )
         }
-        tagId?.let { add(predicate("tag", "=", JsonPrimitive(it))) }
+        scope.toPredicate()?.let(::add)
     }
     // No condition at all ("Both" ages, nothing else) is an empty list: VNDB rejects ["and"].
     return when (predicates.size) {
@@ -56,6 +57,18 @@ private fun BrowseFilter.toFilters(): JsonElement {
             predicates.forEach { add(it) }
         }
     }
+}
+
+/** The condition a tag, producer or staff page adds; null for the Browse tab. */
+private fun BrowseScope.toPredicate(): JsonArray? = when (this) {
+    BrowseScope.None -> null
+
+    is BrowseScope.Tag -> predicate("tag", "=", JsonPrimitive(id))
+
+    is BrowseScope.Producer ->
+        predicate("developer", "=", predicate("id", "=", JsonPrimitive(id)))
+
+    is BrowseScope.Staff -> predicate("staff", "=", predicate("id", "=", JsonPrimitive(id)))
 }
 
 private val BrowseSort.apiField: String
@@ -81,6 +94,29 @@ private fun predicate(name: String, operator: String, value: JsonElement): JsonA
 fun tagQuery(id: String) = QueryDTO(
     filters = predicate("id", "=", JsonPrimitive(id)),
     fields = "name, aliases, description, category, vn_count",
+    sort = null,
+    reverse = null,
+    results = 1,
+    page = null,
+    count = null,
+)
+
+/** One producer by id, for the producer page header. */
+fun producerQuery(id: String) = QueryDTO(
+    filters = predicate("id", "=", JsonPrimitive(id)),
+    fields = "name, original, aliases, lang, type, description",
+    sort = null,
+    reverse = null,
+    results = 1,
+    page = null,
+    count = null,
+)
+
+/** One staff member by id, for the staff page header. */
+fun staffQuery(id: String) = QueryDTO(
+    filters = predicate("id", "=", JsonPrimitive(id)),
+    fields = "name, original, lang, gender, aliases.name, aliases.latin, description, " +
+        "extlinks.label, extlinks.url",
     sort = null,
     reverse = null,
     results = 1,

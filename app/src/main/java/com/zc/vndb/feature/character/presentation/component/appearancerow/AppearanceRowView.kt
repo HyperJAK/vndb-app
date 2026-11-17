@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
@@ -32,6 +33,7 @@ private const val TITLE_MAX_LINES = 2
 fun AppearanceRowView(
     model: AppearanceRowUIModel,
     onClick: () -> Unit,
+    onVoiceActorClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -73,10 +75,20 @@ fun AppearanceRowView(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             model.voiceActorLabel?.let { cv ->
+                val voiceActorId = model.voiceActorId
                 Text(
                     text = cv.asString(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (voiceActorId == null) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        VndbTheme.colors.accent
+                    },
+                    modifier = if (voiceActorId == null) {
+                        Modifier
+                    } else {
+                        Modifier.clickable(role = Role.Button) { onVoiceActorClick(voiceActorId) }
+                    },
                 )
             }
         }
@@ -95,11 +107,13 @@ private fun AppearanceRowViewPreview() {
                 roleLabel = UiText.StringValue("PRIMARY"),
                 isMajorRole = true,
                 voiceActorLabel = UiText.StringValue("CV: Imai Asami"),
+                voiceActorId = "s1",
                 ratingLabel = UiText.StringValue("9.02"),
                 thumbnailUrl = null,
                 isCoverSensitive = false,
             ),
             onClick = {},
+            onVoiceActorClick = {},
             modifier = Modifier.fillMaxWidth().padding(VndbTheme.spacing.lg),
         )
     }

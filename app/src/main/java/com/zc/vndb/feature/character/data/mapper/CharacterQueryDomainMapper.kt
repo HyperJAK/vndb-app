@@ -28,7 +28,7 @@ fun characterQuery(id: String) = QueryDTO(
 /** Every VN the character is in, with its voice-actor credits. */
 fun characterVoicesQuery(characterId: String) = QueryDTO(
     filters = predicate("character", "=", predicate("id", "=", JsonPrimitive(characterId))),
-    fields = "va.character.id, va.staff.name",
+    fields = "va.character.id, va.staff.id, va.staff.name",
     sort = null,
     reverse = null,
     results = MAX_NOVELS,

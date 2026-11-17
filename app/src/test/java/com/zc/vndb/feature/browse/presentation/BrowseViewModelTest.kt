@@ -14,10 +14,17 @@ import com.zc.vndb.common.util.MainDispatcherRule
 import com.zc.vndb.feature.browse.domain.model.AgeRating
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowseSamples
+import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
+import com.zc.vndb.feature.browse.domain.model.ProducerInfo
+import com.zc.vndb.feature.browse.domain.model.ProducerType
+import com.zc.vndb.feature.browse.domain.model.StaffGender
+import com.zc.vndb.feature.browse.domain.model.StaffInfo
 import com.zc.vndb.feature.browse.domain.model.TagInfo
 import com.zc.vndb.feature.browse.domain.repository.FakeBrowseRepository
+import com.zc.vndb.feature.browse.domain.usecase.GetProducerUseCase
+import com.zc.vndb.feature.browse.domain.usecase.GetStaffUseCase
 import com.zc.vndb.feature.browse.domain.usecase.GetTagUseCase
 import com.zc.vndb.feature.browse.domain.usecase.SearchNovelsUseCase
 import kotlin.test.Test
@@ -41,10 +48,12 @@ class BrowseViewModelTest {
 
     private val settings = FakeSettingsRepository()
 
-    private fun createViewModel(tagId: String? = null) = BrowseViewModel(
-        tagId = tagId,
+    private fun createViewModel(scope: BrowseScope = BrowseScope.None) = BrowseViewModel(
+        scope = scope,
         searchNovels = SearchNovelsUseCase(repository),
         getTag = GetTagUseCase(repository),
+        getProducer = GetProducerUseCase(repository),
+        getStaff = GetStaffUseCase(repository),
         observeSettings = ObserveSettingsUseCase(settings),
     )
 
@@ -235,28 +244,28 @@ class BrowseViewModelTest {
             category = TagCategory.Content,
             novelCount = 1067,
         )
-        val viewModel = createViewModel(tagId = "g249")
+        val viewModel = createViewModel(BrowseScope.Tag("g249"))
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertTrue(state.isTagPage)
-        assertEquals(UiText.StringValue("Time Travel"), state.tagHeader?.name)
-        assertEquals("g249", repository.requests.single().filter.tagId)
+        assertTrue(state.isScopedPage)
+        assertEquals(UiText.StringValue("Time Travel"), state.header?.name)
+        assertEquals(BrowseScope.Tag("g249"), repository.requests.single().filter.scope)
 
         viewModel.onIntent(BrowseIntent.GenreToggled(Genre.Mystery))
         advanceUntilIdle()
-        assertEquals("g249", repository.requests.last().filter.tagId)
+        assertEquals(BrowseScope.Tag("g249"), repository.requests.last().filter.scope)
     }
 
     @Test
     fun `a failed tag lookup still lists the tag's novels`() = runTest {
-        val viewModel = createViewModel(tagId = "g-missing")
+        val viewModel = createViewModel(BrowseScope.Tag("g-missing"))
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertEquals(null, state.tagHeader)
+        assertEquals(null, state.header)
         assertEquals(20, state.results.size)
-        assertEquals("g-missing", repository.requests.single().filter.tagId)
+        assertEquals(BrowseScope.Tag("g-missing"), repository.requests.single().filter.scope)
     }
 
     @Test
@@ -264,17 +273,116 @@ class BrowseViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        assertFalse(viewModel.state.value.isTagPage)
-        assertEquals(null, repository.requests.single().filter.tagId)
+        assertFalse(viewModel.state.value.isScopedPage)
+        assertEquals(BrowseScope.None, repository.requests.single().filter.scope)
+    }
+
+    @Test
+    fun `a producer page opens on newest and shows the producer header`() = runTest {
+        repository.producers["p30"] = ProducerInfo(
+            id = "p30",
+            name = "Nitroplus",
+            originalName = null,
+            aliases = emptyList(),
+            type = ProducerType.Company,
+            language = "ja",
+            description = null,
+        )
+        val viewModel = createViewModel(BrowseScope.Producer("p30"))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertTrue(state.isScopedPage)
+        assertEquals(UiText.StringValue("Nitroplus"), state.header?.name)
+        assertEquals(BrowseSort.Newest, state.sort)
+        val filter = repository.requests.single().filter
+        assertEquals(BrowseScope.Producer("p30"), filter.scope)
+        assertEquals(BrowseSort.Newest, filter.sort)
+
+        viewModel.onIntent(BrowseIntent.GenreToggled(Genre.Mystery))
+        advanceUntilIdle()
+        assertEquals(BrowseScope.Producer("p30"), repository.requests.last().filter.scope)
+    }
+
+    @Test
+    fun `a failed producer lookup still lists the producer's novels`() = runTest {
+        val viewModel = createViewModel(BrowseScope.Producer("p-missing"))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(null, state.header)
+        assertEquals(20, state.results.size)
+    }
+
+    @Test
+    fun `searching on a producer page switches to relevance and clearing returns to newest`() =
+        runTest {
+            val viewModel = createViewModel(BrowseScope.Producer("p30"))
+            advanceUntilIdle()
+
+            viewModel.onIntent(BrowseIntent.QueryChanged("fate"))
+            viewModel.onIntent(BrowseIntent.SearchSubmitted)
+            advanceUntilIdle()
+            assertEquals(BrowseSort.Relevance, repository.requests.last().filter.sort)
+
+            viewModel.onIntent(BrowseIntent.QueryCleared)
+            advanceUntilIdle()
+            assertEquals(BrowseSort.Newest, repository.requests.last().filter.sort)
+        }
+
+    @Test
+    fun `a staff page opens on newest and shows the staff header`() = runTest {
+        repository.staff["s2"] = StaffInfo(
+            id = "s2",
+            name = "Nasu Kinoko",
+            originalName = null,
+            aliases = emptyList(),
+            language = "ja",
+            gender = StaffGender.Male,
+            description = null,
+            links = emptyList(),
+        )
+        val viewModel = createViewModel(BrowseScope.Staff("s2"))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertTrue(state.isScopedPage)
+        assertEquals(UiText.StringValue("Nasu Kinoko"), state.header?.name)
+        assertEquals(1, state.header?.links?.size)
+        assertEquals(BrowseSort.Newest, state.sort)
+        val filter = repository.requests.single().filter
+        assertEquals(BrowseScope.Staff("s2"), filter.scope)
+        assertEquals(BrowseSort.Newest, filter.sort)
+    }
+
+    @Test
+    fun `a failed staff lookup still lists the person's novels`() = runTest {
+        val viewModel = createViewModel(BrowseScope.Staff("s-missing"))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(null, state.header)
+        assertEquals(20, state.results.size)
+    }
+
+    @Test
+    fun `a link click opens the url`() = runTest {
+        val viewModel = createViewModel(BrowseScope.Staff("s2"))
+        advanceUntilIdle()
+
+        viewModel.effect.test {
+            viewModel.onIntent(BrowseIntent.LinkClicked("https://vndb.org/s2"))
+            assertEquals(BrowseEffect.OpenUrl("https://vndb.org/s2"), awaitItem())
+        }
     }
 
     @Test
     fun `back and description toggle`() = runTest {
-        val viewModel = createViewModel(tagId = "g249")
+        val viewModel = createViewModel(BrowseScope.Tag("g249"))
         advanceUntilIdle()
 
-        viewModel.onIntent(BrowseIntent.TagDescriptionToggled)
-        assertTrue(viewModel.state.value.isTagDescriptionExpanded)
+        viewModel.onIntent(BrowseIntent.DescriptionToggled)
+        assertTrue(viewModel.state.value.isDescriptionExpanded)
         viewModel.effect.test {
             viewModel.onIntent(BrowseIntent.BackClicked)
             assertEquals(BrowseEffect.NavigateBack, awaitItem())

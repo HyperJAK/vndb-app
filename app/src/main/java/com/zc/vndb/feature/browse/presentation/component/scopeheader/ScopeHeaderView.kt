@@ -1,4 +1,4 @@
-package com.zc.vndb.feature.browse.presentation.component.tagheader
+package com.zc.vndb.feature.browse.presentation.component.scopeheader
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -13,32 +13,41 @@ import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
-import com.zc.vndb.feature.browse.presentation.component.tagheader.model.TagHeaderUIModel
+import com.zc.vndb.feature.browse.presentation.component.scopeheader.model.ScopeHeaderUIModel
 
-/** The tag a filtered Browse is scoped to: name, category, VNDB count and aliases. */
+/** The tag or producer a filtered Browse is scoped to: name, type, VNDB count and aliases. */
 @Composable
-fun TagHeaderView(model: TagHeaderUIModel, modifier: Modifier = Modifier) {
+fun ScopeHeaderView(model: ScopeHeaderUIModel, modifier: Modifier = Modifier) {
     SectionCardView(modifier = modifier) {
         Text(
             text = model.name.asString(),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
+        model.originalName?.let { original ->
+            Text(
+                text = original.asString(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            model.categoryLabel?.let { category ->
+            model.typeLabel?.let { category ->
                 TagChipView(
                     label = category,
                     colors = if (model.isSexualCategory) VndbTheme.colors.tagNsfw else VndbTheme.colors.chipNeutral,
                 )
             }
-            Text(
-                text = model.countLabel.asString(),
-                style = MaterialTheme.typography.labelMedium,
-                color = VndbTheme.colors.accent,
-            )
+            model.countLabel?.let { count ->
+                Text(
+                    text = count.asString(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = VndbTheme.colors.accent,
+                )
+            }
         }
         model.aliasesLabel?.let { aliases ->
             Text(
@@ -52,15 +61,17 @@ fun TagHeaderView(model: TagHeaderUIModel, modifier: Modifier = Modifier) {
 
 @AdaptivePreviews
 @Composable
-private fun TagHeaderViewPreview() {
+private fun ScopeHeaderViewPreview() {
     VndbTheme {
-        TagHeaderView(
-            model = TagHeaderUIModel(
+        ScopeHeaderView(
+            model = ScopeHeaderUIModel(
                 name = UiText.StringValue("ADV"),
-                categoryLabel = UiText.StringValue("Technical tag"),
+                originalName = null,
+                typeLabel = UiText.StringValue("Technical tag"),
                 isSexualCategory = false,
                 countLabel = UiText.StringValue("36,379 visual novels on VNDB"),
                 aliasesLabel = UiText.StringValue("Also known as: AVG, Part-screen Textbox"),
+                aboutTitle = UiText.StringValue("About this tag"),
                 description = null,
             ),
             modifier = Modifier.padding(VndbTheme.spacing.lg),

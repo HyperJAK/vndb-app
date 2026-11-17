@@ -2,6 +2,7 @@ package com.zc.vndb.feature.detail.data.mapper
 
 import com.zc.vndb.common.data.mapper.toReleaseDate
 import com.zc.vndb.common.domain.model.Cover
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.feature.detail.data.dto.CoverReleaseDTO
 import com.zc.vndb.feature.detail.data.dto.NovelCreditsDTO
 import com.zc.vndb.feature.detail.data.dto.QuoteDTO
@@ -34,7 +35,9 @@ fun NovelCreditsDTO.toDomain(): NovelCredits = NovelCredits(
     },
     voiceActors = va.orEmpty()
         .groupBy { it.character.id }
-        .mapValues { (_, actors) -> actors.first().staff.name },
+        .mapValues { (_, actors) ->
+            actors.first().staff.let { VoiceActor(id = it.id, name = it.name) }
+        },
 )
 
 private fun StaffCreditDTO.toDomain() = StaffCredit(

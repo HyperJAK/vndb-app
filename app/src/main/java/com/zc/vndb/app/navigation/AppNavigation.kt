@@ -27,6 +27,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.presentation.BrowseRoute
 import com.zc.vndb.feature.character.presentation.CharacterRoute
 import com.zc.vndb.feature.detail.presentation.DetailRoute
@@ -70,6 +71,14 @@ data class ReleaseNavKey(val id: String) : FullScreenNavKey
 /** Browse scoped to one VNDB tag. */
 @Serializable
 data class TagNavKey(val id: String) : FullScreenNavKey
+
+/** Browse scoped to one VNDB producer (developer). */
+@Serializable
+data class ProducerNavKey(val id: String) : FullScreenNavKey
+
+/** Browse scoped to one VNDB staff member (writer, artist, voice actor…). */
+@Serializable
+data class StaffNavKey(val id: String) : FullScreenNavKey
 
 /** A character's page. */
 @Serializable
@@ -227,6 +236,8 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
             onOpenCharacter = { id -> navigator.navigate(CharacterNavKey(id)) },
             onOpenTag = { id -> navigator.navigate(TagNavKey(id)) },
+            onOpenProducer = { id -> navigator.navigate(ProducerNavKey(id)) },
+            onOpenStaff = { id -> navigator.navigate(StaffNavKey(id)) },
             onOpenRelease = { id -> navigator.navigate(ReleaseNavKey(id)) },
             onOpenListEditor = { id, title -> navigator.navigate(ListEditorNavKey(id, title)) },
         )
@@ -249,11 +260,26 @@ private fun EntryProviderScope<NavKey>.pageEntries(navigator: Navigator) {
             releaseId = key.id,
             onNavigateBack = { navigator.goBack() },
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+            onOpenProducer = { id -> navigator.navigate(ProducerNavKey(id)) },
         )
     }
     entry<TagNavKey> { key ->
         BrowseRoute(
-            tagId = key.id,
+            scope = BrowseScope.Tag(key.id),
+            onNavigateBack = { navigator.goBack() },
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+        )
+    }
+    entry<ProducerNavKey> { key ->
+        BrowseRoute(
+            scope = BrowseScope.Producer(key.id),
+            onNavigateBack = { navigator.goBack() },
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+        )
+    }
+    entry<StaffNavKey> { key ->
+        BrowseRoute(
+            scope = BrowseScope.Staff(key.id),
             onNavigateBack = { navigator.goBack() },
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
         )
@@ -263,6 +289,7 @@ private fun EntryProviderScope<NavKey>.pageEntries(navigator: Navigator) {
             characterId = key.id,
             onNavigateBack = { navigator.goBack() },
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+            onOpenStaff = { id -> navigator.navigate(StaffNavKey(id)) },
         )
     }
 }

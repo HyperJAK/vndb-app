@@ -7,6 +7,7 @@ import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.common.domain.model.NovelTag
 import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.domain.model.VoiceActor
 import kotlinx.datetime.LocalDate
 
 object DetailSamples {
@@ -46,7 +47,11 @@ object DetailSamples {
         average = 90.25,
         voteCount = 17205,
         cover = cover,
-        developerNames = listOf("NITRO PLUS", "MAGES.", "Third"),
+        developers = listOf(
+            NovelDeveloper(id = "p1", name = "NITRO PLUS"),
+            NovelDeveloper(id = null, name = "MAGES."),
+            NovelDeveloper(id = "p3", name = "Third"),
+        ),
         description = description,
         length = NovelLength.Long,
         averagePlayMinutes = 2625,
@@ -106,7 +111,7 @@ object DetailSamples {
     fun credits(
         staff: List<StaffCredit> = emptyList(),
         editions: List<StaffEdition> = emptyList(),
-        voiceActors: Map<String, String> = emptyMap(),
+        voiceActors: Map<String, VoiceActor> = emptyMap(),
     ) = NovelCredits(staff = staff, editions = editions, voiceActors = voiceActors)
 
     fun staff(id: String, role: StaffCreditRole, editionId: Int? = null, note: String? = null) =

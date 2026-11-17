@@ -18,7 +18,7 @@ data class NovelDetail(
     val average: Double?,
     val voteCount: Int,
     val cover: Cover?,
-    val developerNames: List<String>,
+    val developers: List<NovelDeveloper>,
     /** VNDB BBCode. */
     val description: String?,
     val length: NovelLength?,

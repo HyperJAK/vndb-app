@@ -172,6 +172,12 @@ class DetailViewModel(
 
             is DetailIntent.TagClicked -> sendEffect(DetailEffect.NavigateToTag(intent.id))
 
+            is DetailIntent.DeveloperClicked -> sendEffect(
+                DetailEffect.NavigateToProducer(intent.id),
+            )
+
+            is DetailIntent.StaffClicked -> sendEffect(DetailEffect.NavigateToStaff(intent.id))
+
             is DetailIntent.EditionClicked -> sendEffect(
                 DetailEffect.NavigateToRelease(intent.releaseId),
             )

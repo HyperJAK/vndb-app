@@ -59,8 +59,12 @@ private fun ReleaseLanguageDTO.toDomain() = ReleaseLanguage(
     isMachineTranslated = mtl ?: false,
 )
 
-private fun ReleaseProducerDTO.toDomain() =
-    ReleaseProducer(name = name, isDeveloper = developer ?: false, isPublisher = publisher ?: false)
+private fun ReleaseProducerDTO.toDomain() = ReleaseProducer(
+    id = id,
+    name = name,
+    isDeveloper = developer ?: false,
+    isPublisher = publisher ?: false,
+)
 
 private fun ReleaseNovelDTO.toDomain() = ReleaseNovel(
     id = id,

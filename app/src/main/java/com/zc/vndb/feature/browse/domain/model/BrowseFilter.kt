@@ -5,6 +5,6 @@ data class BrowseFilter(
     val ageRating: AgeRating = AgeRating.AllAges,
     val genres: Set<Genre> = emptySet(),
     val sort: BrowseSort = BrowseSort.Popularity,
-    /** Any VNDB tag the list is scoped to (a tag page), on top of [genres]. */
-    val tagId: String? = null,
+    /** A tag or producer page limits the list to it, on top of [genres]. */
+    val scope: BrowseScope = BrowseScope.None,
 )

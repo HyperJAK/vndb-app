@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
@@ -27,6 +28,7 @@ private val CardWidth = 132.dp
 fun CharacterCardView(
     model: CharacterCardUIModel,
     onClick: () -> Unit,
+    onVoiceActorClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -67,12 +69,22 @@ fun CharacterCardView(
             )
         }
         model.voiceActorLabel?.let { cv ->
+            val voiceActorId = model.voiceActorId
             Text(
                 text = cv.asString(),
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (voiceActorId == null) {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                } else {
+                    VndbTheme.colors.accent
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                modifier = if (voiceActorId == null) {
+                    Modifier
+                } else {
+                    Modifier.clickable(role = Role.Button) { onVoiceActorClick(voiceActorId) }
+                },
             )
         }
     }
@@ -90,10 +102,12 @@ private fun CharacterCardViewPreview() {
                 roleLabel = UiText.StringValue("ROLE: PRIMARY"),
                 isMain = false,
                 voiceActorLabel = UiText.StringValue("CV: Imai Asami"),
+                voiceActorId = "s1",
                 imageUrl = null,
                 isImageSensitive = false,
             ),
             onClick = {},
+            onVoiceActorClick = {},
             modifier = Modifier.padding(VndbTheme.spacing.lg),
         )
     }

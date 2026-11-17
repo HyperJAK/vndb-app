@@ -14,6 +14,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.AgeRange
 import com.zc.vndb.feature.detail.domain.model.NovelDetail
 import com.zc.vndb.feature.detail.presentation.component.detailhero.model.DetailHeroUIModel
+import com.zc.vndb.feature.detail.presentation.component.detailhero.model.HeroDeveloperUIModel
 import kotlin.math.roundToInt
 import kotlinx.collections.immutable.toImmutableList
 
@@ -40,8 +41,9 @@ private fun NovelDetail.toHeroUIModel(
     originalTitle = secondaryTitle,
     coverUrl = cover?.url,
     isCoverSensitive = cover?.isSensitive ?: false,
-    developerLabel = developerNames.takeIf { it.isNotEmpty() }
-        ?.let { UiText.StringValue(it.take(MAX_DEVELOPERS).joinToString(" / ")) },
+    developers = developers.take(MAX_DEVELOPERS)
+        .map { HeroDeveloperUIModel(id = it.id, name = it.name) }
+        .toImmutableList(),
     releasedLabel = releaseDate.toIsoLabel(),
     lengthName = length?.toNameLabel(),
     lengthValueLabel = (averageHoursLabel() ?: length?.toLabel())

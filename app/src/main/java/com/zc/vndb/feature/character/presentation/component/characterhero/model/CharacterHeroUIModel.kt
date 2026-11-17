@@ -16,5 +16,10 @@ data class CharacterHeroUIModel(
     val identity: ImmutableList<UiText> = persistentListOf(),
     /** Spoiler sex / gender, shown with a warning tint. */
     val spoilerIdentity: ImmutableList<UiText> = persistentListOf(),
+    /** Distinct voice actors across the character's VNs; each opens their staff page. */
+    val voiceActors: ImmutableList<HeroVoiceActorUIModel> = persistentListOf(),
     val facts: ImmutableList<FactUIModel> = persistentListOf(),
 )
+
+@Immutable
+data class HeroVoiceActorUIModel(val id: String, val name: String)

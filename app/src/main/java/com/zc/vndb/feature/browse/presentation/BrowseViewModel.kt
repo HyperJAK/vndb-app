@@ -7,12 +7,15 @@ import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
 import com.zc.vndb.feature.browse.domain.model.AgeRating
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
+import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
+import com.zc.vndb.feature.browse.domain.usecase.GetProducerUseCase
+import com.zc.vndb.feature.browse.domain.usecase.GetStaffUseCase
 import com.zc.vndb.feature.browse.domain.usecase.GetTagUseCase
 import com.zc.vndb.feature.browse.domain.usecase.SearchNovelsUseCase
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.mapper.toCardUIModel
-import com.zc.vndb.feature.browse.presentation.component.tagheader.mapper.toHeaderUIModel
+import com.zc.vndb.feature.browse.presentation.component.scopeheader.mapper.toHeaderUIModel
 import com.zc.vndb.feature.browse.presentation.mapper.toGenreChips
 import com.zc.vndb.feature.browse.presentation.mapper.toResultCountLabel
 import com.zc.vndb.feature.browse.presentation.mapper.toSortOptions
@@ -33,21 +36,23 @@ import org.koin.core.annotation.KoinViewModel
 
 @KoinViewModel
 class BrowseViewModel(
-    /** Set for a tag page; null for the Browse tab. */
-    @InjectedParam private val tagId: String?,
+    /** What the list is limited to: [BrowseScope.None] for the Browse tab. */
+    @InjectedParam private val scope: BrowseScope,
     private val searchNovels: SearchNovelsUseCase,
     private val getTag: GetTagUseCase,
+    private val getProducer: GetProducerUseCase,
+    private val getStaff: GetStaffUseCase,
     private val observeSettings: ObserveSettingsUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(BrowseState(isTagPage = tagId != null))
+    private val _state = MutableStateFlow(BrowseState(isScopedPage = scope != BrowseScope.None))
     val state: StateFlow<BrowseState> = _state.asStateFlow()
 
     private val _effect = Channel<BrowseEffect>(Channel.BUFFERED)
     val effect: Flow<BrowseEffect> = _effect.receiveAsFlow()
 
     /** The filter the current results belong to. */
-    private var filter = BrowseFilter(tagId = tagId)
+    private var filter = BrowseFilter(scope = scope, sort = scope.defaultSort)
     private var nextPage = SearchNovelsUseCase.FIRST_PAGE
     private var loadJob: Job? = null
     private var debounceJob: Job? = null
@@ -55,7 +60,7 @@ class BrowseViewModel(
 
     // The starting age rating comes from Settings ("Include 18+ titles in Browse").
     init {
-        loadTag()
+        loadHeader()
         viewModelScope.launch {
             val settings = observeSettings.current()
             filter = filter.copy(
@@ -91,12 +96,27 @@ class BrowseViewModel(
 
             BrowseIntent.LoadMoreRetried -> loadNextPage()
 
+            is BrowseIntent.NovelClicked,
+            BrowseIntent.BackClicked,
+            is BrowseIntent.LinkClicked,
+            BrowseIntent.DescriptionToggled,
+            -> onPageIntent(intent)
+        }
+    }
+
+    /** Taps on the page itself: navigation, links and the description. */
+    private fun onPageIntent(intent: BrowseIntent) {
+        when (intent) {
             is BrowseIntent.NovelClicked -> sendEffect(BrowseEffect.NavigateToNovel(intent.id))
 
             BrowseIntent.BackClicked -> sendEffect(BrowseEffect.NavigateBack)
 
-            BrowseIntent.TagDescriptionToggled ->
-                _state.update { it.copy(isTagDescriptionExpanded = !it.isTagDescriptionExpanded) }
+            is BrowseIntent.LinkClicked -> sendEffect(BrowseEffect.OpenUrl(intent.url))
+
+            BrowseIntent.DescriptionToggled ->
+                _state.update { it.copy(isDescriptionExpanded = !it.isDescriptionExpanded) }
+
+            else -> Unit
         }
     }
 
@@ -115,13 +135,16 @@ class BrowseViewModel(
         if (!_state.value.loadMoreFailed) loadNextPage()
     }
 
-    /** The tag header is optional: if it fails to load, the list still works. */
-    private fun loadTag() {
-        val id = tagId ?: return
+    /** The header is optional: if it fails to load, the list still works. */
+    private fun loadHeader() {
         viewModelScope.launch {
-            getTag(
-                id,
-            ).onSuccess { tag -> _state.update { it.copy(tagHeader = tag.toHeaderUIModel()) } }
+            val header = when (val scope = scope) {
+                BrowseScope.None -> return@launch
+                is BrowseScope.Tag -> getTag(scope.id).map { it.toHeaderUIModel() }
+                is BrowseScope.Producer -> getProducer(scope.id).map { it.toHeaderUIModel() }
+                is BrowseScope.Staff -> getStaff(scope.id).map { it.toHeaderUIModel() }
+            }
+            header.onSuccess { model -> _state.update { it.copy(header = model) } }
         }
     }
 
@@ -189,7 +212,7 @@ class BrowseViewModel(
     }
 
     /**
-     * Reloads the first page of the current filter (and the tag header) behind the pull-to-refresh
+     * Reloads the first page of the current filter (and the header) behind the pull-to-refresh
      * indicator. With no results to keep it is a plain reload; a failed refresh keeps them.
      */
     private fun refresh() {
@@ -197,7 +220,7 @@ class BrowseViewModel(
         if (current.isRefreshing || current.isLoading) return
         if (current.results.isEmpty()) return reload()
         loadJob?.cancel()
-        loadTag()
+        loadHeader()
         _state.update {
             it.copy(
                 isRefreshing = true,
@@ -263,14 +286,14 @@ class BrowseViewModel(
     }
 
     /**
-     * Searching switches the default Popularity sort to Relevance; clearing the search
-     * switches Relevance back to Popularity.
+     * Searching switches the scope's default sort to Relevance; clearing the search
+     * switches Relevance back to it.
      */
     private fun BrowseFilter.withQuery(rawQuery: String): BrowseFilter {
         val newQuery = rawQuery.trim()
         val newSort = when {
-            newQuery.isNotEmpty() && query.isEmpty() && sort == BrowseSort.Popularity -> BrowseSort.Relevance
-            newQuery.isEmpty() && sort == BrowseSort.Relevance -> BrowseSort.Popularity
+            newQuery.isNotEmpty() && query.isEmpty() && sort == scope.defaultSort -> BrowseSort.Relevance
+            newQuery.isEmpty() && sort == BrowseSort.Relevance -> scope.defaultSort
             else -> sort
         }
         return copy(query = newQuery, sort = newSort)

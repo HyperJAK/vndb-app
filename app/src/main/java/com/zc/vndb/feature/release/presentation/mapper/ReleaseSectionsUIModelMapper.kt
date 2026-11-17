@@ -45,6 +45,7 @@ fun ReleaseDetail.toLanguageUIModels(): ImmutableList<ReleaseLanguageUIModel> =
 fun ReleaseDetail.toProducerUIModels(): ImmutableList<ReleaseProducerUIModel> =
     producers.map { producer ->
         ReleaseProducerUIModel(
+            id = producer.id,
             name = UiText.StringValue(producer.name),
             roles = listOfNotNull(
                 UiText.StringResource(

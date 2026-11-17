@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.release.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -71,6 +73,7 @@ private val GalleryImageWidth = 120.dp
 private class ReleaseActions(
     val onLinkClick: (String) -> Unit,
     val onNovelClick: (String) -> Unit,
+    val onProducerClick: (String) -> Unit,
     val onNotesToggle: () -> Unit,
 )
 
@@ -84,6 +87,7 @@ fun ReleaseScreen(
         ReleaseActions(
             onLinkClick = { onIntent(ReleaseIntent.LinkClicked(it)) },
             onNovelClick = { onIntent(ReleaseIntent.NovelClicked(it)) },
+            onProducerClick = { onIntent(ReleaseIntent.ProducerClicked(it)) },
             onNotesToggle = { onIntent(ReleaseIntent.NotesToggled) },
         )
     }
@@ -184,7 +188,10 @@ private fun LazyListScope.releaseSections(
         item(key = "languages", contentType = "languages") { LanguagesSection(state.languages) }
     }
     if (state.producers.isNotEmpty()) {
-        item(key = "producers", contentType = "producers") { ProducersSection(state.producers) }
+        item(
+            key = "producers",
+            contentType = "producers",
+        ) { ProducersSection(state.producers, actions.onProducerClick) }
     }
     if (state.images.isNotEmpty()) {
         item(key = "images", contentType = "images") { ImagesSection(state.images) }
@@ -240,7 +247,10 @@ private fun LanguagesSection(languages: ImmutableList<ReleaseLanguageUIModel>) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ProducersSection(producers: ImmutableList<ReleaseProducerUIModel>) {
+private fun ProducersSection(
+    producers: ImmutableList<ReleaseProducerUIModel>,
+    onProducerClick: (String) -> Unit,
+) {
     SectionCardView(
         title = UiText.StringResource(StringResource.release_producers),
         modifier = Modifier.fillMaxWidth(),
@@ -253,7 +263,10 @@ private fun ProducersSection(producers: ImmutableList<ReleaseProducerUIModel>) {
                 Text(
                     text = producer.name.asString(),
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = VndbTheme.colors.accent,
+                    modifier = Modifier.clickable(
+                        role = Role.Button,
+                    ) { onProducerClick(producer.id) },
                 )
                 producer.roles.forEach { role -> TagChipView(label = role) }
             }
@@ -335,6 +348,7 @@ private val previewState = ReleaseState(
     ),
     producers = persistentListOf(
         ReleaseProducerUIModel(
+            "p1",
             UiText.StringValue("NITRO PLUS"),
             persistentListOf(UiText.StringValue("Developer")),
         ),

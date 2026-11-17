@@ -6,7 +6,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.AgeRating
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.BrowseNovelCardUIModel
-import com.zc.vndb.feature.browse.presentation.component.tagheader.model.TagHeaderUIModel
+import com.zc.vndb.feature.browse.presentation.component.scopeheader.model.ScopeHeaderUIModel
 import com.zc.vndb.feature.browse.presentation.model.GenreChipUIState
 import com.zc.vndb.feature.browse.presentation.model.SortOptionUIModel
 import kotlinx.collections.immutable.ImmutableList
@@ -15,9 +15,9 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class BrowseState(
     /** A tag page (opened from a VN) rather than the Browse tab: shows Back and the tag header. */
-    val isTagPage: Boolean = false,
-    val tagHeader: TagHeaderUIModel? = null,
-    val isTagDescriptionExpanded: Boolean = false,
+    val isScopedPage: Boolean = false,
+    val header: ScopeHeaderUIModel? = null,
+    val isDescriptionExpanded: Boolean = false,
     /** What is typed in the search field (applied after a short pause). */
     val query: String = "",
     val ageRating: AgeRating = AgeRating.AllAges,

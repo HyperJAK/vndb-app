@@ -52,7 +52,9 @@ object ReleaseSamples {
         notes = "Comes with [url=/x]4 trading cards[/url].",
         languages = languages,
         novels = novels,
-        producers = listOf(ReleaseProducer("NITRO PLUS", isDeveloper = true, isPublisher = true)),
+        producers = listOf(
+            ReleaseProducer("p1", "NITRO PLUS", isDeveloper = true, isPublisher = true),
+        ),
         images = images,
         links = links,
     )

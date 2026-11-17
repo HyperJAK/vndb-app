@@ -29,7 +29,7 @@ class SearchNovelsUseCase(private val repository: BrowseRepository) {
         val effectiveSort = if (sort == BrowseSort.Relevance &&
             trimmed.isEmpty()
         ) {
-            BrowseSort.Popularity
+            scope.defaultSort
         } else {
             sort
         }

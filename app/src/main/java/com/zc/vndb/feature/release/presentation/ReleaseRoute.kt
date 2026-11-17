@@ -18,6 +18,7 @@ fun ReleaseRoute(
     releaseId: String,
     onNavigateBack: () -> Unit,
     onOpenNovel: (String) -> Unit,
+    onOpenProducer: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ReleaseViewModel = koinViewModel { parametersOf(releaseId) },
 ) {
@@ -30,6 +31,8 @@ fun ReleaseRoute(
             ReleaseEffect.NavigateBack -> onNavigateBack()
 
             is ReleaseEffect.NavigateToNovel -> onOpenNovel(effect.id)
+
+            is ReleaseEffect.NavigateToProducer -> onOpenProducer(effect.id)
 
             is ReleaseEffect.OpenUrl -> uriHandler.openUri(effect.url)
 
