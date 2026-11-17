@@ -19,7 +19,6 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material.icons.outlined.Visibility
@@ -250,19 +249,11 @@ private fun LazyListScope.storageSection(state: SettingsState, actions: Settings
 
 private fun LazyListScope.aboutSection(state: SettingsState, actions: SettingsActions) {
     sectionHeader("about", UiText.StringResource(StringResource.settings_section_about))
-    item(key = "vndb", contentType = "link") {
-        LinkRow(
-            icon = Icons.Outlined.Storage,
-            title = UiText.StringResource(StringResource.settings_about_data),
-            body = UiText.StringResource(StringResource.settings_about_data_body),
-            onClick = { actions.onIntent(SettingsIntent.LinkClicked(SettingsViewModel.VNDB_URL)) },
-        )
-    }
     item(key = "source", contentType = "link") {
         LinkRow(
             icon = Icons.Outlined.Code,
             title = UiText.StringResource(StringResource.settings_about_source),
-            body = UiText.StringResource(StringResource.settings_about_source_body),
+            body = null,
             onClick = {
                 actions.onIntent(
                     SettingsIntent.LinkClicked(SettingsViewModel.SOURCE_URL),
@@ -270,12 +261,16 @@ private fun LazyListScope.aboutSection(state: SettingsState, actions: SettingsAc
             },
         )
     }
-    item(key = "privacy", contentType = "row") {
-        SettingRowView(
+    item(key = "privacy", contentType = "link") {
+        LinkRow(
             icon = Icons.Outlined.Lock,
             title = UiText.StringResource(StringResource.settings_about_privacy),
-            body = UiText.StringResource(StringResource.settings_about_privacy_body),
-            modifier = Modifier.fillMaxWidth(),
+            body = null,
+            onClick = {
+                actions.onIntent(
+                    SettingsIntent.LinkClicked(SettingsViewModel.PRIVACY_URL),
+                )
+            },
         )
     }
     logOutRow(state, actions)
@@ -312,7 +307,7 @@ private fun LazyListScope.logOutRow(state: SettingsState, actions: SettingsActio
 }
 
 @Composable
-private fun LinkRow(icon: ImageVector, title: UiText, body: UiText, onClick: () -> Unit) {
+private fun LinkRow(icon: ImageVector, title: UiText, body: UiText?, onClick: () -> Unit) {
     SettingRowView(
         icon = icon,
         title = title,

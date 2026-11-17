@@ -137,7 +137,11 @@ private fun DiscoverContent(
     val margin = if (isExpanded) VndbTheme.spacing.marginDesktop else VndbTheme.spacing.margin
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = margin, vertical = VndbTheme.spacing.lg),
+        contentPadding = PaddingValues(
+            start = margin,
+            end = margin,
+            bottom = VndbTheme.spacing.lg,
+        ),
         verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
     ) {
         item(key = "header", contentType = "header") {
