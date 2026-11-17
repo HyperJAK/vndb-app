@@ -1,4 +1,4 @@
-package com.zc.vndb.app.navigation
+package com.zc.vndb.common.ui.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet

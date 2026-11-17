@@ -24,7 +24,9 @@ com.zc.vndb/
 │   │   ├── AppModule.kt             # @Module(includes = [...]): CommonModule and every feature module
 │   │   └── AppKoin.kt               # @KoinApplication entry point for startKoin<AppKoin>
 │   └── navigation/
-│       └── AppNavigation.kt         # Navigation 3: @Serializable NavKeys, back stack, NavDisplay, NavigationSuiteScaffold
+│       ├── AppNavigation.kt         # NavigationSuiteScaffold + NavDisplay (the shell)
+│       ├── TopLevelDestination.kt   # The tabs: root key, icon, label
+│       └── AppEntryProvider.kt      # entryProvider: calls every feature's entry function, wiring features together
 │
 ├── common/                          # Shared code used across two or more features
 │   ├── data/
@@ -156,7 +158,11 @@ Rules are in `library-management`.
 |---|---|
 | Activity, `Application`, `startKoin<AppKoin>` | `app/` |
 | Aggregated Koin module (`@Module(includes = [...])`) and the `@KoinApplication` entry point | `app/di/AppModule.kt`, `app/di/AppKoin.kt` |
-| `@Serializable` `NavKey`s, back stack, `NavDisplay`, `NavigationSuiteScaffold` | `app/navigation/AppNavigation.kt` |
+| `NavigationSuiteScaffold`, `NavDisplay`, tab definitions | `app/navigation/AppNavigation.kt`, `app/navigation/TopLevelDestination.kt` |
+| Wiring features' entries and cross-feature navigation lambdas | `app/navigation/AppEntryProvider.kt` |
+| `Navigator`, `NavigationState`, `BottomSheetSceneStrategy`, `FullScreenNavKey` / `OverlayNavKey` | `common/ui/navigation/` |
+| A feature's `@Serializable` `NavKey`s | `feature/[name]/presentation/navigation/[Name]NavKey.kt` |
+| A feature's `Navigator.navigateTo[Name](...)` helpers and `EntryProviderScope<NavKey>.[name]Entry(...)` (and `[Name]NavActions` when a Route has more than ~4 navigation callbacks) | `feature/[name]/presentation/navigation/[Name]Navigation.kt` (`[Name]NavActions.kt`) |
 | Shared `HttpClient` factory, `Json` instance | `common/data/network/` |
 | `safeApiCall { }` (exception → `DomainError` mapping) | `common/data/util/SafeApiCall.kt` |
 | DTO used by 2+ features (query body, image, tag) | `common/data/dto/[Name]DTO.kt` |
@@ -168,6 +174,7 @@ Rules are in `library-management`.
 | Koin providers for types we don't own (`HttpClient`, `Json`, `Clock`, `DataStore`) | `common/di/CommonModule.kt` |
 | Theme, colors, typography | `common/ui/theme/` |
 | `ObserveAsEvents`, `@AdaptivePreviews` and other non-visual Compose helpers | `common/ui/util/` |
+| Navigation plumbing shared by all features (`Navigator`, `NavigationState`, marker interfaces, bottom-sheet scene) | `common/ui/navigation/` |
 | Presentation mapper for a `common/domain` type used by 2+ features (not tied to one component) | `common/ui/mapper/[Name]UIModelMapper.kt` |
 | `UiText` (all user-visible text in `presentation`) | `common/ui/text/UiText.kt` |
 | `StringResource` / `PluralResource` typealiases for `R.string` / `R.plurals` (the only way code names a string resource) | `common/ui/resource/ResourceTypes.kt` |
@@ -226,7 +233,8 @@ Each component folder follows §1.1 (`model/`, `mapper/`, nested `component/`).
 | `common` | — | ✅ | — | — |
 | `feature/[name]` | — | ✅ | ✅ (per layer rules in `architecture`) | `domain` only (models, use cases) |
 
-- Only `app/navigation/` knows `NavKey`s and the back stack. Features expose Routes with plain arguments and navigation callbacks; `AppNavigation.kt` connects them.
+- A feature owns its `NavKey`s and its entry extension function in `presentation/navigation/`. Everything that leaves the feature (open another feature's screen, go back) is a lambda parameter of that function. A feature never imports another feature's navigation package.
+- Only `app/navigation/AppEntryProvider.kt` knows every feature: it passes each entry function the lambdas that navigate to the other features' keys. The back stack and `NavDisplay` live in `app/navigation/` and `common/ui/navigation/`.
 - Only `app/di/AppModule.kt` lists all modules; feature modules never include each other.
 
 ---
@@ -270,7 +278,7 @@ class AppApplication : Application(), SingletonImageLoader.Factory {
 |---|---|
 | `com.zc.vndb.ui.screens.NovelDetailScreen` | `com.zc.vndb.feature.novel.presentation.NovelDetailScreen` |
 | `com.zc.vndb.utils.DateUtils` / `feature/novel/util/` | Formatting in `presentation/mapper/[Name]UIModelMapper.kt` |
-| `feature/novel/presentation/navigation/NovelDetailNavKey.kt` | `NovelDetailNavKey` in `app/navigation/AppNavigation.kt` |
+| `NovelDetailNavKey` declared in `app/navigation/AppNavigation.kt` | `feature/novel/presentation/navigation/NovelDetailNavKey.kt` |
 | `common/ui/LoadingView.kt` | `common/ui/component/loading/LoadingView.kt` |
 | `feature/novel/presentation/component/NovelHeaderView.kt` (flat file) | `feature/novel/presentation/component/novelheader/NovelHeaderView.kt` |
 | `NovelHeaderUIModel` in `presentation/model/` when only `NovelHeaderView` renders it | `component/novelheader/model/NovelHeaderUIModel.kt` |
@@ -313,5 +321,5 @@ The template project still has `MainActivity.kt` at the root and `ui/theme/`. Mo
 - [ ] No top-level packages or folders outside the tree.
 - [ ] `common/` code is used by 2+ features and imports no `feature`/`app` code.
 - [ ] Every component has its own `component/[name]/` subpackage. Its own models and mappers sit inside it, its sub-components nest under its `component/`, and it has no ViewModel, Route or State.
-- [ ] NavKeys and the back stack live only in `app/navigation/`.
+- [ ] NavKeys and entry extension functions live in the owning feature's `presentation/navigation/`; no feature imports another feature's navigation package; `AppEntryProvider.kt` does the wiring.
 - [ ] `app/di/AppModule.kt` includes every feature module.
