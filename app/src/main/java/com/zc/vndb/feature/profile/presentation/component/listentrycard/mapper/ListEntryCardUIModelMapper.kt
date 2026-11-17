@@ -21,53 +21,47 @@ private const val DAYS_SHOWN_AS_AGO = 30
 private const val VOTE_SCALE = 10.0
 
 /**
- * A list entry as a card. The label being shown ([shownLabelId]) and "Voted" (the vote is shown
- * instead) are left out of its labels.
+ * A list entry as a card with all its labels, whatever tab it is shown in: the status first,
+ * then Wishlist, Blacklist and the user's own labels. "Voted" is left out (the vote is shown).
  */
 fun ListEntry.toCardUIModel(
-    shownLabelId: Int,
     now: Instant,
     titleLanguage: TitleLanguage = TitleLanguage.Romanized,
-): ListEntryCardUIModel = toCardUIModel(
-    shownLabelId,
-    now,
-    primaryTitle(title, originalTitle, titleLanguage),
-)
+): ListEntryCardUIModel = toCardUIModel(now, primaryTitle(title, originalTitle, titleLanguage))
 
-private fun ListEntry.toCardUIModel(shownLabelId: Int, now: Instant, primaryTitle: UiText) =
-    ListEntryCardUIModel(
-        novelId = novelId,
-        title = primaryTitle,
-        coverUrl = cover?.thumbnailUrl ?: cover?.url,
-        isCoverSensitive = cover?.isSensitive ?: false,
-        voteLabel = vote?.let {
+private fun ListEntry.toCardUIModel(now: Instant, primaryTitle: UiText) = ListEntryCardUIModel(
+    novelId = novelId,
+    title = primaryTitle,
+    coverUrl = cover?.thumbnailUrl ?: cover?.url,
+    isCoverSensitive = cover?.isSensitive ?: false,
+    voteLabel = vote?.let {
+        UiText.StringResource(
+            StringResource.profile_my_vote,
+            listOf("%.1f".format(it / VOTE_SCALE)),
+        )
+    },
+    dates = listOfNotNull(
+        started?.let {
             UiText.StringResource(
-                StringResource.profile_my_vote,
-                listOf("%.1f".format(it / VOTE_SCALE)),
+                StringResource.profile_started,
+                listOf(it.toString()),
             )
         },
-        dates = listOfNotNull(
-            started?.let {
-                UiText.StringResource(
-                    StringResource.profile_started,
-                    listOf(it.toString()),
-                )
-            },
-            finished?.let {
-                UiText.StringResource(
-                    StringResource.profile_finished,
-                    listOf(it.toString()),
-                )
-            },
-        ).toImmutableList(),
-        labels = labels
-            .filter { it.id != shownLabelId && it.id != ListLabel.VOTED }
-            .sortedBy { it.id !in MyListEntry.STATUS_LABELS }
-            .map { EntryLabelUIModel(it.id, UiText.StringValue(it.name)) }
-            .toImmutableList(),
-        notes = notes?.let(UiText::StringValue),
-        updatedLabel = lastModified.toUpdatedLabel(now),
-    )
+        finished?.let {
+            UiText.StringResource(
+                StringResource.profile_finished,
+                listOf(it.toString()),
+            )
+        },
+    ).toImmutableList(),
+    labels = labels
+        .filter { it.id != ListLabel.VOTED }
+        .sortedWith(compareBy({ it.id !in MyListEntry.STATUS_LABELS }, { it.id }))
+        .map { EntryLabelUIModel(it.id, UiText.StringValue(it.name)) }
+        .toImmutableList(),
+    notes = notes?.let(UiText::StringValue),
+    updatedLabel = lastModified.toUpdatedLabel(now),
+)
 
 /** "Updated just now", "… 5 minutes / 3 hours / 12 days ago", then the date. */
 fun Instant.toUpdatedLabel(now: Instant): UiText {

@@ -73,19 +73,24 @@ class ProfilePresentationMapperTest {
     }
 
     @Test
-    fun `cards leave out the shown label and Voted, and show the vote`() {
+    fun `cards show every label but Voted, status first, and the vote`() {
         val card = ProfileSamples.entry(
             "v1",
             labels = listOf(
-                EntryLabel(ListLabel.PLAYING, "Playing"),
-                EntryLabel(ListLabel.VOTED, "Voted"),
                 EntryLabel(13, "Waiting"),
+                EntryLabel(ListLabel.WISHLIST, "Wishlist"),
+                EntryLabel(ListLabel.VOTED, "Voted"),
+                EntryLabel(ListLabel.PLAYING, "Playing"),
             ),
             vote = 85,
-        ).toCardUIModel(shownLabelId = ListLabel.PLAYING, now = now)
+        ).toCardUIModel(now = now)
 
         assertEquals(
-            listOf(EntryLabelUIModel(13, UiText.StringValue("Waiting"))),
+            listOf(
+                EntryLabelUIModel(ListLabel.PLAYING, UiText.StringValue("Playing")),
+                EntryLabelUIModel(ListLabel.WISHLIST, UiText.StringValue("Wishlist")),
+                EntryLabelUIModel(13, UiText.StringValue("Waiting")),
+            ),
             card.labels.toList(),
         )
         assertEquals(

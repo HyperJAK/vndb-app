@@ -303,11 +303,7 @@ class ProfileViewModel(
             it.copy(
                 entries = EntriesUIState(
                     items = loaded.entries.map { entry ->
-                        entry.toCardUIModel(
-                            labelId,
-                            now,
-                            titleLanguage,
-                        )
+                        entry.toCardUIModel(now, titleLanguage)
                     }.toImmutableList(),
                     hasMore = loaded.hasMore,
                 ),
