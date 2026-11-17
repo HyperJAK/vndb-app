@@ -1,0 +1,54 @@
+{
+  "more": true,
+  "results": [
+    {
+      "character": null,
+      "id": "q715",
+      "quote": "The food they were given had small bombs in it, which exploded from inside their stomachs.",
+      "vn": {
+        "alttitle": "うみねこのなく頃に",
+        "id": "v24",
+        "title": "Umineko no Naku Koro ni"
+      }
+    },
+    {
+      "character": {
+        "id": "c16497",
+        "name": "Okonogi Tetsurou"
+      },
+      "id": "q633",
+      "quote": "Without love, it cannot be seen.",
+      "vn": {
+        "alttitle": "うみねこのなく頃に散",
+        "id": "v2153",
+        "title": "Umineko no Naku Koro ni Chiru"
+      }
+    },
+    {
+      "character": {
+        "id": "c196",
+        "name": "Ushiromiya Battler"
+      },
+      "id": "q1867",
+      "quote": "It's useless, it's all useless!",
+      "vn": {
+        "alttitle": "うみねこのなく頃に",
+        "id": "v24",
+        "title": "Umineko no Naku Koro ni"
+      }
+    },
+    {
+      "character": {
+        "id": "c3929",
+        "name": "Shizuki Soujuurou"
+      },
+      "id": "q1798",
+      "quote": "Wait! It's wrong to kill people!",
+      "vn": {
+        "alttitle": "魔法使いの夜",
+        "id": "v777",
+        "title": "Mahoutsukai no Yoru"
+      }
+    }
+  ]
+}

@@ -11,6 +11,9 @@ import kotlinx.serialization.json.buildJsonArray
 
 private const val NOVEL_ID_PREFIX = "v"
 
+/** A release rated 18+ makes the whole visual novel adult, as in Browse. */
+private const val ADULT_MIN_AGE = 18
+
 /** Below this many votes a rating is too noisy to rank by. */
 private const val TOP_RATED_MIN_VOTES = 500
 
@@ -76,6 +79,29 @@ fun firstNovelFromQuery(number: Int) = QueryDTO(
     sort = "id",
     reverse = false,
     results = 1,
+    page = null,
+    count = null,
+)
+
+/**
+ * The best-scored quotes from visual novels with no 18+ release (the rule Browse's "All Ages"
+ * uses). VNDB's own `random` filter cannot be combined with other filters, so Discover picks one of
+ * these at random itself.
+ */
+fun topQuotesQuery(limit: Int) = QueryDTO(
+    filters = buildJsonArray {
+        add("vn")
+        add("=")
+        addJsonArray {
+            add("release")
+            add("!=")
+            add(filter("minage", ">=", JsonPrimitive(ADULT_MIN_AGE)))
+        }
+    },
+    fields = "quote, vn.id, vn.title, vn.alttitle, character.name",
+    sort = "score",
+    reverse = true,
+    results = limit,
     page = null,
     count = null,
 )

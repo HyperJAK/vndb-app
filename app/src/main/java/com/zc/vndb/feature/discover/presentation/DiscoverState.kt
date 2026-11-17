@@ -5,6 +5,7 @@ import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.discover.presentation.component.featurednovel.model.FeaturedNovelUIModel
 import com.zc.vndb.feature.discover.presentation.component.novelcard.model.NovelCardUIModel
+import com.zc.vndb.feature.discover.presentation.component.quoteoftheday.model.QuoteOfTheDayUIModel
 import com.zc.vndb.feature.discover.presentation.component.trendingrelease.model.TrendingReleaseUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -20,6 +21,8 @@ data class DiscoverState(
     val topRated: ImmutableList<NovelCardUIModel> = persistentListOf(),
     val trending: ImmutableList<TrendingReleaseUIModel> = persistentListOf(),
     val statsLabel: UiText? = null,
+    /** Left out when the quote request fails; it never makes the screen an error. */
+    val quote: QuoteOfTheDayUIModel? = null,
     /** The New & Trending languages from Settings, e.g. "English, Japanese". */
     val trendingLanguagesLabel: UiText? = null,
     val isRolling: Boolean = false,

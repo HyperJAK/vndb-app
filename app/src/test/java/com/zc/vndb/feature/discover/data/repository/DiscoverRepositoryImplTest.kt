@@ -109,4 +109,25 @@ class DiscoverRepositoryImplTest {
             repository.getTopRatedNovels(limit = 3).exceptionOrNull(),
         )
     }
+
+    @Test
+    fun `maps the quotes fixture`() = runTest {
+        api.body = fixture("quotes.json")
+
+        val quotes = repository.getTopQuotes(limit = 4).getOrThrow()
+
+        assertEquals(4, quotes.size)
+        assertEquals("q715", quotes.first().id)
+        assertEquals("v24", quotes.first().novelId)
+        assertEquals("うみねこのなく頃に", quotes.first().novelOriginalTitle)
+        assertNull(quotes.first().characterName)
+        assertEquals("Ushiromiya Battler", quotes[2].characterName)
+    }
+
+    @Test
+    fun `no quotes is an empty list, not an error`() = runTest {
+        api.body = """{"more":false,"results":[]}"""
+
+        assertEquals(emptyList(), repository.getTopQuotes(limit = 100).getOrThrow())
+    }
 }
