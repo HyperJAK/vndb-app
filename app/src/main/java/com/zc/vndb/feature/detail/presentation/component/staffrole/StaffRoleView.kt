@@ -44,7 +44,7 @@ fun StaffRoleView(
                 val text = person.note?.let { "${person.name} ($it)" } ?: person.name
                 Text(
                     text = if (index < role.people.lastIndex) "$text," else text,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.labelSmall,
                     color = VndbTheme.colors.accent,
                     modifier = Modifier.clickable(role = Role.Button) { onPersonClick(person.id) },
                 )

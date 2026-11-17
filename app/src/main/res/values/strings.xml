@@ -283,6 +283,7 @@
 
     <!-- Character -->
     <string name="character_share_chooser">Share character</string>
+    <string name="character_cv">CV:</string>
     <string name="character_age">Age:</string>
     <string name="character_birthday">Birthday:</string>
     <string name="character_blood_type">Blood type:</string>

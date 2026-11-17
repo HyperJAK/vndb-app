@@ -147,7 +147,13 @@ private fun LazyListScope.characterSections(
     item(
         key = "hero",
         contentType = "hero",
-    ) { CharacterHeroView(model = hero, modifier = Modifier.fillMaxWidth()) }
+    ) {
+        CharacterHeroView(
+            model = hero,
+            onVoiceActorClick = actions.onStaffClick,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
     if (state.aliases.isNotEmpty()) {
         item(key = "aliases", contentType = "aliases") { AliasesSection(state.aliases) }
     }
