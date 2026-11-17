@@ -29,7 +29,6 @@ import com.zc.vndb.feature.detail.presentation.component.detailhero.mapper.toHer
 import com.zc.vndb.feature.detail.presentation.component.editionrow.mapper.toRowUIModel
 import com.zc.vndb.feature.detail.presentation.component.mylist.mapper.toMyListCard
 import com.zc.vndb.feature.detail.presentation.component.relationcard.mapper.toCardUIModel
-import com.zc.vndb.feature.detail.presentation.component.scorecard.mapper.toScoreUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.mapper.toContentNotes
 import com.zc.vndb.feature.detail.presentation.component.taggroups.mapper.toHiddenTagsLabel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.mapper.toTagGroups
@@ -222,7 +221,6 @@ class DetailViewModel(
                         it.copy(
                             isLoading = false,
                             hero = loaded.toHeroUIModel(editions?.ageRange, settings.titleLanguage),
-                            score = loaded.toScoreUIModel(),
                             links = loaded.toLinks(),
                             alsoKnownAs = loaded.toAlsoKnownAs(),
                             contentNotes = loaded.toContentNotes(),

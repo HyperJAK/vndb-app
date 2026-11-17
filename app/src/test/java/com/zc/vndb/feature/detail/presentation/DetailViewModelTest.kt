@@ -107,7 +107,7 @@ class DetailViewModelTest {
         assertNull(state.error)
         assertEquals(UiText.StringValue("STEINS;GATE"), state.hero?.title)
         assertNull(state.hero?.ageLabel)
-        assertNotNull(state.score)
+        assertNotNull(state.hero?.scoreLabel)
         assertEquals("https://vndb.org/v2002", state.links.first().url)
         assertEquals(listOf("v17102"), state.relations.map { it.id })
         assertEquals(SectionState.Idle, state.editions)

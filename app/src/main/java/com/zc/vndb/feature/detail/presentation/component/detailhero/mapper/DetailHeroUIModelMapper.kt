@@ -8,6 +8,7 @@ import com.zc.vndb.common.ui.mapper.secondaryTitle
 import com.zc.vndb.common.ui.mapper.toIsoLabel
 import com.zc.vndb.common.ui.mapper.toLabel
 import com.zc.vndb.common.ui.mapper.toNameLabel
+import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.AgeRange
@@ -39,7 +40,6 @@ private fun NovelDetail.toHeroUIModel(
     originalTitle = secondaryTitle,
     coverUrl = cover?.url,
     isCoverSensitive = cover?.isSensitive ?: false,
-    ratingLabel = rating?.toRatingLabel(),
     developerLabel = developerNames.takeIf { it.isNotEmpty() }
         ?.let { UiText.StringValue(it.take(MAX_DEVELOPERS).joinToString(" / ")) },
     releasedLabel = releaseDate.toIsoLabel(),
@@ -53,6 +53,12 @@ private fun NovelDetail.toHeroUIModel(
                 listOf("%,d".format(it)),
             )
         },
+    scoreLabel = rating?.let {
+        UiText.StringResource(StringResource.detail_score_value, listOf(it.toRatingLabel()))
+    },
+    scoreVotesLabel = rating?.let {
+        UiText.StringPlural(PluralResource.detail_votes, voteCount, listOf("%,d".format(voteCount)))
+    },
     ageLabel = ageRange?.toLabel(),
     tags = tags
         .filter { it.category == TagCategory.Content && it.spoilerLevel == 0 }

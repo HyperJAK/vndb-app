@@ -261,11 +261,6 @@ private fun DiscoverHeader(isRolling: Boolean, onRollClick: () -> Unit) {
     Row(verticalAlignment = Alignment.Bottom) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = UiText.StringResource(StringResource.discover_overline).asString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = VndbTheme.colors.accent,
-            )
-            Text(
                 text = UiText.StringResource(StringResource.discover_title).asString(),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface,

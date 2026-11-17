@@ -15,11 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
-import com.zc.vndb.common.ui.component.ratingbadge.RatingBadgeView
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -31,7 +31,7 @@ import kotlinx.collections.immutable.persistentListOf
 private val CoverWidth = 128.dp
 private val MetaLabelWidth = 72.dp
 
-/** Cover with score, titles, top tags, age rating, and developer / release / length lines. */
+/** Cover, titles, top tags, age rating, and developer / release / length / score lines. */
 @Composable
 fun DetailHeroView(model: DetailHeroUIModel, modifier: Modifier = Modifier) {
     SectionCardView(modifier = modifier) {
@@ -45,14 +45,6 @@ fun DetailHeroView(model: DetailHeroUIModel, modifier: Modifier = Modifier) {
                         .fillMaxWidth()
                         .aspectRatio(VndbTheme.dimens.coverAspectRatio),
                 )
-                model.ratingLabel?.let { rating ->
-                    RatingBadgeView(
-                        label = rating,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(VndbTheme.spacing.xs),
-                    )
-                }
             }
             Column(
                 modifier = Modifier.weight(1f),
@@ -78,6 +70,36 @@ fun DetailHeroView(model: DetailHeroUIModel, modifier: Modifier = Modifier) {
         MetaLine(UiText.StringResource(StringResource.detail_dev), model.developerLabel)
         MetaLine(UiText.StringResource(StringResource.detail_released), model.releasedLabel)
         LengthLine(model)
+        ScoreLine(model)
+    }
+}
+
+/** "Score:  8.69 / 10 · 12,409 votes", the score in the score color. */
+@Composable
+private fun ScoreLine(model: DetailHeroUIModel) {
+    val score = model.scoreLabel ?: return
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = UiText.StringResource(StringResource.detail_score).asString(),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.width(MetaLabelWidth),
+        )
+        Text(
+            text = score.asString(),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            color = VndbTheme.colors.score,
+        )
+        model.scoreVotesLabel?.let { votes ->
+            Text(
+                text = " ${UiText.StringResource(
+                    StringResource.separator_dot,
+                ).asString()} ${votes.asString()}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
@@ -161,12 +183,13 @@ private fun DetailHeroViewPreview() {
                 originalTitle = UiText.StringValue("シュタインズ・ゲート"),
                 coverUrl = null,
                 isCoverSensitive = false,
-                ratingLabel = UiText.StringValue("9.02"),
                 developerLabel = UiText.StringValue("5pb. / Nitroplus"),
                 releasedLabel = UiText.StringValue("2009-10-15"),
                 lengthName = UiText.StringValue("Long"),
                 lengthValueLabel = UiText.StringValue("(44h)"),
-                lengthVotesLabel = UiText.StringValue("1,021 votes"),
+                lengthVotesLabel = UiText.StringValue("1,021 length votes"),
+                scoreLabel = UiText.StringValue("9.02 / 10"),
+                scoreVotesLabel = UiText.StringValue("17,205 votes"),
                 ageLabel = UiText.StringValue("All Ages / 15+"),
                 tags = persistentListOf(
                     UiText.StringValue("Sci-Fi"),

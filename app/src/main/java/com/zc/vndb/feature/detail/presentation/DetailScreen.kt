@@ -72,8 +72,6 @@ import com.zc.vndb.feature.detail.presentation.component.lazysection.LazySection
 import com.zc.vndb.feature.detail.presentation.component.mylist.MyListCardView
 import com.zc.vndb.feature.detail.presentation.component.quotecard.QuoteCardView
 import com.zc.vndb.feature.detail.presentation.component.relationcard.RelationCardView
-import com.zc.vndb.feature.detail.presentation.component.scorecard.ScoreCardView
-import com.zc.vndb.feature.detail.presentation.component.scorecard.model.ScoreUIModel
 import com.zc.vndb.feature.detail.presentation.component.screenshotgrid.ScreenshotGridView
 import com.zc.vndb.feature.detail.presentation.component.taggroups.TagGroupsView
 import com.zc.vndb.feature.detail.presentation.model.CastUIModel
@@ -243,12 +241,6 @@ private fun LazyListScope.header(
         key = "hero",
         contentType = "hero",
     ) { DetailHeroView(model = hero, modifier = Modifier.fillMaxWidth()) }
-    state.score?.let { score ->
-        item(
-            key = "score",
-            contentType = "score",
-        ) { ScoreCardView(model = score, modifier = Modifier.fillMaxWidth()) }
-    }
     state.myList?.let { myList ->
         item(key = "my-list", contentType = "my-list") {
             MyListCardView(
@@ -712,19 +704,13 @@ private val previewState = DetailState(
         originalTitle = UiText.StringValue("シュタインズ・ゲート"),
         coverUrl = null,
         isCoverSensitive = false,
-        ratingLabel = UiText.StringValue("9.02"),
         developerLabel = UiText.StringValue("5pb. / Nitroplus"),
         releasedLabel = UiText.StringValue("2009-10-15"),
         lengthName = UiText.StringValue("Long"),
         lengthValueLabel = UiText.StringValue("(44h)"),
-        lengthVotesLabel = UiText.StringValue("1,021 votes"),
+        lengthVotesLabel = UiText.StringValue("1,021 length votes"),
         ageLabel = UiText.StringValue("All Ages / 15+"),
         tags = persistentListOf(UiText.StringValue("Sci-Fi"), UiText.StringValue("Time Travel")),
-    ),
-    score = ScoreUIModel(
-        UiText.StringValue("9.02"),
-        UiText.StringValue("17,205 recorded votes"),
-        UiText.StringValue("Average 9.02"),
     ),
     links = persistentListOf(
         LinkUIModel(UiText.StringValue("vndb.org/v2002"), "https://vndb.org/v2002", isVndb = true),

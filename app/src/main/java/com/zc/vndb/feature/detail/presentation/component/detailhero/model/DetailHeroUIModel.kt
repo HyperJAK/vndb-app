@@ -11,15 +11,18 @@ data class DetailHeroUIModel(
     val originalTitle: UiText?,
     val coverUrl: String?,
     val isCoverSensitive: Boolean,
-    val ratingLabel: UiText?,
     val developerLabel: UiText?,
     val releasedLabel: UiText,
     /** Length category, shown as a pill: "Very Long". */
     val lengthName: UiText?,
     /** Average play time from votes, else the category's range: "(73h)", "(>50h)". */
     val lengthValueLabel: UiText?,
-    /** "90 votes", when the play time comes from votes. */
+    /** "90 length votes", when the play time comes from votes. */
     val lengthVotesLabel: UiText? = null,
+    /** "8.69 / 10" (Bayesian rating); null before the VN has a rating. */
+    val scoreLabel: UiText? = null,
+    /** "12,409 votes" behind the score. */
+    val scoreVotesLabel: UiText? = null,
     val ageLabel: UiText? = null,
     val tags: ImmutableList<UiText> = persistentListOf(),
 )

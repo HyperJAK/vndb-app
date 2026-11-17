@@ -23,7 +23,6 @@
     <string name="cd_navigate_back">Back</string>
 
     <!-- Discover -->
-    <string name="discover_overline">CURATED ARCHIVE</string>
     <string name="discover_title">Discover</string>
     <string name="discover_random_roll">Random Roll</string>
     <string name="discover_vn_of_the_week">VN OF THE WEEK</string>
@@ -89,12 +88,12 @@
     <string name="detail_age_min">%1$d+</string>
     <string name="detail_age_range_from_all">All Ages / %1$d+</string>
     <string name="detail_age_range">%1$d+ / %2$d+</string>
-    <string name="detail_score_out_of">/ 10 (Bayesian)</string>
+    <string name="detail_score">Score:</string>
+    <string name="detail_score_value">%1$s / 10</string>
     <plurals name="detail_votes">
-        <item quantity="one">%1$s recorded vote</item>
-        <item quantity="other">%1$s recorded votes</item>
+        <item quantity="one">%1$s vote</item>
+        <item quantity="other">%1$s votes</item>
     </plurals>
-    <string name="detail_average">Average %1$s</string>
     <string name="detail_spoiler_filter">SPOILER FILTER:</string>
     <string name="detail_spoiler_none">None (0)</string>
     <string name="detail_spoiler_minor">Minor (1)</string>
@@ -151,7 +150,7 @@
     <string name="detail_tab_with_count">%1$s %2$s</string>
     <string name="detail_length_value">(%1$s)</string>
     <string name="detail_hours">%1$sh</string>
-    <string name="detail_length_votes">%1$s votes</string>
+    <string name="detail_length_votes">%1$s length votes</string>
     <string name="length_name_very_short">Very Short</string>
     <string name="length_name_short">Short</string>
     <string name="length_name_medium">Medium</string>

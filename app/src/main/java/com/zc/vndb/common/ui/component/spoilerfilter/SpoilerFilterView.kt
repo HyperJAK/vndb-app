@@ -3,8 +3,9 @@ package com.zc.vndb.common.ui.component.spoilerfilter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -29,7 +30,11 @@ import com.zc.vndb.common.ui.util.AdaptivePreviews
 
 private val ShieldSize = 16.dp
 
-/** "SPOILER FILTER: None (0) | Minor (1) | Major (2)". */
+/**
+ * "SPOILER FILTER: None (0) | Minor (1) | Major (2)". The options stay together on one line and
+ * move under the label when the width runs out, so no label is ever squeezed or wrapped.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SpoilerFilterView(
     level: SpoilerLevel,
@@ -37,28 +42,42 @@ fun SpoilerFilterView(
     modifier: Modifier = Modifier,
 ) {
     SectionCardView(modifier = modifier) {
-        Row(
+        FlowRow(
             horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+            itemVerticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Shield,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(ShieldSize),
-            )
-            Text(
-                text = UiText.StringResource(StringResource.detail_spoiler_filter).asString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.weight(1f))
-            SpoilerLevel.entries.forEach { option ->
-                LevelOption(
-                    label = option.toLabel(),
-                    isSelected = option == level,
-                    onClick = { onLevelSelect(option) },
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Shield,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(ShieldSize),
                 )
+                Text(
+                    text = UiText.StringResource(StringResource.detail_spoiler_filter).asString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    softWrap = false,
+                )
+            }
+            // Fills the rest of the line (options on the right), or a line of its own when wrapped.
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs, Alignment.End),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f),
+            ) {
+                SpoilerLevel.entries.forEach { option ->
+                    LevelOption(
+                        label = option.toLabel(),
+                        isSelected = option == level,
+                        onClick = { onLevelSelect(option) },
+                    )
+                }
             }
         }
     }
@@ -69,6 +88,8 @@ private fun LevelOption(label: UiText, isSelected: Boolean, onClick: () -> Unit)
     Text(
         text = label.asString(),
         style = MaterialTheme.typography.labelMedium,
+        maxLines = 1,
+        softWrap = false,
         color = if (isSelected) VndbTheme.colors.onAccent else MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier
             .clip(MaterialTheme.shapes.small)

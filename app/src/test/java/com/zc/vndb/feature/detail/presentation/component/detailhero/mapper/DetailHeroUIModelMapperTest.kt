@@ -23,7 +23,13 @@ class DetailHeroUIModelMapperTest {
         )
             .toHeroUIModel(AgeRange(0, 15))
 
-        assertEquals(UiText.StringValue("9.02"), hero.ratingLabel)
+        assertEquals(
+            UiText.StringResource(
+                StringResource.detail_score_value,
+                listOf(UiText.StringValue("9.02")),
+            ),
+            hero.scoreLabel,
+        )
         assertEquals(UiText.StringValue("NITRO PLUS / MAGES."), hero.developerLabel)
         assertEquals(UiText.StringValue("2009-10-15"), hero.releasedLabel)
         assertEquals(UiText.StringResource(StringResource.length_name_long), hero.lengthName)

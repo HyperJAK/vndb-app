@@ -9,7 +9,6 @@ import com.zc.vndb.feature.detail.presentation.component.detailhero.model.Detail
 import com.zc.vndb.feature.detail.presentation.component.editionrow.model.EditionRowUIModel
 import com.zc.vndb.feature.detail.presentation.component.mylist.model.MyListCardUIModel
 import com.zc.vndb.feature.detail.presentation.component.relationcard.model.RelationCardUIModel
-import com.zc.vndb.feature.detail.presentation.component.scorecard.model.ScoreUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.ContentNoteUIModel
 import com.zc.vndb.feature.detail.presentation.component.taggroups.model.TagGroupUIModel
 import com.zc.vndb.feature.detail.presentation.model.AlsoKnownAsUIModel
@@ -39,7 +38,6 @@ data class DetailState(
     val tabs: ImmutableList<DetailTabUIModel> = persistentListOf(),
     // Overview (loaded on open)
     val hero: DetailHeroUIModel? = null,
-    val score: ScoreUIModel? = null,
     /** The signed-in user's entry; null for guests or until it loads. */
     val myList: MyListCardUIModel? = null,
     val links: ImmutableList<LinkUIModel> = persistentListOf(),
