@@ -392,7 +392,7 @@
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_body">Colors and wallpaper of the whole app</string>
     <string name="theme_title">Theme</string>
-    <string name="theme_original">Original</string>
+    <string name="theme_original">Classic</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_neon">Neon</string>

@@ -28,7 +28,7 @@ import com.zc.vndb.feature.theme.presentation.component.themepreview.ThemePrevie
 import com.zc.vndb.feature.theme.presentation.mapper.themeState
 
 private val MaxContentWidth = 640.dp
-private val MinPreviewWidth = 150.dp
+private val MinPreviewWidth = 100.dp
 
 @Composable
 fun ThemeScreen(state: ThemeState, onIntent: (ThemeIntent) -> Unit, modifier: Modifier = Modifier) {
