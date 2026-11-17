@@ -72,9 +72,9 @@
     <string name="browse_no_results">No visual novels match these filters.</string>
     <string name="browse_load_more_failed">Couldn\'t load more results.</string>
     <string name="length_very_short">&lt;2h</string>
-    <string name="length_short">2-10h</string>
-    <string name="length_medium">10-30h</string>
-    <string name="length_long">30-50h</string>
+    <string name="length_short">2–10h</string>
+    <string name="length_medium">10–30h</string>
+    <string name="length_long">30–50h</string>
     <string name="length_very_long">&gt;50h</string>
     <string name="credits_separator">%1$s / %2$s</string>
 
