@@ -19,7 +19,7 @@ fun releaseUrl(id: String): String = "https://vndb.org/$id"
 fun ReleaseDetail.toLinks(): ImmutableList<LinkUIModel> = buildList {
     add(
         LinkUIModel(
-            UiText.StringResource(StringResource.detail_vndb_link, listOf(id)),
+            UiText.StringResource(StringResource.detail_vndb_link),
             releaseUrl(id),
             isVndb = true,
         ),

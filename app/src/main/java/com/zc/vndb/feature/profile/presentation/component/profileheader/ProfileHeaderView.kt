@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
@@ -45,17 +44,11 @@ fun ProfileHeaderView(model: ProfileHeaderUIModel, modifier: Modifier = Modifier
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs)) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = model.username.asString(),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    TagChipView(label = model.userId)
-                }
+                Text(
+                    text = model.username.asString(),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
                 model.statsLabel?.let { stats ->
                     Text(
                         text = stats.asString(),
@@ -83,7 +76,6 @@ private fun ProfileHeaderViewPreview() {
             model = ProfileHeaderUIModel(
                 username = UiText.StringValue("Yorhel"),
                 initial = UiText.StringValue("Y"),
-                userId = UiText.StringValue("u2"),
                 statsLabel = UiText.StringValue("10 play-time votes · 171h logged"),
                 privateNote = UiText.StringValue("Private lists are hidden."),
             ),

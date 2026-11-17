@@ -45,7 +45,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
-import com.zc.vndb.common.ui.component.chip.TagChipView
 import com.zc.vndb.common.ui.component.coverimage.CoverImageView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
@@ -236,7 +235,6 @@ private fun LazyListScope.header(
     hero: DetailHeroUIModel,
     onIntent: (DetailIntent) -> Unit,
 ) {
-    item(key = "id", contentType = "id") { TagChipView(label = UiText.StringValue(state.novelId)) }
     item(
         key = "hero",
         contentType = "hero",
@@ -713,7 +711,7 @@ private val previewState = DetailState(
         tags = persistentListOf(UiText.StringValue("Sci-Fi"), UiText.StringValue("Time Travel")),
     ),
     links = persistentListOf(
-        LinkUIModel(UiText.StringValue("vndb.org/v2002"), "https://vndb.org/v2002", isVndb = true),
+        LinkUIModel(UiText.StringValue("vndb.org"), "https://vndb.org/v2002", isVndb = true),
     ),
     synopsis = UiText.StringValue(
         "Set in Akihabara in summer 2010, self-proclaimed mad scientist Rintaro Okabe…",

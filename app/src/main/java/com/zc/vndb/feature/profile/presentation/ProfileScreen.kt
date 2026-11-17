@@ -288,7 +288,6 @@ private val previewSignedIn = ProfileState(
     header = ProfileHeaderUIModel(
         username = UiText.StringValue("Yorhel"),
         initial = UiText.StringValue("Y"),
-        userId = UiText.StringValue("u2"),
         statsLabel = UiText.StringValue("10 play-time votes · 171h logged"),
     ),
     labels = persistentListOf(

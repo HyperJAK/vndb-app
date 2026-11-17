@@ -9,7 +9,6 @@ data class ProfileHeaderUIModel(
     val username: UiText,
     /** First letter of the username, for the avatar. */
     val initial: UiText,
-    val userId: UiText,
     /** "12 play-time votes · 170h logged", once known. */
     val statsLabel: UiText? = null,
     /** Shown when the token cannot read private lists. */

@@ -142,10 +142,6 @@ private fun LazyListScope.characterSections(
     actions: CharacterActions,
 ) {
     item(
-        key = "id",
-        contentType = "id",
-    ) { TagChipView(label = UiText.StringValue(state.characterId)) }
-    item(
         key = "hero",
         contentType = "hero",
     ) { CharacterHeroView(model = hero, modifier = Modifier.fillMaxWidth()) }

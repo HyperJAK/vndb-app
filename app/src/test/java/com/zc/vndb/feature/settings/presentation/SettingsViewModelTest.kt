@@ -182,7 +182,7 @@ class SettingsViewModelTest {
             collect(viewModel.state)
             advanceUntilIdle()
             assertEquals(
-                UiText.StringResource(StringResource.settings_signed_in_as, listOf("Yorhel", "u2")),
+                UiText.StringValue("Yorhel"),
                 viewModel.state.value.accountLabel,
             )
 

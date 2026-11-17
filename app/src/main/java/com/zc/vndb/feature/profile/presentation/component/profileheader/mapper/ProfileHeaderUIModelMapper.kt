@@ -14,7 +14,6 @@ private const val MINUTES_PER_HOUR = 60.0
 fun Session.toHeaderUIModel(user: UserProfile? = null) = ProfileHeaderUIModel(
     username = UiText.StringValue(username),
     initial = UiText.StringValue(username.firstOrNull()?.uppercase().orEmpty()),
-    userId = UiText.StringValue(userId),
     statsLabel = user?.takeIf { it.lengthVotes > 0 }?.toStatsLabel(),
     privateNote = if (canReadPrivateList) {
         null

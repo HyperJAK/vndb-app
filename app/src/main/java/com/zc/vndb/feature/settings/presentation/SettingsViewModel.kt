@@ -53,12 +53,7 @@ class SettingsViewModel(
         combine(_state, observeSettings(), observeSession()) { state, settings, session ->
             state.withSettings(settings).copy(
                 isSignedIn = session != null,
-                accountLabel = session?.let {
-                    UiText.StringResource(
-                        StringResource.settings_signed_in_as,
-                        listOf(it.username, it.userId),
-                    )
-                },
+                accountLabel = session?.let { UiText.StringValue(it.username) },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), _state.value)
 

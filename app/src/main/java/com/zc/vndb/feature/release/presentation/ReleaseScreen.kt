@@ -154,10 +154,6 @@ private fun LazyListScope.releaseSections(
     actions: ReleaseActions,
 ) {
     item(
-        key = "id",
-        contentType = "id",
-    ) { TagChipView(label = UiText.StringValue(state.releaseId)) }
-    item(
         key = "hero",
         contentType = "hero",
     ) { ReleaseHeroView(model = hero, modifier = Modifier.fillMaxWidth()) }
@@ -315,7 +311,7 @@ private val previewState = ReleaseState(
         ),
     ),
     links = persistentListOf(
-        LinkUIModel(UiText.StringValue("vndb.org/r7668"), "https://vndb.org/r7668", isVndb = true),
+        LinkUIModel(UiText.StringValue("vndb.org"), "https://vndb.org/r7668", isVndb = true),
     ),
     novels = persistentListOf(
         ReleaseNovelRowUIModel(

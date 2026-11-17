@@ -14,7 +14,7 @@ fun vndbUrl(id: String): String = "https://vndb.org/$id"
 fun NovelDetail.toLinks(): ImmutableList<LinkUIModel> = buildList {
     add(
         LinkUIModel(
-            UiText.StringResource(StringResource.detail_vndb_link, listOf(id)),
+            UiText.StringResource(StringResource.detail_vndb_link),
             vndbUrl(id),
             isVndb = true,
         ),
