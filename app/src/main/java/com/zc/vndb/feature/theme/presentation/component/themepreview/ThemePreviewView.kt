@@ -53,7 +53,7 @@ private const val NAV_DOT_COUNT = 3
 
 /**
  * A theme as a small phone: its wallpaper and real tokens drawn under that theme, so it can never
- * drift from the theme itself. Tapping selects it. Below the phone: the name and four swatches.
+ * drift from the theme itself. Tapping selects it. Below the phone: four swatches, then the name (which may wrap).
  */
 @Composable
 fun ThemePreviewView(model: ThemeUIModel, onSelect: () -> Unit, modifier: Modifier = Modifier) {
@@ -76,6 +76,17 @@ fun ThemePreviewView(model: ThemeUIModel, onSelect: () -> Unit, modifier: Modifi
                 .clip(shape)
                 .border(borderWidth, borderColor, shape),
         )
+        VndbTheme(model.spec) {
+            Row(
+                modifier = Modifier.clearAndSetSemantics {},
+                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+            ) {
+                Swatch(MaterialTheme.colorScheme.background)
+                Swatch(VndbTheme.colors.surfaceCard)
+                Swatch(VndbTheme.colors.accent)
+                Swatch(VndbTheme.colors.score)
+            }
+        }
         Row(
             modifier = Modifier.heightIn(min = CheckIconSize),
             verticalAlignment = Alignment.CenterVertically,
@@ -95,17 +106,6 @@ fun ThemePreviewView(model: ThemeUIModel, onSelect: () -> Unit, modifier: Modifi
                     ).asString(),
                     tint = VndbTheme.colors.accent,
                 )
-            }
-        }
-        VndbTheme(model.spec) {
-            Row(
-                modifier = Modifier.clearAndSetSemantics {},
-                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
-            ) {
-                Swatch(MaterialTheme.colorScheme.background)
-                Swatch(VndbTheme.colors.surfaceCard)
-                Swatch(VndbTheme.colors.accent)
-                Swatch(VndbTheme.colors.score)
             }
         }
     }

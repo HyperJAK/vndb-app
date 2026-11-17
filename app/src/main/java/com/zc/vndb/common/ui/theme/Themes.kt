@@ -3,6 +3,7 @@ package com.zc.vndb.common.ui.theme
 import com.zc.vndb.common.ui.resource.DrawableResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.common.ui.theme.schemes.HouseInFataMorganaScheme
 import com.zc.vndb.common.ui.theme.schemes.NocturneScheme
 import com.zc.vndb.common.ui.theme.schemes.SayaNoUtaScheme
 
@@ -34,4 +35,10 @@ val AngelicSerenadeThemeSpec = NocturneScheme.toSpec(
 val SayaNoUtaThemeSpec = SayaNoUtaScheme.toSpec(
     name = UiText.StringResource(StringResource.theme_saya_no_uta),
     wallpaper = WallpaperSpec(DrawableResource.wallpaper_saya_no_uta, WALLPAPER_ALPHA),
+)
+
+/** Warm near-black and gold over the House in Fata Morgana wallpaper. */
+val HouseInFataMorganaThemeSpec = HouseInFataMorganaScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_house_in_fata_morgana),
+    wallpaper = WallpaperSpec(DrawableResource.wallpaper_house_in_fata_morgana, WALLPAPER_ALPHA),
 )

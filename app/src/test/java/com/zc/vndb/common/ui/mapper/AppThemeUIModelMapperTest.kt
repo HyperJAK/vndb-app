@@ -2,6 +2,7 @@ package com.zc.vndb.common.ui.mapper
 
 import com.zc.vndb.common.domain.model.AppTheme
 import com.zc.vndb.common.ui.theme.AngelicSerenadeThemeSpec
+import com.zc.vndb.common.ui.theme.HouseInFataMorganaThemeSpec
 import com.zc.vndb.common.ui.theme.OriginalThemeSpec
 import com.zc.vndb.common.ui.theme.SayaNoUtaThemeSpec
 import kotlin.test.Test
@@ -17,6 +18,7 @@ class AppThemeUIModelMapperTest {
         assertEquals(OriginalThemeSpec, AppTheme.Original.toSpec())
         assertEquals(AngelicSerenadeThemeSpec, AppTheme.AngelicSerenade.toSpec())
         assertEquals(SayaNoUtaThemeSpec, AppTheme.SayaNoUta.toSpec())
+        assertEquals(HouseInFataMorganaThemeSpec, AppTheme.HouseInFataMorgana.toSpec())
     }
 
     @Test

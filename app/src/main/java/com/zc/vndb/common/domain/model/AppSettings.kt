@@ -56,4 +56,7 @@ enum class AppTheme {
 
     /** A wine-and-teal palette taken from the Saya no Uta wallpaper. */
     SayaNoUta,
+
+    /** A warm near-black and gold palette over the House in Fata Morgana wallpaper. */
+    HouseInFataMorgana,
 }

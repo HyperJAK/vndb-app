@@ -13,6 +13,7 @@ Rules: `.claude/skills/*`. Supersedes the "no theme picker" decision in [plan 09
 | **Original** | Nocturne VN, as before | none | yes |
 | **Angelic Serenade** | Same Nocturne VN palette | `wallpaper_angelic_serenade.webp` at 20% | no |
 | **Saya no Uta** | Own wine-and-teal palette, taken from the wallpaper's colors | `wallpaper_saya_no_uta.webp` at 20% | no |
+| **House in Fata Morgana** | Own palette: warm near-black `#171311` / `#261F1B`, gold `#C9A66B`, wine `#8C4A4A` | `wallpaper_house_in_fata_morgana.webp` at 20% | no |
 
 - **Saved:** the choice is stored in the `settings` DataStore and read at launch. An unknown or missing value falls back to Original.
 - **Dynamic:** changing the theme recomposes the whole app (every screen, the nav bar, the Theme screen itself). Dialogs and the bottom sheet pick it up too, because they read the same theme tokens.
