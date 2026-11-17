@@ -5,6 +5,7 @@ import com.zc.vndb.feature.discover.data.mapper.firstNovelFromQuery
 import com.zc.vndb.feature.discover.data.mapper.latestNovelQuery
 import com.zc.vndb.feature.discover.data.mapper.novelDetailsQuery
 import com.zc.vndb.feature.discover.data.mapper.recentReleasesQuery
+import com.zc.vndb.feature.discover.data.mapper.topQuotesQuery
 import com.zc.vndb.feature.discover.data.mapper.topRatedNovelsQuery
 import com.zc.vndb.feature.discover.data.remote.DiscoverApiStub.Companion.fixture
 import io.ktor.http.HttpMethod
@@ -117,5 +118,29 @@ class DiscoverServiceTest {
         assertEquals(HttpMethod.Get, api.requests.single().method)
         assertEquals("/kana/stats", api.requests.single().path)
         assertEquals(68053, stats.vn)
+    }
+
+    @Test
+    fun `top quotes posts a score-sorted all-ages query to quote`() = runTest {
+        api.body = fixture("quotes.json")
+
+        val page = api.service.queryQuotes(topQuotesQuery(limit = 100))
+
+        val request = api.requests.single()
+        assertEquals(HttpMethod.Post, request.method)
+        assertEquals("/kana/quote", request.path)
+        assertEquals(
+            json(
+                """
+                {"filters":["vn","=",["release","!=",["minage",">=",18]]],
+                 "fields":"quote, vn.id, vn.title, vn.alttitle, character.name",
+                 "sort":"score","reverse":true,"results":100}
+                """,
+            ),
+            request.body,
+        )
+        assertEquals("q715", page.results.first().id)
+        assertNull(page.results.first().character)
+        assertEquals("Okonogi Tetsurou", page.results[1].character?.name)
     }
 }

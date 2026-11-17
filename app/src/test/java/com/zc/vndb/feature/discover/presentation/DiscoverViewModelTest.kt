@@ -16,6 +16,7 @@ import com.zc.vndb.feature.discover.domain.model.DiscoverSamples
 import com.zc.vndb.feature.discover.domain.repository.FakeDiscoverRepository
 import com.zc.vndb.feature.discover.domain.usecase.GetDatabaseStatsUseCase
 import com.zc.vndb.feature.discover.domain.usecase.GetFeaturedNovelUseCase
+import com.zc.vndb.feature.discover.domain.usecase.GetQuoteOfTheDayUseCase
 import com.zc.vndb.feature.discover.domain.usecase.GetTopRatedNovelsUseCase
 import com.zc.vndb.feature.discover.domain.usecase.GetTrendingReleasesUseCase
 import com.zc.vndb.feature.discover.domain.usecase.RollRandomNovelUseCase
@@ -44,6 +45,7 @@ class DiscoverViewModelTest {
         stats = DatabaseStats(novelCount = 68053)
         latestNovelNumber = 10
         novelNumbers = listOf(10)
+        quotes = listOf(DiscoverSamples.quote(id = "q1", novelId = "v11"))
     }
 
     private val settings = FakeSettingsRepository()
@@ -56,6 +58,7 @@ class DiscoverViewModelTest {
         ),
         getTrendingReleases = GetTrendingReleasesUseCase(repository),
         getDatabaseStats = GetDatabaseStatsUseCase(repository),
+        getQuoteOfTheDay = GetQuoteOfTheDayUseCase(repository, Random(seed = 1)),
         rollRandomNovel = RollRandomNovelUseCase(repository, Random(seed = 1)),
         observeSettings = ObserveSettingsUseCase(settings),
     )
@@ -207,6 +210,66 @@ class DiscoverViewModelTest {
             assertFalse(isRefreshing)
             assertNull(error)
             assertEquals(10, topRated.size)
+        }
+    }
+
+    @Test
+    fun `the quote of the day loads once with the other sections`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val quote = assertNotNull(viewModel.state.value.quote)
+        assertEquals("People die when they are killed.", quote.text)
+        assertEquals("v11", quote.novelId)
+        assertEquals(1, repository.quoteCalls)
+    }
+
+    @Test
+    fun `a failed quote only hides its section`() = runTest {
+        repository.quoteError = DomainError.Server
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertNull(state.error)
+        assertNull(state.quote)
+        assertEquals(10, state.topRated.size)
+    }
+
+    @Test
+    fun `refreshing asks for a new quote`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        repository.quotes = listOf(DiscoverSamples.quote(id = "q2", text = "Live happily!"))
+
+        viewModel.onIntent(DiscoverIntent.Refresh)
+        advanceUntilIdle()
+
+        assertEquals("Live happily!", viewModel.state.value.quote?.text)
+        assertEquals(2, repository.quoteCalls)
+    }
+
+    @Test
+    fun `a refresh that cannot fetch a quote keeps the one on screen`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        repository.quoteError = DomainError.Network
+
+        viewModel.onIntent(DiscoverIntent.Refresh)
+        advanceUntilIdle()
+
+        assertEquals("People die when they are killed.", viewModel.state.value.quote?.text)
+    }
+
+    @Test
+    fun `tapping the quote opens its novel`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        val quote = assertNotNull(viewModel.state.value.quote)
+
+        viewModel.effect.test {
+            viewModel.onIntent(DiscoverIntent.NovelClicked(quote.novelId))
+            assertEquals(DiscoverEffect.NavigateToNovel("v11"), awaitItem())
         }
     }
 

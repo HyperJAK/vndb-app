@@ -9,11 +9,13 @@ import com.zc.vndb.common.ui.mapper.toLanguagesLabel
 import com.zc.vndb.feature.discover.domain.model.DiscoverNovel
 import com.zc.vndb.feature.discover.domain.usecase.GetDatabaseStatsUseCase
 import com.zc.vndb.feature.discover.domain.usecase.GetFeaturedNovelUseCase
+import com.zc.vndb.feature.discover.domain.usecase.GetQuoteOfTheDayUseCase
 import com.zc.vndb.feature.discover.domain.usecase.GetTopRatedNovelsUseCase
 import com.zc.vndb.feature.discover.domain.usecase.GetTrendingReleasesUseCase
 import com.zc.vndb.feature.discover.domain.usecase.RollRandomNovelUseCase
 import com.zc.vndb.feature.discover.presentation.component.featurednovel.mapper.toUIModel
 import com.zc.vndb.feature.discover.presentation.component.novelcard.mapper.toNovelCardUIModel
+import com.zc.vndb.feature.discover.presentation.component.quoteoftheday.mapper.toUIModel
 import com.zc.vndb.feature.discover.presentation.component.trendingrelease.mapper.toUIModel
 import com.zc.vndb.feature.discover.presentation.mapper.toCountLabel
 import kotlinx.collections.immutable.persistentListOf
@@ -37,6 +39,7 @@ class DiscoverViewModel(
     private val getFeaturedNovel: GetFeaturedNovelUseCase,
     private val getTrendingReleases: GetTrendingReleasesUseCase,
     private val getDatabaseStats: GetDatabaseStatsUseCase,
+    private val getQuoteOfTheDay: GetQuoteOfTheDayUseCase,
     private val rollRandomNovel: RollRandomNovelUseCase,
     private val observeSettings: ObserveSettingsUseCase,
 ) : ViewModel() {
@@ -98,9 +101,11 @@ class DiscoverViewModel(
         val settings = observeSettings.current()
         val trending = async { getTrendingReleases(settings.trendingLanguages) }
         val stats = async { getDatabaseStats() }
+        val quote = async { getQuoteOfTheDay() }
         val topRated = getTopRatedNovels().getOrElse { error ->
             trending.cancel()
             stats.cancel()
+            quote.cancel()
             if (isRefresh) {
                 _state.update { it.copy(isRefreshing = false) }
                 sendEffect(DiscoverEffect.ShowError(error.toErrorUIModel()))
@@ -113,6 +118,7 @@ class DiscoverViewModel(
                         topRated = persistentListOf(),
                         trending = persistentListOf(),
                         statsLabel = null,
+                        quote = null,
                     )
                 }
             }
@@ -121,6 +127,7 @@ class DiscoverViewModel(
         val featured = getFeaturedNovel(topRated).getOrNull()
         val trendingRows = trending.await().getOrNull().orEmpty()
         val statsLabel = stats.await().getOrNull()?.toCountLabel()
+        val newQuote = quote.await().getOrNull()?.toUIModel(settings.titleLanguage)
         _state.update {
             it.copy(
                 isLoading = false,
@@ -134,6 +141,8 @@ class DiscoverViewModel(
                 }.toImmutableList(),
                 trendingLanguagesLabel = settings.trendingLanguages.toLanguagesLabel(),
                 statsLabel = statsLabel,
+                // A refresh that fails to fetch a new quote keeps the one on screen.
+                quote = newQuote ?: it.quote.takeIf { isRefresh },
             )
         }
     }

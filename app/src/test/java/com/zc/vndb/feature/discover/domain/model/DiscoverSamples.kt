@@ -85,4 +85,19 @@ object DiscoverSamples {
             ),
         ),
     )
+
+    fun quote(
+        id: String = "q1",
+        text: String = "People die when they are killed.",
+        novelId: String = "v11",
+        novelTitle: String = "Fate/stay night",
+        characterName: String? = "Emiya Shirou",
+    ) = QuoteOfTheDay(
+        id = id,
+        text = text,
+        novelId = novelId,
+        novelTitle = novelTitle,
+        novelOriginalTitle = null,
+        characterName = characterName,
+    )
 }

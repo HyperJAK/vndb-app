@@ -3,6 +3,7 @@ package com.zc.vndb.feature.discover.domain.repository
 import com.zc.vndb.feature.discover.domain.model.DatabaseStats
 import com.zc.vndb.feature.discover.domain.model.DiscoverNovel
 import com.zc.vndb.feature.discover.domain.model.NovelDetails
+import com.zc.vndb.feature.discover.domain.model.QuoteOfTheDay
 import com.zc.vndb.feature.discover.domain.model.Release
 
 interface DiscoverRepository {
@@ -16,6 +17,9 @@ interface DiscoverRepository {
     suspend fun getRecentReleases(languageCodes: List<String>, limit: Int): Result<List<Release>>
 
     suspend fun getDatabaseStats(): Result<DatabaseStats>
+
+    /** The best-scored quotes from all-ages visual novels, best first. */
+    suspend fun getTopQuotes(limit: Int): Result<List<QuoteOfTheDay>>
 
     /** Numeric part of the highest visual novel id (e.g. 70123 for "v70123"). */
     suspend fun getLatestNovelNumber(): Result<Int>

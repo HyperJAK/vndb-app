@@ -53,6 +53,7 @@ import com.zc.vndb.feature.discover.presentation.component.featurednovel.Feature
 import com.zc.vndb.feature.discover.presentation.component.featurednovel.model.FeaturedNovelUIModel
 import com.zc.vndb.feature.discover.presentation.component.novelcard.NovelCardView
 import com.zc.vndb.feature.discover.presentation.component.novelcard.model.NovelCardUIModel
+import com.zc.vndb.feature.discover.presentation.component.quoteoftheday.QuoteOfTheDayView
 import com.zc.vndb.feature.discover.presentation.component.sectionheader.SectionHeaderView
 import com.zc.vndb.feature.discover.presentation.component.statsfooter.StatsFooterView
 import com.zc.vndb.feature.discover.presentation.component.trendingrelease.TrendingReleaseView
@@ -160,6 +161,15 @@ private fun DiscoverContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = VndbTheme.spacing.md),
+                )
+            }
+        }
+        state.quote?.let { quote ->
+            item(key = "quote", contentType = "quote") {
+                QuoteOfTheDayView(
+                    model = quote,
+                    onClick = { actions.onNovelClick(quote.novelId) },
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }

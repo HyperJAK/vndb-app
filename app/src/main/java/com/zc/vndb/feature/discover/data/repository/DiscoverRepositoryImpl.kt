@@ -10,11 +10,13 @@ import com.zc.vndb.feature.discover.data.mapper.recentReleasesQuery
 import com.zc.vndb.feature.discover.data.mapper.toDiscoverNovel
 import com.zc.vndb.feature.discover.data.mapper.toDomain
 import com.zc.vndb.feature.discover.data.mapper.toNovelDetails
+import com.zc.vndb.feature.discover.data.mapper.topQuotesQuery
 import com.zc.vndb.feature.discover.data.mapper.topRatedNovelsQuery
 import com.zc.vndb.feature.discover.data.remote.DiscoverService
 import com.zc.vndb.feature.discover.domain.model.DatabaseStats
 import com.zc.vndb.feature.discover.domain.model.DiscoverNovel
 import com.zc.vndb.feature.discover.domain.model.NovelDetails
+import com.zc.vndb.feature.discover.domain.model.QuoteOfTheDay
 import com.zc.vndb.feature.discover.domain.model.Release
 import com.zc.vndb.feature.discover.domain.repository.DiscoverRepository
 import org.koin.core.annotation.Single
@@ -44,6 +46,10 @@ class DiscoverRepositoryImpl(private val service: DiscoverService) : DiscoverRep
 
     override suspend fun getDatabaseStats(): Result<DatabaseStats> = safeApiCall {
         service.getStats().toDomain()
+    }
+
+    override suspend fun getTopQuotes(limit: Int): Result<List<QuoteOfTheDay>> = safeApiCall {
+        service.queryQuotes(topQuotesQuery(limit)).results.map { it.toDomain() }
     }
 
     override suspend fun getLatestNovelNumber(): Result<Int> = safeApiCall {
