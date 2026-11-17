@@ -25,6 +25,12 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.zc.vndb.common.ui.resource.StringResource
+import com.zc.vndb.common.ui.navigation.BottomSheetSceneStrategy
+import com.zc.vndb.common.ui.navigation.FullScreenNavKey
+import com.zc.vndb.common.ui.navigation.NavigationState
+import com.zc.vndb.common.ui.navigation.Navigator
+import com.zc.vndb.common.ui.navigation.OverlayNavKey
+import com.zc.vndb.common.ui.navigation.rememberNavigationState
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.feature.browse.domain.model.BrowseScope
@@ -48,9 +54,6 @@ data object BrowseNavKey : NavKey
 
 @Serializable
 data object ProfileNavKey : NavKey
-
-/** A destination shown full screen: the navigation bar (or rail) is hidden while it is on top. */
-interface FullScreenNavKey : NavKey
 
 /** Preferences and app info (pushed on the Profile tab). */
 @Serializable
@@ -83,12 +86,6 @@ data class StaffNavKey(val id: String) : FullScreenNavKey
 /** A character's page. */
 @Serializable
 data class CharacterNavKey(val id: String) : FullScreenNavKey
-
-/**
- * A destination shown over the page below it (a bottom sheet). The navigation bar keeps the
- * state of that page: shown over a tab, hidden over a full-screen page.
- */
-interface OverlayNavKey : NavKey
 
 /** The signed-in user's list entry for a VN, edited in a bottom sheet. */
 @Serializable

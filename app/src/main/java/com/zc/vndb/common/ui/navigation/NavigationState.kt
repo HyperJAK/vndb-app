@@ -1,4 +1,4 @@
-package com.zc.vndb.app.navigation
+package com.zc.vndb.common.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -53,6 +53,9 @@ class NavigationState(
     /** Saveable UI state of each tab's entries. */
     private val stateHolders: Map<NavKey, SaveableStateHolder>,
 ) {
+
+    /** The top-level (tab) routes: the keys of [backStacks]. */
+    val topLevelRoutes: Set<NavKey> = backStacks.keys.toSet()
 
     /** The selected tab. */
     var topLevelRoute: NavKey by topLevelRoute

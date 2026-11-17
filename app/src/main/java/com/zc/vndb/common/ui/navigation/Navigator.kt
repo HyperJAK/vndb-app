@@ -1,4 +1,4 @@
-package com.zc.vndb.app.navigation
+package com.zc.vndb.common.ui.navigation
 
 import androidx.navigation3.runtime.NavKey
 
@@ -10,7 +10,7 @@ class Navigator(private val state: NavigationState) {
 
     /** Switches to a tab, or pushes [route] onto the current tab's stack. */
     fun navigate(route: NavKey) {
-        if (route in state.backStacks.keys) {
+        if (route in state.topLevelRoutes) {
             if (route == state.topLevelRoute) return
             // Each tab opens at the top: its data is kept, its scroll position is not.
             state.resetTopScreenState(route)
