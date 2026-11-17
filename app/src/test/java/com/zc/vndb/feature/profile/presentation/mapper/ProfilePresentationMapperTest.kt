@@ -94,7 +94,7 @@ class ProfilePresentationMapperTest {
             card.labels.toList(),
         )
         assertEquals(
-            UiText.StringResource(StringResource.profile_my_vote, listOf("8.5")),
+            UiText.StringValue("8.5"),
             card.voteLabel,
         )
         assertEquals(

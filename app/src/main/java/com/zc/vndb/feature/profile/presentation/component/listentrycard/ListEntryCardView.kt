@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Notes
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material3.Icon
@@ -172,7 +173,17 @@ private fun EntryMeta(model: ListEntryCardUIModel) {
         verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
     ) {
         model.labels.forEach { EntryLabelChipView(it) }
-        model.voteLabel?.let { TagChipView(label = it, colors = VndbTheme.colors.spoilerMinor) }
+        model.voteLabel?.let { vote ->
+            TagChipView(
+                label = vote,
+                colors = VndbTheme.colors.spoilerMinor,
+                icon = Icons.Filled.Star,
+                contentDescription = UiText.StringResource(
+                    StringResource.cd_your_vote,
+                    listOf(vote),
+                ),
+            )
+        }
         model.dates.forEach { TagChipView(label = it) }
     }
 }
@@ -189,7 +200,7 @@ private fun ListEntryCardViewPreview() {
                 title = UiText.StringValue("Hello Lady!"),
                 coverUrl = null,
                 isCoverSensitive = false,
-                voteLabel = UiText.StringValue("My vote 8.5"),
+                voteLabel = UiText.StringValue("8.5"),
                 dates = persistentListOf(UiText.StringValue("Started 2024-10-15")),
                 labels = persistentListOf(
                     EntryLabelUIModel(ListLabel.PLAYING, UiText.StringValue("Playing")),

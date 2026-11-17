@@ -12,7 +12,7 @@ data class ListEntryCardUIModel(
     val title: UiText,
     val coverUrl: String?,
     val isCoverSensitive: Boolean,
-    /** "My vote 8.5". */
+    /** The vote alone, "8.5", shown after a star. */
     val voteLabel: UiText?,
     /** "Started 2024-10-15", "Finished 2024-11-02". */
     val dates: ImmutableList<UiText> = persistentListOf(),

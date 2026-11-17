@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Cancel
@@ -58,7 +59,8 @@ fun statusIcon(id: Int): ImageVector? = when (id) {
 
 /**
  * The colored mark for a label in a filter tab: the status icon for statuses, the icon for Wishlist and
- * Blacklist, a tag icon for your own labels, nothing for Voted and No label.
+ * Blacklist, a star for Voted (in the vote color), a tag icon for your own labels, nothing for
+ * No label.
  * Keeps its color whether or not the tab is selected.
  */
 @Composable
@@ -67,6 +69,12 @@ fun EntryLabelMark(id: Int, modifier: Modifier = Modifier) {
     val status = colors.statusColors(id)
     when {
         status != null -> statusIcon(id)?.let { MarkIcon(it, status.content, modifier) }
+
+        id == ListLabel.VOTED -> MarkIcon(
+            Icons.Filled.Star,
+            colors.spoilerMinor.content,
+            modifier,
+        )
 
         id == ListLabel.WISHLIST -> MarkIcon(
             Icons.Outlined.BookmarkBorder,

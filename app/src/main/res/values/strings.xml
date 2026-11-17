@@ -443,6 +443,7 @@
     <string name="list_editor_remove_title">Remove from your list?</string>
     <string name="list_editor_remove_body">Its status, labels, vote, dates, notes and releases are removed from your VNDB list.</string>
     <string name="cd_clear_date">Clear date</string>
+    <string name="cd_your_vote">Your vote: %1$s</string>
     <string name="list_editor_notes_counter">%1$d / %2$d</string>
     <string name="list_editor_dates_hint">VNDB can change a saved date but not remove it.</string>
     <string name="list_editor_error_date_range">Pick a date between 1970-01-01 and today.</string>

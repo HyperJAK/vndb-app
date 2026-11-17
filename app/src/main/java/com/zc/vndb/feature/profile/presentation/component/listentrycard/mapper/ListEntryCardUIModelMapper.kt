@@ -34,12 +34,7 @@ private fun ListEntry.toCardUIModel(now: Instant, primaryTitle: UiText) = ListEn
     title = primaryTitle,
     coverUrl = cover?.thumbnailUrl ?: cover?.url,
     isCoverSensitive = cover?.isSensitive ?: false,
-    voteLabel = vote?.let {
-        UiText.StringResource(
-            StringResource.profile_my_vote,
-            listOf("%.1f".format(it / VOTE_SCALE)),
-        )
-    },
+    voteLabel = vote?.let { UiText.StringValue("%.1f".format(it / VOTE_SCALE)) },
     dates = listOfNotNull(
         started?.let {
             UiText.StringResource(
