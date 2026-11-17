@@ -169,8 +169,8 @@ class SettingsViewModelTest {
         assertTrue(settings.current.value.spoilIfFinished)
 
         viewModel.effect.test {
-            viewModel.onIntent(SettingsIntent.LinkClicked(SettingsViewModel.VNDB_URL))
-            assertEquals(SettingsEffect.OpenUrl("https://vndb.org"), awaitItem())
+            viewModel.onIntent(SettingsIntent.LinkClicked(SettingsViewModel.PRIVACY_URL))
+            assertEquals(SettingsEffect.OpenUrl("https://vndb.org/d17#4"), awaitItem())
         }
     }
 

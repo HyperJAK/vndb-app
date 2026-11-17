@@ -5,6 +5,7 @@ import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 sealed interface CharacterIntent {
     data object Load : CharacterIntent
     data object Retry : CharacterIntent
+    data object Refresh : CharacterIntent
     data object BackClicked : CharacterIntent
     data object ShareClicked : CharacterIntent
     data object OpenInBrowserClicked : CharacterIntent

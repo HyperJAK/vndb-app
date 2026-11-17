@@ -142,4 +142,48 @@ class CharacterViewModelTest {
 
         assertEquals(SpoilerLevel.Minor, viewModel.state.value.spoilerLevel)
     }
+
+    @Test
+    fun `refresh reloads behind the pull indicator without a loading state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        repository.characters["c6487"] = CharacterSamples.profile(description = "Updated bio")
+
+        viewModel.state.test {
+            skipItems(1)
+            viewModel.onIntent(CharacterIntent.Refresh)
+            val refreshing = awaitItem()
+            assertTrue(refreshing.isRefreshing)
+            assertFalse(refreshing.isLoading)
+            assertEquals(UiText.StringValue("Researcher."), refreshing.description)
+
+            cancelAndConsumeRemainingEvents()
+        }
+        advanceUntilIdle()
+        with(viewModel.state.value) {
+            assertFalse(isRefreshing)
+            assertEquals(UiText.StringValue("Updated bio"), description)
+        }
+    }
+
+    @Test
+    fun `a failed refresh keeps the character and shows an error`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        repository.characters.remove("c6487")
+
+        viewModel.effect.test {
+            viewModel.onIntent(CharacterIntent.Refresh)
+            advanceUntilIdle()
+            assertEquals(
+                UiText.StringResource(StringResource.error_not_found),
+                (awaitItem() as CharacterEffect.ShowError).error.message,
+            )
+        }
+        with(viewModel.state.value) {
+            assertFalse(isRefreshing)
+            assertNull(error)
+            assertNotNull(hero)
+        }
+    }
 }

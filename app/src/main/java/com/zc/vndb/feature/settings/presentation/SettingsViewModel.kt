@@ -177,7 +177,7 @@ class SettingsViewModel(
     }
 
     companion object {
-        const val VNDB_URL = "https://vndb.org"
+        const val PRIVACY_URL = "https://vndb.org/d17#4"
         const val SOURCE_URL = "https://github.com/zahichemaly/vndb-app"
         private const val STOP_TIMEOUT_MILLIS = 5_000L
     }

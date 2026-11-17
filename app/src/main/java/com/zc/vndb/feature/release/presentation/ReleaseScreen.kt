@@ -21,11 +21,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -47,7 +48,9 @@ import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
 import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.linksrow.LinksRowView
 import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
+import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.component.skeleton.PageSkeletonView
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
@@ -82,6 +85,7 @@ fun ReleaseScreen(
     state: ReleaseState,
     onIntent: (ReleaseIntent) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val actions = remember(onIntent) {
         ReleaseActions(
@@ -94,6 +98,7 @@ fun ReleaseScreen(
     Scaffold(
         modifier = modifier,
         topBar = { ReleaseTopBar(onIntent) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Color.Transparent,
     ) { padding ->
         val contentModifier = Modifier
@@ -106,22 +111,29 @@ fun ReleaseScreen(
                 modifier = contentModifier,
             )
 
-            state.hero == null -> Box(contentModifier, contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = VndbTheme.colors.accent)
-            }
+            state.hero == null -> PageSkeletonView(
+                modifier = contentModifier,
+                maxWidth = MaxContentWidth,
+            )
 
-            else -> Box(contentModifier, contentAlignment = Alignment.TopCenter) {
-                LazyColumn(
-                    modifier = Modifier
-                        .widthIn(max = MaxContentWidth)
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        horizontal = VndbTheme.spacing.margin,
-                        vertical = VndbTheme.spacing.sm,
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
-                ) {
-                    releaseSections(state, state.hero, actions)
+            else -> PullToRefreshView(
+                isRefreshing = state.isRefreshing,
+                onRefresh = { onIntent(ReleaseIntent.Refresh) },
+                modifier = contentModifier,
+            ) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .widthIn(max = MaxContentWidth)
+                            .fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            horizontal = VndbTheme.spacing.margin,
+                            vertical = VndbTheme.spacing.sm,
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
+                    ) {
+                        releaseSections(state, state.hero, actions)
+                    }
                 }
             }
         }

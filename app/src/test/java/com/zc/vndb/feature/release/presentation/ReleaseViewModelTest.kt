@@ -91,4 +91,45 @@ class ReleaseViewModelTest {
             assertEquals(ReleaseEffect.NavigateToNovel("v2002"), awaitItem())
         }
     }
+
+    @Test
+    fun `refresh reloads behind the pull indicator without a loading state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.state.test {
+            skipItems(1)
+            viewModel.onIntent(ReleaseIntent.Refresh)
+            val refreshing = awaitItem()
+            assertTrue(refreshing.isRefreshing)
+            assertFalse(refreshing.isLoading)
+            assertNotNull(refreshing.hero)
+
+            cancelAndConsumeRemainingEvents()
+        }
+        advanceUntilIdle()
+        assertFalse(viewModel.state.value.isRefreshing)
+        assertNotNull(viewModel.state.value.hero)
+    }
+
+    @Test
+    fun `a failed refresh keeps the release and shows an error`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        repository.releases.remove("r7668")
+
+        viewModel.effect.test {
+            viewModel.onIntent(ReleaseIntent.Refresh)
+            advanceUntilIdle()
+            assertEquals(
+                UiText.StringResource(StringResource.error_not_found),
+                (awaitItem() as ReleaseEffect.ShowError).error.message,
+            )
+        }
+        with(viewModel.state.value) {
+            assertFalse(isRefreshing)
+            assertNull(error)
+            assertNotNull(hero)
+        }
+    }
 }

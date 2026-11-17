@@ -14,6 +14,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class CharacterState(
     val characterId: String = "",
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: ErrorUIModel? = null,
     val hero: CharacterHeroUIModel? = null,
     val aliases: ImmutableList<UiText> = persistentListOf(),

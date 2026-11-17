@@ -16,6 +16,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class ReleaseState(
     val releaseId: String = "",
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: ErrorUIModel? = null,
     val hero: ReleaseHeroUIModel? = null,
     val links: ImmutableList<LinkUIModel> = persistentListOf(),

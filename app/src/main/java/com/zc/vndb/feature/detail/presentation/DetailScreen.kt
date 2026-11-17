@@ -53,6 +53,7 @@ import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
 import com.zc.vndb.common.ui.component.linksrow.LinksRowView
 import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.component.skeleton.PageSkeletonView
 import com.zc.vndb.common.ui.component.spoilerfilter.SpoilerFilterView
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
@@ -140,9 +141,10 @@ fun DetailScreen(
                 modifier = contentModifier,
             )
 
-            state.hero == null -> Box(contentModifier, contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = VndbTheme.colors.accent)
-            }
+            state.hero == null -> PageSkeletonView(
+                modifier = contentModifier,
+                maxWidth = MaxContentWidth,
+            )
 
             else -> DetailContent(state, actions, contentModifier)
         }

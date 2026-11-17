@@ -52,6 +52,7 @@ import com.zc.vndb.feature.profile.presentation.component.listentrycard.model.Li
 import com.zc.vndb.feature.profile.presentation.component.listsortmenu.ListSortMenuView
 import com.zc.vndb.feature.profile.presentation.component.profileheader.ProfileHeaderView
 import com.zc.vndb.feature.profile.presentation.component.profileheader.model.ProfileHeaderUIModel
+import com.zc.vndb.feature.profile.presentation.component.profileskeleton.ProfileSkeletonView
 import com.zc.vndb.feature.profile.presentation.model.EntriesUIState
 import com.zc.vndb.feature.profile.presentation.model.LabelChipUIModel
 import kotlinx.collections.immutable.ImmutableList
@@ -90,8 +91,17 @@ fun ProfileScreen(
             .padding(padding)
             .fillMaxSize()
         when {
-            !state.isSessionKnown -> Box(contentModifier, contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = VndbTheme.colors.accent)
+            !state.isSessionKnown -> Box(contentModifier, contentAlignment = Alignment.TopCenter) {
+                ProfileSkeletonView(
+                    modifier = Modifier
+                        .widthIn(max = MaxContentWidth)
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = VndbTheme.spacing.margin,
+                            vertical = VndbTheme.spacing.sm,
+                        ),
+                    showHeader = true,
+                )
             }
 
             !state.isSignedIn -> Box(contentModifier, contentAlignment = Alignment.Center) {
@@ -133,8 +143,8 @@ private fun SignedInContent(state: ProfileState, onIntent: (ProfileIntent) -> Un
             when {
                 state.isLoading -> item(
                     key = "loading",
-                    contentType = "progress",
-                ) { CenteredProgress() }
+                    contentType = "skeleton",
+                ) { ProfileSkeletonView(modifier = Modifier.fillMaxWidth()) }
 
                 state.error != null -> item(key = "error", contentType = "error") {
                     ErrorView(model = state.error, onRetry = { onIntent(ProfileIntent.Retry) })
@@ -193,8 +203,8 @@ private fun LazyListScope.entries(
     when {
         entries.isLoading -> item(
             key = "entries-loading",
-            contentType = "progress",
-        ) { CenteredProgress() }
+            contentType = "skeleton",
+        ) { ProfileSkeletonView(modifier = Modifier.fillMaxWidth()) }
 
         entries.error != null -> item(key = "entries-error", contentType = "error") {
             ErrorView(model = entries.error, onRetry = { onIntent(ProfileIntent.EntriesRetried) })
