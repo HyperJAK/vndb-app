@@ -11,7 +11,8 @@ Rules: `.claude/skills/*`. Supersedes the "no theme picker" decision in [plan 09
 | Theme | Colors | Wallpaper | Default |
 |---|---|---|---|
 | **Original** | Nocturne VN, as before | none | yes |
-| **Angelic Serenade** | Same Nocturne VN palette | `wallpaper_default.webp` at 20% | no |
+| **Angelic Serenade** | Same Nocturne VN palette | `wallpaper_angelic_serenade.webp` at 20% | no |
+| **Saya no Uta** | Own wine-and-teal palette, taken from the wallpaper's colors | `wallpaper_saya_no_uta.webp` at 20% | no |
 
 - **Saved:** the choice is stored in the `settings` DataStore and read at launch. An unknown or missing value falls back to Original.
 - **Dynamic:** changing the theme recomposes the whole app (every screen, the nav bar, the Theme screen itself). Dialogs and the bottom sheet pick it up too, because they read the same theme tokens.
@@ -73,6 +74,16 @@ Below it: the theme name and a check when selected. Cards sit in an adaptive gri
 
 **Docs**
 - Update plan 09 (theme picker now exists, see this plan), the `structure` skill's `common/ui/theme` and `mapper` lines, and add the Angelic Serenade palette notes to `DESIGN.md` only once a theme has its own colors.
+
+## Adding a theme
+A theme is a name, a color scheme and an optional wallpaper. Color schemes live one per file in `common/ui/theme/schemes/`; a theme may reuse an existing scheme (Original and Angelic Serenade both use Nocturne).
+1. **Scheme** (only if the theme has new colors): copy `schemes/SayaNoUtaScheme.kt`, rename it, and set every Material role and every `VndbColors` token. `VndbColors` has no defaults, so a missing token is a compile error, not a silent inherit. Contrast to check: the accent against the card and background colors (>= 4.5:1), `onAccent` on the accent, cream/body text on the wallpaper wash.
+2. **Wallpaper** (optional): 1080 x 2400 WebP in `res/drawable-nodpi/wallpaper_<name>.webp` (`cwebp -q 80`).
+3. **Strings:** `theme_<name>` in `strings.xml`.
+4. **Spec:** one entry in `common/ui/theme/Themes.kt`: `val <Name>ThemeSpec = <Scheme>.toSpec(name, wallpaper)`.
+5. **Enum and mapper:** add the entry to `AppTheme` (domain) and one branch to `AppTheme.toSpec()` (`common/ui/mapper/AppThemeUIModelMapper.kt`). The `when` is exhaustive, so the build fails until this is done.
+
+Nothing else changes: the Theme screen lists `AppTheme.entries`, the Settings row, persistence (an unknown stored value falls back to Original) and the root all read from the spec. The mapper test checks every theme has a unique name and look, and a wallpaper unless it is Original.
 
 ## 5. Tests
 - `SettingsLocalDataSourceTest`: theme round-trip, default is Original, an unknown stored value falls back to Original.

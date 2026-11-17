@@ -53,4 +53,7 @@ enum class AppTheme {
 
     /** The Nocturne VN palette over the Angelic Serenade wallpaper. */
     AngelicSerenade,
+
+    /** A wine-and-teal palette taken from the Saya no Uta wallpaper. */
+    SayaNoUta,
 }
