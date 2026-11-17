@@ -65,6 +65,7 @@ import com.zc.vndb.feature.detail.presentation.component.charactercard.Character
 import com.zc.vndb.feature.detail.presentation.component.contenttoggles.ContentTogglesView
 import com.zc.vndb.feature.detail.presentation.component.detailhero.DetailHeroView
 import com.zc.vndb.feature.detail.presentation.component.detailhero.model.DetailHeroUIModel
+import com.zc.vndb.feature.detail.presentation.component.detailhero.model.HeroDeveloperUIModel
 import com.zc.vndb.feature.detail.presentation.component.detailtabs.DetailTabRowView
 import com.zc.vndb.feature.detail.presentation.component.editionrow.EditionRowView
 import com.zc.vndb.feature.detail.presentation.component.imageviewer.ImageViewerView
@@ -102,6 +103,7 @@ private class DetailActions(
     val onRelationClick: (String) -> Unit,
     val onCharacterClick: (String) -> Unit,
     val onTagClick: (String) -> Unit,
+    val onDeveloperClick: (String) -> Unit,
     val onEditionClick: (String) -> Unit,
     val onTabSelect: (DetailTab) -> Unit,
     val onFilterToggle: (ContentFilter) -> Unit,
@@ -173,7 +175,7 @@ private fun DetailContent(
             ),
             verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
         ) {
-            header(state, hero, actions.onIntent)
+            header(state, hero, actions.onIntent, actions.onDeveloperClick)
             stickyHeader(key = "tabs", contentType = "tabs") {
                 DetailTabRowView(
                     tabs = state.tabs,
@@ -199,6 +201,7 @@ private fun detailActions(onIntent: (DetailIntent) -> Unit) = DetailActions(
     onRelationClick = { onIntent(DetailIntent.RelationClicked(it)) },
     onCharacterClick = { onIntent(DetailIntent.CharacterClicked(it)) },
     onTagClick = { onIntent(DetailIntent.TagClicked(it)) },
+    onDeveloperClick = { onIntent(DetailIntent.DeveloperClicked(it)) },
     onEditionClick = { onIntent(DetailIntent.EditionClicked(it)) },
     onTabSelect = { onIntent(DetailIntent.TabSelected(it)) },
     onFilterToggle = { onIntent(DetailIntent.ContentFilterToggled(it)) },
@@ -235,11 +238,18 @@ private fun LazyListScope.header(
     state: DetailState,
     hero: DetailHeroUIModel,
     onIntent: (DetailIntent) -> Unit,
+    onDeveloperClick: (String) -> Unit,
 ) {
     item(
         key = "hero",
         contentType = "hero",
-    ) { DetailHeroView(model = hero, modifier = Modifier.fillMaxWidth()) }
+    ) {
+        DetailHeroView(
+            model = hero,
+            onDeveloperClick = onDeveloperClick,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
     state.myList?.let { myList ->
         item(key = "my-list", contentType = "my-list") {
             MyListCardView(
@@ -703,7 +713,10 @@ private val previewState = DetailState(
         originalTitle = UiText.StringValue("シュタインズ・ゲート"),
         coverUrl = null,
         isCoverSensitive = false,
-        developerLabel = UiText.StringValue("5pb. / Nitroplus"),
+        developers = persistentListOf(
+            HeroDeveloperUIModel(id = "p1", name = "5pb."),
+            HeroDeveloperUIModel(id = null, name = "Nitroplus"),
+        ),
         releasedLabel = UiText.StringValue("2009-10-15"),
         lengthName = UiText.StringValue("Long"),
         lengthValueLabel = UiText.StringValue("(44h)"),

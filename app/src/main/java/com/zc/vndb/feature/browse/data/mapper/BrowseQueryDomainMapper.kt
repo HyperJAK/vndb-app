@@ -3,6 +3,7 @@ package com.zc.vndb.feature.browse.data.mapper
 import com.zc.vndb.common.data.dto.QueryDTO
 import com.zc.vndb.feature.browse.domain.model.AgeRating
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
+import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -43,7 +44,15 @@ private fun BrowseFilter.toFilters(): JsonElement {
                 predicate("tag", "=", JsonPrimitive(it.tagId)),
             )
         }
-        tagId?.let { add(predicate("tag", "=", JsonPrimitive(it))) }
+        when (val scope = scope) {
+            BrowseScope.None -> Unit
+
+            is BrowseScope.Tag -> add(predicate("tag", "=", JsonPrimitive(scope.id)))
+
+            is BrowseScope.Producer -> add(
+                predicate("developer", "=", predicate("id", "=", JsonPrimitive(scope.id))),
+            )
+        }
     }
     // No condition at all ("Both" ages, nothing else) is an empty list: VNDB rejects ["and"].
     return when (predicates.size) {
@@ -81,6 +90,17 @@ private fun predicate(name: String, operator: String, value: JsonElement): JsonA
 fun tagQuery(id: String) = QueryDTO(
     filters = predicate("id", "=", JsonPrimitive(id)),
     fields = "name, aliases, description, category, vn_count",
+    sort = null,
+    reverse = null,
+    results = 1,
+    page = null,
+    count = null,
+)
+
+/** One producer by id, for the producer page header. */
+fun producerQuery(id: String) = QueryDTO(
+    filters = predicate("id", "=", JsonPrimitive(id)),
+    fields = "name, original, aliases, lang, type, description",
     sort = null,
     reverse = null,
     results = 1,

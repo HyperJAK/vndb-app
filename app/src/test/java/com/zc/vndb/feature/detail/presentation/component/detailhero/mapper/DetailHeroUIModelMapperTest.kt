@@ -5,6 +5,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.detail.domain.model.AgeRange
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.novel
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.tag
+import com.zc.vndb.feature.detail.presentation.component.detailhero.model.HeroDeveloperUIModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -30,7 +31,13 @@ class DetailHeroUIModelMapperTest {
             ),
             hero.scoreLabel,
         )
-        assertEquals(UiText.StringValue("NITRO PLUS / MAGES."), hero.developerLabel)
+        assertEquals(
+            listOf(
+                HeroDeveloperUIModel(id = "p1", name = "NITRO PLUS"),
+                HeroDeveloperUIModel(id = null, name = "MAGES."),
+            ),
+            hero.developers,
+        )
         assertEquals(UiText.StringValue("2009-10-15"), hero.releasedLabel)
         assertEquals(UiText.StringResource(StringResource.length_name_long), hero.lengthName)
         assertEquals(

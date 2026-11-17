@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.detail.presentation.component.detailhero
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,6 +28,8 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.detail.presentation.component.detailhero.model.DetailHeroUIModel
+import com.zc.vndb.feature.detail.presentation.component.detailhero.model.HeroDeveloperUIModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 private val CoverWidth = 128.dp
@@ -33,7 +37,11 @@ private val MetaLabelWidth = 72.dp
 
 /** Cover, titles, top tags, age rating, and developer / release / length / score lines. */
 @Composable
-fun DetailHeroView(model: DetailHeroUIModel, modifier: Modifier = Modifier) {
+fun DetailHeroView(
+    model: DetailHeroUIModel,
+    onDeveloperClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     SectionCardView(modifier = modifier) {
         Row(horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md)) {
             Box(modifier = Modifier.width(CoverWidth)) {
@@ -67,10 +75,57 @@ fun DetailHeroView(model: DetailHeroUIModel, modifier: Modifier = Modifier) {
                 HeroChips(model)
             }
         }
-        MetaLine(UiText.StringResource(StringResource.detail_dev), model.developerLabel)
+        DeveloperLine(model.developers, onDeveloperClick)
         MetaLine(UiText.StringResource(StringResource.detail_released), model.releasedLabel)
         LengthLine(model)
         ScoreLine(model)
+    }
+}
+
+/** "Developer:  5pb. / Nitroplus"; a name with a known producer id opens that producer. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DeveloperLine(
+    developers: ImmutableList<HeroDeveloperUIModel>,
+    onDeveloperClick: (String) -> Unit,
+) {
+    if (developers.isEmpty()) return
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = UiText.StringResource(StringResource.detail_dev).asString(),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.width(MetaLabelWidth),
+        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            developers.forEachIndexed { index, developer ->
+                val id = developer.id
+                Text(
+                    text = developer.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (id == null) {
+                        MaterialTheme.colorScheme.onSurface
+                    } else {
+                        VndbTheme.colors.accent
+                    },
+                    modifier = if (id != null) {
+                        Modifier.clickable(role = Role.Button) { onDeveloperClick(id) }
+                    } else {
+                        Modifier
+                    },
+                )
+                if (index < developers.lastIndex) {
+                    Text(
+                        text = UiText.StringResource(StringResource.separator_slash).asString(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -183,7 +238,10 @@ private fun DetailHeroViewPreview() {
                 originalTitle = UiText.StringValue("シュタインズ・ゲート"),
                 coverUrl = null,
                 isCoverSensitive = false,
-                developerLabel = UiText.StringValue("5pb. / Nitroplus"),
+                developers = persistentListOf(
+                    HeroDeveloperUIModel(id = "p1", name = "5pb."),
+                    HeroDeveloperUIModel(id = null, name = "Nitroplus"),
+                ),
                 releasedLabel = UiText.StringValue("2009-10-15"),
                 lengthName = UiText.StringValue("Long"),
                 lengthValueLabel = UiText.StringValue("(44h)"),
@@ -196,6 +254,7 @@ private fun DetailHeroViewPreview() {
                     UiText.StringValue("Time Travel"),
                 ),
             ),
+            onDeveloperClick = {},
             modifier = Modifier.padding(VndbTheme.spacing.lg),
         )
     }

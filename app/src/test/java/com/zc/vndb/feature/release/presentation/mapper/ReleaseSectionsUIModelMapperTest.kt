@@ -57,6 +57,7 @@ class ReleaseSectionsUIModelMapperTest {
             ),
             detail.toProducerUIModels().single().roles,
         )
+        assertEquals("p1", detail.toProducerUIModels().single().id)
         val image = detail.toImageUIModels().single()
         assertEquals(UiText.StringResource(StringResource.release_image_back), image.typeLabel)
         assertEquals("back-thumb", image.thumbnailUrl)

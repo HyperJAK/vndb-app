@@ -8,5 +8,6 @@ sealed interface ReleaseIntent {
     data object OpenInBrowserClicked : ReleaseIntent
     data class LinkClicked(val url: String) : ReleaseIntent
     data class NovelClicked(val id: String) : ReleaseIntent
+    data class ProducerClicked(val id: String) : ReleaseIntent
     data object NotesToggled : ReleaseIntent
 }

@@ -46,7 +46,11 @@ object DetailSamples {
         average = 90.25,
         voteCount = 17205,
         cover = cover,
-        developerNames = listOf("NITRO PLUS", "MAGES.", "Third"),
+        developers = listOf(
+            NovelDeveloper(id = "p1", name = "NITRO PLUS"),
+            NovelDeveloper(id = null, name = "MAGES."),
+            NovelDeveloper(id = "p3", name = "Third"),
+        ),
         description = description,
         length = NovelLength.Long,
         averagePlayMinutes = 2625,

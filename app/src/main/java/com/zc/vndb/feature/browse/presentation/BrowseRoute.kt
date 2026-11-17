@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zc.vndb.common.ui.util.ObserveAsEvents
+import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -15,9 +16,9 @@ import org.koin.core.parameter.parametersOf
 fun BrowseRoute(
     onOpenNovel: (String) -> Unit,
     modifier: Modifier = Modifier,
-    tagId: String? = null,
+    scope: BrowseScope = BrowseScope.None,
     onNavigateBack: () -> Unit = {},
-    viewModel: BrowseViewModel = koinViewModel { parametersOf(tagId) },
+    viewModel: BrowseViewModel = koinViewModel { parametersOf(scope) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current

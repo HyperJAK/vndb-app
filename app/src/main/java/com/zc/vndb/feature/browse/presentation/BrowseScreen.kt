@@ -56,8 +56,8 @@ import com.zc.vndb.feature.browse.domain.model.Genre
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.BrowseNovelCardView
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.model.BrowseNovelCardUIModel
 import com.zc.vndb.feature.browse.presentation.component.filterbar.FilterBarView
+import com.zc.vndb.feature.browse.presentation.component.scopeheader.ScopeHeaderView
 import com.zc.vndb.feature.browse.presentation.component.searchfield.SearchFieldView
-import com.zc.vndb.feature.browse.presentation.component.tagheader.TagHeaderView
 import com.zc.vndb.feature.browse.presentation.model.GenreChipUIState
 import com.zc.vndb.feature.browse.presentation.model.SortOptionUIModel
 import kotlinx.collections.immutable.ImmutableList
@@ -79,7 +79,7 @@ private class BrowseActions(
     val onNovelClick: (String) -> Unit,
     val onRetry: () -> Unit,
     val onLoadMoreRetry: () -> Unit,
-    val onTagDescriptionToggle: () -> Unit,
+    val onDescriptionToggle: () -> Unit,
 )
 
 @Composable
@@ -117,7 +117,7 @@ fun BrowseScreen(
             onNovelClick = { onIntent(BrowseIntent.NovelClicked(it)) },
             onRetry = { onIntent(BrowseIntent.Retry) },
             onLoadMoreRetry = { onIntent(BrowseIntent.LoadMoreRetried) },
-            onTagDescriptionToggle = { onIntent(BrowseIntent.TagDescriptionToggled) },
+            onDescriptionToggle = { onIntent(BrowseIntent.DescriptionToggled) },
         )
     }
     val gridState = rememberLazyGridState()
@@ -127,7 +127,7 @@ fun BrowseScreen(
         modifier = modifier,
         topBar = {
             AppTopBarView(
-                onBack = if (state.isTagPage) ({ onIntent(BrowseIntent.BackClicked) }) else null,
+                onBack = if (state.isScopedPage) ({ onIntent(BrowseIntent.BackClicked) }) else null,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -188,7 +188,7 @@ private fun LazyGridScope.fullWidthItem(key: String, content: @Composable () -> 
 }
 
 private fun LazyGridScope.filters(state: BrowseState, actions: BrowseActions) {
-    tagHeader(state, actions)
+    header(state, actions)
     fullWidthItem("search") {
         SearchFieldView(
             value = state.query,
@@ -214,19 +214,19 @@ private fun LazyGridScope.filters(state: BrowseState, actions: BrowseActions) {
     }
 }
 
-/** On a tag page: what the tag is, above the usual filters. */
-private fun LazyGridScope.tagHeader(state: BrowseState, actions: BrowseActions) {
-    val header = state.tagHeader ?: return
+/** On a tag or producer page: what it is, above the usual filters. */
+private fun LazyGridScope.header(state: BrowseState, actions: BrowseActions) {
+    val header = state.header ?: return
     fullWidthItem(
-        "tag-header",
-    ) { TagHeaderView(model = header, modifier = Modifier.fillMaxWidth()) }
+        "scope-header",
+    ) { ScopeHeaderView(model = header, modifier = Modifier.fillMaxWidth()) }
     header.description?.let { description ->
-        fullWidthItem("tag-description") {
+        fullWidthItem("scope-description") {
             ExpandableTextView(
-                title = UiText.StringResource(StringResource.tag_about),
+                title = header.aboutTitle,
                 text = description,
-                isExpanded = state.isTagDescriptionExpanded,
-                onToggle = actions.onTagDescriptionToggle,
+                isExpanded = state.isDescriptionExpanded,
+                onToggle = actions.onDescriptionToggle,
                 modifier = Modifier.fillMaxWidth(),
             )
         }

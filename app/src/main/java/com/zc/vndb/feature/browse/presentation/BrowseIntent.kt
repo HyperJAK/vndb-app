@@ -20,5 +20,5 @@ sealed interface BrowseIntent {
     data object LoadMoreRetried : BrowseIntent
     data class NovelClicked(val id: String) : BrowseIntent
     data object BackClicked : BrowseIntent
-    data object TagDescriptionToggled : BrowseIntent
+    data object DescriptionToggled : BrowseIntent
 }

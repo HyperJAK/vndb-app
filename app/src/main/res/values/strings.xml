@@ -15,6 +15,7 @@
     <string name="rating_out_of_ten">%1$s / 10</string>
     <string name="release_tba">TBA</string>
     <string name="separator_dot">·</string>
+    <string name="separator_slash">/</string>
 
     <!-- Navigation -->
     <string name="nav_discover">Discover</string>
@@ -212,6 +213,13 @@
     </plurals>
     <string name="tag_aliases">Also known as: %1$s</string>
     <string name="tag_about">About this tag</string>
+
+    <!-- Producer -->
+    <string name="producer_type_company">Company</string>
+    <string name="producer_type_individual">Individual</string>
+    <string name="producer_type_amateur">Amateur group</string>
+    <string name="producer_type_with_language">%1$s · %2$s</string>
+    <string name="producer_about">About this producer</string>
 
     <!-- Release -->
     <string name="release_share_chooser">Share release</string>

@@ -11,7 +11,7 @@ data class DetailHeroUIModel(
     val originalTitle: UiText?,
     val coverUrl: String?,
     val isCoverSensitive: Boolean,
-    val developerLabel: UiText?,
+    val developers: ImmutableList<HeroDeveloperUIModel>,
     val releasedLabel: UiText,
     /** Length category, shown as a pill: "Very Long". */
     val lengthName: UiText?,

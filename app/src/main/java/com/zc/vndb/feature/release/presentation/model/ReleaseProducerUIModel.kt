@@ -5,4 +5,8 @@ import com.zc.vndb.common.ui.text.UiText
 import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
-data class ReleaseProducerUIModel(val name: UiText, val roles: ImmutableList<UiText>)
+data class ReleaseProducerUIModel(
+    val id: String,
+    val name: UiText,
+    val roles: ImmutableList<UiText>,
+)

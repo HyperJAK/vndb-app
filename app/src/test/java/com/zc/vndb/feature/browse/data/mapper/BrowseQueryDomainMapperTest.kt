@@ -3,6 +3,7 @@ package com.zc.vndb.feature.browse.data.mapper
 import com.zc.vndb.common.data.network.appJson
 import com.zc.vndb.feature.browse.domain.model.AgeRating
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
+import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
 import kotlin.test.Test
@@ -90,12 +91,50 @@ class BrowseQueryDomainMapperTest {
 
     @Test
     fun `a tag page adds its tag to the filters`() {
-        val body = BrowseFilter(tagId = "g249").body()
+        val body = BrowseFilter(scope = BrowseScope.Tag("g249")).body()
 
         assertEquals(
             json("""["and",["release","!=",["minage",">=",18]],["tag","=","g249"]]"""),
             body["filters"],
         )
+    }
+
+    @Test
+    fun `a producer page filters to novels the producer developed`() {
+        val body = BrowseFilter(scope = BrowseScope.Producer("p30")).body()
+
+        assertEquals(
+            json(
+                """["and",["release","!=",["minage",">=",18]],["developer","=",["id","=","p30"]]]""",
+            ),
+            body["filters"],
+        )
+    }
+
+    @Test
+    fun `producer scope combines with search and genres`() {
+        val body = BrowseFilter(
+            ageRating = AgeRating.Any,
+            query = "fate",
+            genres = setOf(Genre.Mystery),
+            scope = BrowseScope.Producer("p30"),
+        ).body()
+
+        assertEquals(
+            json(
+                """["and",["search","=","fate"],["tag","=","${Genre.Mystery.tagId}"],""" +
+                    """["developer","=",["id","=","p30"]]]""",
+            ),
+            body["filters"],
+        )
+    }
+
+    @Test
+    fun `producer lookup by id`() {
+        val body = appJson.encodeToJsonElement(producerQuery("p30")).jsonObject
+
+        assertEquals(json("""["id","=","p30"]"""), body["filters"])
+        assertEquals(json("\"name, original, aliases, lang, type, description\""), body["fields"])
     }
 
     @Test

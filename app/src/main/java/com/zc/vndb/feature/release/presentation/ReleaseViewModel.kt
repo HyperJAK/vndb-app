@@ -66,6 +66,10 @@ class ReleaseViewModel(
 
             is ReleaseIntent.NovelClicked -> sendEffect(ReleaseEffect.NavigateToNovel(intent.id))
 
+            is ReleaseIntent.ProducerClicked -> sendEffect(
+                ReleaseEffect.NavigateToProducer(intent.id),
+            )
+
             ReleaseIntent.NotesToggled -> _state.update {
                 it.copy(
                     isNotesExpanded = !it.isNotesExpanded,
