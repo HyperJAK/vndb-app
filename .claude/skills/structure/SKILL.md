@@ -162,7 +162,7 @@ Rules are in `library-management`.
 | Wiring features' entries and cross-feature navigation lambdas | `app/navigation/AppEntryProvider.kt` |
 | `Navigator`, `NavigationState`, `BottomSheetSceneStrategy`, `FullScreenNavKey` / `OverlayNavKey` | `common/ui/navigation/` |
 | A feature's `@Serializable` `NavKey`s | `feature/[name]/presentation/navigation/[Name]NavKey.kt` |
-| A feature's `EntryProviderScope<NavKey>.[name]Entry(...)` (and `[Name]NavActions` when a Route has more than ~4 navigation callbacks) | `feature/[name]/presentation/navigation/[Name]Navigation.kt` (`[Name]NavActions.kt`) |
+| A feature's `Navigator.navigateTo[Name](...)` helpers and `EntryProviderScope<NavKey>.[name]Entry(...)` (and `[Name]NavActions` when a Route has more than ~4 navigation callbacks) | `feature/[name]/presentation/navigation/[Name]Navigation.kt` (`[Name]NavActions.kt`) |
 | Shared `HttpClient` factory, `Json` instance | `common/data/network/` |
 | `safeApiCall { }` (exception → `DomainError` mapping) | `common/data/util/SafeApiCall.kt` |
 | DTO used by 2+ features (query body, image, tag) | `common/data/dto/[Name]DTO.kt` |

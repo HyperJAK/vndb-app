@@ -2,6 +2,7 @@ package com.zc.vndb.feature.release.presentation.navigation
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import com.zc.vndb.common.ui.navigation.Navigator
 import com.zc.vndb.feature.release.presentation.ReleaseRoute
 
 fun EntryProviderScope<NavKey>.releaseEntry(
@@ -18,3 +19,6 @@ fun EntryProviderScope<NavKey>.releaseEntry(
         )
     }
 }
+
+/** Opens a release's page. */
+fun Navigator.navigateToRelease(id: String) = navigate(ReleaseNavKey(id))

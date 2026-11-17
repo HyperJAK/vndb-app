@@ -2,6 +2,7 @@ package com.zc.vndb.feature.browse.presentation.navigation
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import com.zc.vndb.common.ui.navigation.Navigator
 import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.presentation.BrowseRoute
 
@@ -33,3 +34,15 @@ private inline fun <reified K : NavKey> EntryProviderScope<NavKey>.scopedBrowse(
         )
     }
 }
+
+/** Switches to the Browse tab. */
+fun Navigator.navigateToBrowse() = navigate(BrowseNavKey)
+
+/** Opens Browse scoped to a tag. */
+fun Navigator.navigateToTag(id: String) = navigate(TagNavKey(id))
+
+/** Opens Browse scoped to a producer. */
+fun Navigator.navigateToProducer(id: String) = navigate(ProducerNavKey(id))
+
+/** Opens Browse scoped to a staff member. */
+fun Navigator.navigateToStaff(id: String) = navigate(StaffNavKey(id))

@@ -137,6 +137,8 @@ fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
 
 `AppNavDisplay` builds `appEntryProvider(navigator)` once with `remember(navigator)` and hands it to `navigationState.toDecoratedEntries`.
 
+Each `<Name>Navigation.kt` also declares `Navigator.navigateTo<Name>(...)` helpers (e.g. `fun Navigator.navigateToTheme() = navigate(ThemeNavKey)`), and `AppEntryProvider` calls those instead of constructing keys. Added after the initial migration.
+
 ## 4. Marker interfaces and navigator move to `common`
 
 `FullScreenNavKey` / `OverlayNavKey` must be reachable from features (they implement them), so they move to `common/ui/navigation`. `BottomSheetSceneStrategy` moves with them (the list editor entry uses `BottomSheetSceneStrategy.bottomSheet()`), and so do `NavigationState` and `Navigator` to keep the navigation plumbing in one package. Pure package moves, done first and on their own (§7 step 1).

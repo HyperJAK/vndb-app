@@ -31,6 +31,7 @@ Rules marked **MUST** / **NEVER** are non-negotiable. Examples use the feature `
 | ViewModel | `presentation` | `[Screen]ViewModel` | `NovelDetailViewModel` |
 | Navigation 3 key | `presentation/navigation/[Screen]NavKey.kt` | `[Screen]NavKey` (`@Serializable`) | `NovelDetailNavKey` |
 | Entry registration | `presentation/navigation/[Screen]Navigation.kt` | `EntryProviderScope<NavKey>.[screen]Entry(...)` | `novelDetailEntry` |
+| Navigate-to helper | `presentation/navigation/[Screen]Navigation.kt` | `Navigator.navigateTo[Screen](args)` (one per key other features open) | `Navigator.navigateToNovelDetail(id)` |
 | Navigation actions (only when a Route has more than ~4 navigation callbacks) | `presentation/navigation/[Screen]NavActions.kt` | `[Screen]NavActions` | `NovelDetailNavActions` |
 | Nav destination composable | `presentation` | `[Screen]Route` | `NovelDetailRoute` |
 | Stateless screen | `presentation` | `[Screen]Screen` | `NovelDetailScreen` |
@@ -688,7 +689,7 @@ File locations follow the `structure` skill. When adding a screen `[Name]`, work
 2. `data`: the DTOs (one per file), `[Thing]DTOMapper`, `[Feature]Service` and `[Thing]RepositoryImpl`.
 3. `presentation`: `[Thing]UIModel` / `[Thing]UIState`, `[Thing]UIModelMapper`, then `[Name]State`, `[Name]Intent`, `[Name]Effect`, `[Name]ViewModel`, `[Name]Screen` (with a preview) and `[Name]Route`.
 4. `di`: register everything in the feature's `[Name]Module.kt`, and make sure `app/di/AppModule.kt` includes that module.
-5. `presentation/navigation/`: add `[Name]NavKey.kt` and `[Name]Navigation.kt` with `[name]Entry(...)`, then call `[name]Entry(...)` from `app/navigation/AppEntryProvider.kt` with the lambdas that open other screens. Add the key to `NavKeySerializationTest`.
+5. `presentation/navigation/`: add `[Name]NavKey.kt` and `[Name]Navigation.kt` with `[name]Entry(...)`, add `Navigator.navigateTo[Name](...)` there too, then call `[name]Entry(...)` from `app/navigation/AppEntryProvider.kt` with lambdas that use the other features' `navigateTo…` helpers. Add the key to `NavKeySerializationTest`.
 
 ## 7. Conventions checklist (run before finishing any change)
 
