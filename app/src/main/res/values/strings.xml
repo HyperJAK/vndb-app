@@ -85,7 +85,7 @@
     <string name="detail_open_in_browser">Open on vndb.org</string>
     <string name="detail_share_chooser">Share visual novel</string>
     <string name="detail_vndb_link">vndb.org</string>
-    <string name="detail_dev">Dev:</string>
+    <string name="detail_dev">Developer:</string>
     <string name="detail_released">Released:</string>
     <string name="detail_length">Length:</string>
     <string name="detail_age_all">All Ages</string>
@@ -152,9 +152,9 @@
     <string name="detail_tab_releases">Releases</string>
     <string name="detail_tab_quotes">Quotes</string>
     <string name="detail_tab_with_count">%1$s %2$s</string>
-    <string name="detail_length_value">(%1$s)</string>
+    <string name="detail_length_value">%1$s</string>
     <string name="detail_hours">%1$sh</string>
-    <string name="detail_length_votes">%1$s length votes</string>
+    <string name="detail_length_votes">%1$s votes</string>
     <string name="length_name_very_short">Very Short</string>
     <string name="length_name_short">Short</string>
     <string name="length_name_medium">Medium</string>
@@ -201,8 +201,8 @@
     <string name="detail_staff_staff">Staff:</string>
     <string name="detail_staff_other">Other:</string>
     <string name="detail_quote_score">%1$+d</string>
-    <string name="detail_reviews_link">Reviews on vndb.org</string>
-    <string name="detail_reviews_hint">Reviews are not available through the VNDB API.</string>
+    <string name="detail_reviews_link">Reviews</string>
+    <string name="detail_reviews_hint">Reviews are not available in the app.</string>
     <string name="detail_close_viewer">Close</string>
     <string name="detail_viewer_position">%1$d / %2$d</string>
 

@@ -20,7 +20,12 @@ fun MyListEntry?.toMyListCard(canEdit: Boolean): MyListCardUIModel {
         labels = ordered.mapNotNull { id ->
             labelNames[id]?.let { EntryLabelUIModel(id, UiText.StringValue(it)) }
         }.toImmutableList(),
-        voteLabel = vote?.let { UiText.StringValue("%.1f".format(it / VOTE_SCALE)) },
+        voteLabel = vote?.let {
+            UiText.StringResource(
+                StringResource.detail_score_value,
+                listOf("%.1f".format(it / VOTE_SCALE)),
+            )
+        },
         dates = listOfNotNull(
             started?.let {
                 UiText.StringResource(

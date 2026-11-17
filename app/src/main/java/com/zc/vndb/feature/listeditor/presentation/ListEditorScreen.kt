@@ -60,6 +60,9 @@ private const val VOTE_STEPS = MyListEntry.MAX_VOTE - MyListEntry.MIN_VOTE - 1
 private val ProgressSize = 18.dp
 private val VoteRowHeight = 24.dp
 
+/** Keeps the sheet from jumping in height when the skeleton gives way to the fields. */
+private val BodyMinHeight = 360.dp
+
 /** The list editor's content: status, labels, vote, dates and notes, then Save (and Remove). */
 @Composable
 fun ListEditorScreen(
@@ -67,30 +70,62 @@ fun ListEditorScreen(
     onIntent: (ListEditorIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val showFooter = !state.isLoading && state.error == null
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = VndbTheme.spacing.lg)
-            .padding(bottom = VndbTheme.spacing.lg)
             .navigationBarsPadding()
             .imePadding(),
-        verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.lg),
     ) {
-        Header(state)
-        when {
-            state.isLoading -> EditorSkeletonView(modifier = Modifier.fillMaxWidth())
+        // Only the fields scroll: Save and Remove stay pinned below them.
+        Column(
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .heightIn(min = BodyMinHeight)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = VndbTheme.spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.lg),
+        ) {
+            Header(state)
+            when {
+                state.isLoading -> EditorSkeletonView(modifier = Modifier.fillMaxWidth())
 
-            state.error != null -> ErrorView(
-                model = state.error,
-                onRetry = { onIntent(ListEditorIntent.Retry) },
-                modifier = Modifier.fillMaxWidth(),
-            )
+                state.error != null -> ErrorView(
+                    model = state.error,
+                    onRetry = { onIntent(ListEditorIntent.Retry) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
 
-            else -> EditorFields(state, onIntent)
+                else -> EditorFields(state, onIntent)
+            }
+        }
+        if (showFooter) {
+            Footer(state, onIntent)
         }
     }
     ListEditorDialogs(dialog = state.dialog, onIntent = onIntent)
+}
+
+@Composable
+private fun Footer(state: ListEditorState, onIntent: (ListEditorIntent) -> Unit) {
+    Column(
+        modifier = Modifier.padding(
+            start = VndbTheme.spacing.lg,
+            end = VndbTheme.spacing.lg,
+            top = VndbTheme.spacing.sm,
+            bottom = VndbTheme.spacing.lg,
+        ),
+        verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+    ) {
+        state.saveError?.let { error ->
+            Text(
+                text = error.asString(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+        Actions(state, onIntent)
+    }
 }
 
 @Composable
@@ -139,14 +174,6 @@ private fun EditorFields(state: ListEditorState, onIntent: (ListEditorIntent) ->
                 modifier = Modifier.fillMaxWidth(),
             )
         }
-        state.saveError?.let { error ->
-            Text(
-                text = error.asString(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.error,
-            )
-        }
-        Actions(state, onIntent)
     }
 }
 

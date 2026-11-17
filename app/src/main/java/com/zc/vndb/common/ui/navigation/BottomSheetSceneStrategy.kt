@@ -3,6 +3,7 @@ package com.zc.vndb.common.ui.navigation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -32,8 +33,11 @@ internal data class BottomSheetScene<T : Any>(
 
     override val content: @Composable (() -> Unit) = {
         val lifecycleOwner = rememberLifecycleOwner()
+        // No half-open state: the sheet opens at its full content height (a taller one scrolls) and
+        // Back dismisses it in one press instead of first collapsing it.
         ModalBottomSheet(
             onDismissRequest = onBack,
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             properties = properties,
             containerColor = VndbTheme.colors.surfaceCard,
         ) {

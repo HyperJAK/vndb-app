@@ -651,7 +651,11 @@ private fun LazyListScope.quotesTab(state: DetailState, actions: DetailActions) 
             modifier = Modifier.fillMaxWidth(),
         ) {
             MutedNote(UiText.StringResource(StringResource.detail_reviews_hint))
-            TextButton(onClick = { actions.onIntent(DetailIntent.ReviewsClicked) }) {
+            // No start padding, so the text lines up with the note above.
+            TextButton(
+                onClick = { actions.onIntent(DetailIntent.ReviewsClicked) },
+                contentPadding = PaddingValues(end = 12.dp, top = 8.dp, bottom = 8.dp),
+            ) {
                 Text(
                     text = UiText.StringResource(StringResource.detail_open_in_browser).asString(),
                     color = VndbTheme.colors.accent,

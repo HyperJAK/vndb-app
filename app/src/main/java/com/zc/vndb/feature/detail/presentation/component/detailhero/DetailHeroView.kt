@@ -7,10 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +38,11 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 private val CoverWidth = 128.dp
-private val MetaLabelWidth = 72.dp
+private val MetaLabelWidth = 84.dp
+private val ScoreStarSize = 16.dp
+
+/** Centers the "Length:" label on the first line, whose height is set by the chip. */
+private val LengthLabelTopPadding = 2.dp
 
 /** Cover, titles, top tags, age rating, and developer / release / length / score lines. */
 @Composable
@@ -140,6 +149,13 @@ private fun ScoreLine(model: DetailHeroUIModel) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.width(MetaLabelWidth),
         )
+        Icon(
+            imageVector = Icons.Filled.Star,
+            contentDescription = null,
+            tint = VndbTheme.colors.score,
+            modifier = Modifier.size(ScoreStarSize),
+        )
+        Spacer(Modifier.width(VndbTheme.spacing.xs))
         Text(
             text = score.asString(),
             style = MaterialTheme.typography.bodyMedium,
@@ -194,36 +210,47 @@ private fun MetaLine(label: UiText, value: UiText?) {
     }
 }
 
-/** "Length:  [Very Long] (73h) · 90 votes". */
+/**
+ * "Length:  73h [Very Long] · 90 votes": the hours first, then the length class, then the votes.
+ * The values wrap together under the label when the line is too narrow, so the votes never split.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun LengthLine(model: DetailHeroUIModel) {
     if (model.lengthName == null && model.lengthValueLabel == null) return
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+    Row(verticalAlignment = Alignment.Top) {
         Text(
             text = UiText.StringResource(StringResource.detail_length).asString(),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(MetaLabelWidth - VndbTheme.spacing.sm),
+            modifier = Modifier
+                .width(MetaLabelWidth)
+                .padding(top = LengthLabelTopPadding),
         )
-        model.lengthName?.let { TagChipView(label = it, colors = VndbTheme.colors.chipLength) }
-        model.lengthValueLabel?.let { value ->
-            Text(
-                text = value.asString(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        model.lengthVotesLabel?.let { votes ->
-            Text(
-                text = "${UiText.StringResource(
-                    StringResource.separator_dot,
-                ).asString()} ${votes.asString()}",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        FlowRow(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
+            verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
+            itemVerticalAlignment = Alignment.CenterVertically,
+        ) {
+            model.lengthValueLabel?.let { value ->
+                Text(
+                    text = value.asString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            model.lengthName?.let { TagChipView(label = it, colors = VndbTheme.colors.chipLength) }
+            model.lengthVotesLabel?.let { votes ->
+                Text(
+                    text = "${UiText.StringResource(
+                        StringResource.separator_dot,
+                    ).asString()} ${votes.asString()}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    softWrap = false,
+                )
+            }
         }
     }
 }
@@ -244,8 +271,8 @@ private fun DetailHeroViewPreview() {
                 ),
                 releasedLabel = UiText.StringValue("2009-10-15"),
                 lengthName = UiText.StringValue("Long"),
-                lengthValueLabel = UiText.StringValue("(44h)"),
-                lengthVotesLabel = UiText.StringValue("1,021 length votes"),
+                lengthValueLabel = UiText.StringValue("44h"),
+                lengthVotesLabel = UiText.StringValue("1,021 votes"),
                 scoreLabel = UiText.StringValue("9.02 / 10"),
                 scoreVotesLabel = UiText.StringValue("17,205 votes"),
                 ageLabel = UiText.StringValue("All Ages / 15+"),
