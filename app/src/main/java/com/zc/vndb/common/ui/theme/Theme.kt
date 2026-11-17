@@ -1,9 +1,12 @@
 package com.zc.vndb.common.ui.theme
 
+import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 /** Applies [spec]: Material colors, the extra design tokens and the wallpaper. */
 @Composable
@@ -23,6 +26,15 @@ fun VndbTheme(spec: VndbThemeSpec = OriginalThemeSpec, content: @Composable () -
         )
     }
 }
+
+/**
+ * A card's background: [color] at the theme's card opacity, so the wallpaper shows slightly through
+ * it. Solid when the theme has no wallpaper. For on-page cards only: dialogs, sheets and menus stay
+ * solid, so they use the plain color tokens.
+ */
+@Composable
+fun Modifier.cardBackground(color: Color = VndbTheme.colors.surfaceCard): Modifier =
+    background(color.copy(alpha = VndbTheme.wallpaper?.cardAlpha ?: 1f))
 
 /** Design tokens that extend [MaterialTheme]. */
 object VndbTheme {

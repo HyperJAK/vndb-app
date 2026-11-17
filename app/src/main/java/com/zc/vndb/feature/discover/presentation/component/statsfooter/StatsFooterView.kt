@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.discover.presentation.component.statsfooter
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
 private val IconSize = 20.dp
@@ -34,7 +34,7 @@ fun StatsFooterView(label: UiText, onClick: () -> Unit, modifier: Modifier = Mod
     Row(
         modifier = modifier
             .clip(shape)
-            .background(VndbTheme.colors.surfaceCard)
+            .cardBackground()
             .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape)
             .clickable(onClick = onClick)
             .padding(VndbTheme.spacing.md),

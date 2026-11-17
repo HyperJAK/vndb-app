@@ -35,6 +35,7 @@ import com.zc.vndb.common.ui.component.entrylabel.EntryLabelUIModel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.profile.domain.model.ListLabel
 import com.zc.vndb.feature.profile.presentation.component.listentrycard.model.ListEntryCardUIModel
@@ -60,7 +61,7 @@ fun ListEntryCardView(
     Row(
         modifier = modifier
             .clip(shape)
-            .background(VndbTheme.colors.surfaceCard)
+            .cardBackground()
             .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape)
             .clickable(onClick = onClick)
             .padding(VndbTheme.spacing.md),

@@ -26,6 +26,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
 private val IconBoxSize = 40.dp
@@ -52,7 +53,7 @@ fun SettingRowView(
     Row(
         modifier = modifier
             .clip(shape)
-            .background(VndbTheme.colors.surfaceCard)
+            .cardBackground()
             .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape)
             .then(
                 if (onClick != null && isEnabled) {

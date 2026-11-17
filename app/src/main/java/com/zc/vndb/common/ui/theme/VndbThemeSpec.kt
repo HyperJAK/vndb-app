@@ -6,9 +6,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zc.vndb.common.ui.text.UiText
 
-/** An image drawn full screen behind the app, cropped to fit, at [alpha] over the background. */
+/**
+ * An image drawn full screen behind the app, cropped to fit, at [alpha] over the background.
+ * Cards are drawn at [cardAlpha] so the wallpaper shows slightly through them.
+ */
 @Immutable
-data class WallpaperSpec(@DrawableRes val image: Int, val alpha: Float)
+data class WallpaperSpec(@DrawableRes val image: Int, val alpha: Float, val cardAlpha: Float)
 
 /**
  * A color palette: the Material roles and the extra design tokens. Each one is defined in its own

@@ -1,6 +1,5 @@
 package com.zc.vndb.feature.profile.presentation.component.guestprompt
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 
 private val IconBoxSize = 72.dp
@@ -47,7 +47,7 @@ fun GuestPromptView(onLogInClick: () -> Unit, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(IconBoxSize)
                 .clip(shape)
-                .background(VndbTheme.colors.surfaceCard)
+                .cardBackground()
                 .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape),
             contentAlignment = Alignment.Center,
         ) {

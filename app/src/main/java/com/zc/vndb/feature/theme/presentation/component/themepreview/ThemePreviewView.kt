@@ -39,6 +39,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.AngelicSerenadeThemeSpec
 import com.zc.vndb.common.ui.theme.OriginalThemeSpec
 import com.zc.vndb.common.ui.theme.VndbTheme
+import com.zc.vndb.common.ui.theme.cardBackground
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.theme.presentation.component.themepreview.model.ThemeUIModel
 
@@ -168,7 +169,7 @@ private fun MockCard(isTall: Boolean) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(VndbTheme.colors.surfaceCard)
+            .cardBackground()
             .border(VndbTheme.dimens.borderWidth, VndbTheme.colors.borderSubtle, shape)
             .padding(VndbTheme.spacing.sm),
         verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
