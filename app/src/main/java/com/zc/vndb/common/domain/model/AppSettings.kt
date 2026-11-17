@@ -17,6 +17,8 @@ data class AppSettings(
     val listSort: ListSort = ListSort.Title,
     /** The Profile lists run opposite to [listSort]'s natural order (Z to A, oldest, lowest vote). */
     val isListSortReversed: Boolean = false,
+    /** The app's colors and wallpaper. */
+    val theme: AppTheme = AppTheme.Original,
 ) {
     companion object {
         val DEFAULT_TRENDING_LANGUAGES = listOf("en", "ja")
@@ -42,4 +44,13 @@ enum class SpoilerPreference {
     None,
     Minor,
     Major,
+}
+
+/** A look for the whole app: its colors and wallpaper. */
+enum class AppTheme {
+    /** The Nocturne VN palette on a plain background. */
+    Original,
+
+    /** The Nocturne VN palette over the Angelic Serenade wallpaper. */
+    AngelicSerenade,
 }

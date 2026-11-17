@@ -9,3 +9,6 @@ typealias StringResource = com.zc.vndb.R.string
 
 /** The app's plurals resources: `PluralResource.detail_votes`, used with `UiText.StringPlural`. */
 typealias PluralResource = com.zc.vndb.R.plurals
+
+/** The app's drawable resources: `DrawableResource.wallpaper_angelic_serenade`. */
+typealias DrawableResource = com.zc.vndb.R.drawable

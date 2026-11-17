@@ -2,7 +2,7 @@
 
 A Settings screen for user preferences and app info, opened from a gear icon on the Profile tab (guests and signed-in users).
 Design (reference only): Stitch "VNDB – Settings". API: [VNDB Kana](https://api.vndb.org/kana). Rules: `.claude/skills/*`.
-Decided 2026-11-16: no theme picker (the app is dark-only), no offline cover caching (no offline data), no account sync row, no bottom-bar reordering or start tab.
+Decided 2026-11-16: no theme picker (the app was dark-only; a picker was added later, see [plan 10](10-themes.md)), no offline cover caching (no offline data), no account sync row, no bottom-bar reordering or start tab.
 
 ## 1. Screen
 Top bar with Back · sections of rows (title, one-line explanation, control on the right):

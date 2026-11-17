@@ -9,25 +9,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import com.zc.vndb.R
-
-/** Opacity of the wallpaper over the page background; low so text and cards stay readable. */
-private const val WALLPAPER_ALPHA = 0.2f
+import com.zc.vndb.common.ui.theme.VndbTheme
 
 /**
- * App-wide backdrop: the wallpaper at low opacity over the page background. Screens draw on top
- * of it with transparent containers.
+ * App-wide backdrop: the current theme's wallpaper, if it has one, at low opacity over the page
+ * background. Screens draw on top of it with transparent containers.
  */
 @Composable
 fun WallpaperView(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Box(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
-        Image(
-            painter = painterResource(R.drawable.wallpaper_default),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            alpha = WALLPAPER_ALPHA,
-        )
+        VndbTheme.wallpaper?.let { wallpaper ->
+            Image(
+                painter = painterResource(wallpaper.image),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                alpha = wallpaper.alpha,
+            )
+        }
         content()
     }
 }

@@ -4,6 +4,7 @@ import com.zc.vndb.common.domain.model.AppSettings
 import com.zc.vndb.common.domain.model.SpoilerPreference
 import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.ui.mapper.languageName
+import com.zc.vndb.common.ui.mapper.toLabel
 import com.zc.vndb.common.ui.mapper.toLanguagesLabel
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
@@ -16,6 +17,7 @@ private const val BYTES_PER_UNIT = 1024.0
 /** Copies [settings] into [state]'s rows and dialog options. */
 fun SettingsState.withSettings(settings: AppSettings): SettingsState = copy(
     isLoaded = true,
+    themeLabel = settings.theme.toLabel(),
     titleLanguageOptions = TitleLanguage.entries.map {
         SettingOptionUIModel(it.name, it.toLabel(), it == settings.titleLanguage)
     }.toImmutableList(),

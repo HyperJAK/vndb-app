@@ -11,6 +11,8 @@ import kotlinx.collections.immutable.persistentListOf
 data class SettingsState(
     /** False until the stored settings have been read. */
     val isLoaded: Boolean = false,
+    /** The current theme's name, shown on the Theme row. */
+    val themeLabel: UiText? = null,
     val titleLanguageOptions: ImmutableList<SettingOptionUIModel> = persistentListOf(),
     val titleLanguageLabel: UiText? = null,
     val spoilerOptions: ImmutableList<SettingOptionUIModel> = persistentListOf(),
