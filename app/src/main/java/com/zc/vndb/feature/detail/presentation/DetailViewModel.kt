@@ -176,6 +176,8 @@ class DetailViewModel(
                 DetailEffect.NavigateToProducer(intent.id),
             )
 
+            is DetailIntent.StaffClicked -> sendEffect(DetailEffect.NavigateToStaff(intent.id))
+
             is DetailIntent.EditionClicked -> sendEffect(
                 DetailEffect.NavigateToRelease(intent.releaseId),
             )

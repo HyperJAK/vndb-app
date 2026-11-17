@@ -50,7 +50,6 @@ import com.zc.vndb.common.ui.component.coverimage.CoverImageView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
-import com.zc.vndb.common.ui.component.factline.FactLineView
 import com.zc.vndb.common.ui.component.linksrow.LinksRowView
 import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
@@ -74,6 +73,7 @@ import com.zc.vndb.feature.detail.presentation.component.mylist.MyListCardView
 import com.zc.vndb.feature.detail.presentation.component.quotecard.QuoteCardView
 import com.zc.vndb.feature.detail.presentation.component.relationcard.RelationCardView
 import com.zc.vndb.feature.detail.presentation.component.screenshotgrid.ScreenshotGridView
+import com.zc.vndb.feature.detail.presentation.component.staffrole.StaffRoleView
 import com.zc.vndb.feature.detail.presentation.component.taggroups.TagGroupsView
 import com.zc.vndb.feature.detail.presentation.model.CastUIModel
 import com.zc.vndb.feature.detail.presentation.model.ContentFilter
@@ -104,6 +104,7 @@ private class DetailActions(
     val onCharacterClick: (String) -> Unit,
     val onTagClick: (String) -> Unit,
     val onDeveloperClick: (String) -> Unit,
+    val onStaffClick: (String) -> Unit,
     val onEditionClick: (String) -> Unit,
     val onTabSelect: (DetailTab) -> Unit,
     val onFilterToggle: (ContentFilter) -> Unit,
@@ -202,6 +203,7 @@ private fun detailActions(onIntent: (DetailIntent) -> Unit) = DetailActions(
     onCharacterClick = { onIntent(DetailIntent.CharacterClicked(it)) },
     onTagClick = { onIntent(DetailIntent.TagClicked(it)) },
     onDeveloperClick = { onIntent(DetailIntent.DeveloperClicked(it)) },
+    onStaffClick = { onIntent(DetailIntent.StaffClicked(it)) },
     onEditionClick = { onIntent(DetailIntent.EditionClicked(it)) },
     onTabSelect = { onIntent(DetailIntent.TabSelected(it)) },
     onFilterToggle = { onIntent(DetailIntent.ContentFilterToggled(it)) },
@@ -404,6 +406,7 @@ private fun CharactersPreview(state: DetailState, actions: DetailActions) {
                     CharacterCardView(
                         model = character,
                         onClick = { actions.onCharacterClick(character.id) },
+                        onVoiceActorClick = actions.onStaffClick,
                     )
                 }
             }
@@ -555,6 +558,7 @@ private fun CastContent(cast: CastUIModel, actions: DetailActions) {
                         CharacterCardView(
                             model = character,
                             onClick = { actions.onCharacterClick(character.id) },
+                            onVoiceActorClick = actions.onStaffClick,
                         )
                     }
                 }
@@ -564,8 +568,9 @@ private fun CastContent(cast: CastUIModel, actions: DetailActions) {
         cast.staffGroups.forEach { group ->
             SectionCardView(title = group.title, modifier = Modifier.fillMaxWidth()) {
                 group.credits.forEach { credit ->
-                    FactLineView(
-                        fact = credit,
+                    StaffRoleView(
+                        role = credit,
+                        onPersonClick = actions.onStaffClick,
                         labelWidth = StaffLabelWidth,
                     )
                 }

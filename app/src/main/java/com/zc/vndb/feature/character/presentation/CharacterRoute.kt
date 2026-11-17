@@ -18,6 +18,7 @@ fun CharacterRoute(
     characterId: String,
     onNavigateBack: () -> Unit,
     onOpenNovel: (String) -> Unit,
+    onOpenStaff: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CharacterViewModel = koinViewModel { parametersOf(characterId) },
 ) {
@@ -30,6 +31,8 @@ fun CharacterRoute(
             CharacterEffect.NavigateBack -> onNavigateBack()
 
             is CharacterEffect.NavigateToNovel -> onOpenNovel(effect.id)
+
+            is CharacterEffect.NavigateToStaff -> onOpenStaff(effect.id)
 
             is CharacterEffect.OpenUrl -> uriHandler.openUri(effect.url)
 

@@ -3,6 +3,7 @@ package com.zc.vndb.feature.browse.data.remote
 import com.zc.vndb.common.data.dto.QueryDTO
 import com.zc.vndb.feature.browse.data.dto.BrowseNovelPageDTO
 import com.zc.vndb.feature.browse.data.dto.ProducerPageDTO
+import com.zc.vndb.feature.browse.data.dto.StaffPageDTO
 import com.zc.vndb.feature.browse.data.dto.TagInfoPageDTO
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -19,6 +20,10 @@ class BrowseService(private val client: HttpClient) {
 
     suspend fun queryProducer(query: QueryDTO): ProducerPageDTO = client.post(
         "producer",
+    ) { setBody(query) }.body()
+
+    suspend fun queryStaff(query: QueryDTO): StaffPageDTO = client.post(
+        "staff",
     ) { setBody(query) }.body()
 
     suspend fun queryNovels(query: QueryDTO): BrowseNovelPageDTO = client.post(

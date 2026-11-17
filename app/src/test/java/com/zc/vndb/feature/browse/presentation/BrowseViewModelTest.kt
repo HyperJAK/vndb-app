@@ -19,9 +19,12 @@ import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
 import com.zc.vndb.feature.browse.domain.model.ProducerInfo
 import com.zc.vndb.feature.browse.domain.model.ProducerType
+import com.zc.vndb.feature.browse.domain.model.StaffGender
+import com.zc.vndb.feature.browse.domain.model.StaffInfo
 import com.zc.vndb.feature.browse.domain.model.TagInfo
 import com.zc.vndb.feature.browse.domain.repository.FakeBrowseRepository
 import com.zc.vndb.feature.browse.domain.usecase.GetProducerUseCase
+import com.zc.vndb.feature.browse.domain.usecase.GetStaffUseCase
 import com.zc.vndb.feature.browse.domain.usecase.GetTagUseCase
 import com.zc.vndb.feature.browse.domain.usecase.SearchNovelsUseCase
 import kotlin.test.Test
@@ -50,6 +53,7 @@ class BrowseViewModelTest {
         searchNovels = SearchNovelsUseCase(repository),
         getTag = GetTagUseCase(repository),
         getProducer = GetProducerUseCase(repository),
+        getStaff = GetStaffUseCase(repository),
         observeSettings = ObserveSettingsUseCase(settings),
     )
 
@@ -325,6 +329,52 @@ class BrowseViewModelTest {
             advanceUntilIdle()
             assertEquals(BrowseSort.Newest, repository.requests.last().filter.sort)
         }
+
+    @Test
+    fun `a staff page opens on newest and shows the staff header`() = runTest {
+        repository.staff["s2"] = StaffInfo(
+            id = "s2",
+            name = "Nasu Kinoko",
+            originalName = null,
+            aliases = emptyList(),
+            language = "ja",
+            gender = StaffGender.Male,
+            description = null,
+            links = emptyList(),
+        )
+        val viewModel = createViewModel(BrowseScope.Staff("s2"))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertTrue(state.isScopedPage)
+        assertEquals(UiText.StringValue("Nasu Kinoko"), state.header?.name)
+        assertEquals(1, state.header?.links?.size)
+        assertEquals(BrowseSort.Newest, state.sort)
+        val filter = repository.requests.single().filter
+        assertEquals(BrowseScope.Staff("s2"), filter.scope)
+        assertEquals(BrowseSort.Newest, filter.sort)
+    }
+
+    @Test
+    fun `a failed staff lookup still lists the person's novels`() = runTest {
+        val viewModel = createViewModel(BrowseScope.Staff("s-missing"))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(null, state.header)
+        assertEquals(20, state.results.size)
+    }
+
+    @Test
+    fun `a link click opens the url`() = runTest {
+        val viewModel = createViewModel(BrowseScope.Staff("s2"))
+        advanceUntilIdle()
+
+        viewModel.effect.test {
+            viewModel.onIntent(BrowseIntent.LinkClicked("https://vndb.org/s2"))
+            assertEquals(BrowseEffect.OpenUrl("https://vndb.org/s2"), awaitItem())
+        }
+    }
 
     @Test
     fun `back and description toggle`() = runTest {

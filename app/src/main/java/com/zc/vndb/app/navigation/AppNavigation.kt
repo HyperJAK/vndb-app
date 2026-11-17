@@ -76,6 +76,10 @@ data class TagNavKey(val id: String) : FullScreenNavKey
 @Serializable
 data class ProducerNavKey(val id: String) : FullScreenNavKey
 
+/** Browse scoped to one VNDB staff member (writer, artist, voice actor…). */
+@Serializable
+data class StaffNavKey(val id: String) : FullScreenNavKey
+
 /** A character's page. */
 @Serializable
 data class CharacterNavKey(val id: String) : FullScreenNavKey
@@ -233,6 +237,7 @@ private fun appEntryProvider(navigator: Navigator) = entryProvider<NavKey> {
             onOpenCharacter = { id -> navigator.navigate(CharacterNavKey(id)) },
             onOpenTag = { id -> navigator.navigate(TagNavKey(id)) },
             onOpenProducer = { id -> navigator.navigate(ProducerNavKey(id)) },
+            onOpenStaff = { id -> navigator.navigate(StaffNavKey(id)) },
             onOpenRelease = { id -> navigator.navigate(ReleaseNavKey(id)) },
             onOpenListEditor = { id, title -> navigator.navigate(ListEditorNavKey(id, title)) },
         )
@@ -272,11 +277,19 @@ private fun EntryProviderScope<NavKey>.pageEntries(navigator: Navigator) {
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
         )
     }
+    entry<StaffNavKey> { key ->
+        BrowseRoute(
+            scope = BrowseScope.Staff(key.id),
+            onNavigateBack = { navigator.goBack() },
+            onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+        )
+    }
     entry<CharacterNavKey> { key ->
         CharacterRoute(
             characterId = key.id,
             onNavigateBack = { navigator.goBack() },
             onOpenNovel = { id -> navigator.navigate(NovelDetailNavKey(id)) },
+            onOpenStaff = { id -> navigator.navigate(StaffNavKey(id)) },
         )
     }
 }

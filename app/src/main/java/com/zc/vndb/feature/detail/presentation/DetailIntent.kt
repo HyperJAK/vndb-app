@@ -21,6 +21,7 @@ sealed interface DetailIntent {
     data class CharacterClicked(val id: String) : DetailIntent
     data class TagClicked(val id: String) : DetailIntent
     data class DeveloperClicked(val id: String) : DetailIntent
+    data class StaffClicked(val id: String) : DetailIntent
     data class EditionClicked(val releaseId: String) : DetailIntent
 
     data class TabSelected(val tab: DetailTab) : DetailIntent

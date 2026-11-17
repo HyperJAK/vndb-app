@@ -79,6 +79,10 @@ class CharacterViewModel(
             is CharacterIntent.NovelClicked -> sendEffect(
                 CharacterEffect.NavigateToNovel(intent.id),
             )
+
+            is CharacterIntent.StaffClicked -> sendEffect(
+                CharacterEffect.NavigateToStaff(intent.id),
+            )
         }
     }
 

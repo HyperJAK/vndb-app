@@ -7,6 +7,7 @@ import com.zc.vndb.common.domain.model.DomainError
 import com.zc.vndb.common.domain.model.Session
 import com.zc.vndb.common.domain.model.SpoilerPreference
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.common.domain.repository.FakeSessionRepository
 import com.zc.vndb.common.domain.repository.FakeSettingsRepository
 import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
@@ -58,7 +59,9 @@ class DetailViewModelTest {
             tags = listOf(DetailSamples.tag("Visible"), DetailSamples.tag("Hidden", spoiler = 2)),
             relations = listOf(DetailSamples.relation("v17102")),
         )
-        credits = DetailSamples.credits(voiceActors = mapOf("c1" to "Miyano Mamoru"))
+        credits = DetailSamples.credits(
+            voiceActors = mapOf("c1" to VoiceActor("s7", "Miyano Mamoru")),
+        )
         characters = listOf(
             DetailSamples.character("c1", CharacterRole.Main),
             DetailSamples.character("c2", CharacterRole.Primary, spoiler = 1),
@@ -149,6 +152,7 @@ class DetailViewModelTest {
                 UiText.StringResource(StringResource.detail_cv, listOf("Miyano Mamoru")),
                 cast.preview.first().voiceActorLabel,
             )
+            assertEquals("s7", cast.preview.first().voiceActorId)
             assertNotNull(cast.hiddenLabel)
             assertNotNull(hiddenTagsLabel)
             assertEquals(

@@ -1,11 +1,15 @@
 package com.zc.vndb.feature.browse.presentation.component.scopeheader.mapper
 
+import com.zc.vndb.common.domain.model.ExternalLink
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.ProducerInfo
 import com.zc.vndb.feature.browse.domain.model.ProducerType
+import com.zc.vndb.feature.browse.domain.model.StaffGender
+import com.zc.vndb.feature.browse.domain.model.StaffInfo
 import com.zc.vndb.feature.browse.domain.model.TagInfo
 import java.util.Locale
 import kotlin.test.Test
@@ -78,7 +82,7 @@ class ScopeHeaderUIModelMapperTest {
         assertEquals(UiText.StringValue("ニトロプラス"), header.originalName)
         assertEquals(
             UiText.StringResource(
-                StringResource.producer_type_with_language,
+                StringResource.scope_type_with_language,
                 listOf(UiText.StringResource(StringResource.producer_type_company), "Japanese"),
             ),
             header.typeLabel,
@@ -112,5 +116,61 @@ class ScopeHeaderUIModelMapperTest {
             UiText.StringResource(StringResource.producer_type_company),
             typeOnly.typeLabel,
         )
+    }
+
+    private val staff = StaffInfo(
+        id = "s2",
+        name = "Nasu Kinoko",
+        originalName = "奈須 きのこ",
+        aliases = listOf("Nasu Kunihiro"),
+        language = "ja",
+        gender = StaffGender.Male,
+        description = "Writer of [url=/v1]Tsukihime[/url].",
+        links = listOf(ExternalLink("Wikipedia (en)", "https://en.wikipedia.org/wiki/Nasu")),
+    )
+
+    @Test
+    fun `staff header shows gender with language, aliases, description and links`() {
+        val header = staff.toHeaderUIModel(Locale.ENGLISH)
+
+        assertEquals(UiText.StringValue("Nasu Kinoko"), header.name)
+        assertEquals(UiText.StringValue("奈須 きのこ"), header.originalName)
+        assertEquals(
+            UiText.StringResource(
+                StringResource.scope_type_with_language,
+                listOf(UiText.StringResource(StringResource.staff_gender_male), "Japanese"),
+            ),
+            header.typeLabel,
+        )
+        assertNull(header.countLabel)
+        assertEquals(
+            UiText.StringResource(StringResource.tag_aliases, listOf("Nasu Kunihiro")),
+            header.aliasesLabel,
+        )
+        assertEquals(UiText.StringResource(StringResource.staff_about), header.aboutTitle)
+        assertEquals(UiText.StringValue("Writer of Tsukihime."), header.description)
+        assertEquals(
+            listOf(
+                LinkUIModel(
+                    UiText.StringResource(StringResource.staff_vndb_link),
+                    "https://vndb.org/s2",
+                    isVndb = true,
+                ),
+                LinkUIModel(
+                    UiText.StringValue("Wikipedia (en)"),
+                    "https://en.wikipedia.org/wiki/Nasu",
+                    isVndb = false,
+                ),
+            ),
+            header.links,
+        )
+    }
+
+    @Test
+    fun `staff header copes with a missing gender and language`() {
+        val header = staff.copy(gender = null, language = null).toHeaderUIModel(Locale.ENGLISH)
+
+        assertNull(header.typeLabel)
+        assertEquals(2, header.links.size)
     }
 }

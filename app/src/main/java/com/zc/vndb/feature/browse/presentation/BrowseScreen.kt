@@ -44,6 +44,7 @@ import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
+import com.zc.vndb.common.ui.component.linksrow.LinksRowView
 import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
 import com.zc.vndb.common.ui.resource.StringResource
@@ -80,6 +81,7 @@ private class BrowseActions(
     val onRetry: () -> Unit,
     val onLoadMoreRetry: () -> Unit,
     val onDescriptionToggle: () -> Unit,
+    val onLinkClick: (String) -> Unit,
 )
 
 @Composable
@@ -118,6 +120,7 @@ fun BrowseScreen(
             onRetry = { onIntent(BrowseIntent.Retry) },
             onLoadMoreRetry = { onIntent(BrowseIntent.LoadMoreRetried) },
             onDescriptionToggle = { onIntent(BrowseIntent.DescriptionToggled) },
+            onLinkClick = { onIntent(BrowseIntent.LinkClicked(it)) },
         )
     }
     val gridState = rememberLazyGridState()
@@ -220,6 +223,11 @@ private fun LazyGridScope.header(state: BrowseState, actions: BrowseActions) {
     fullWidthItem(
         "scope-header",
     ) { ScopeHeaderView(model = header, modifier = Modifier.fillMaxWidth()) }
+    if (header.links.isNotEmpty()) {
+        fullWidthItem("scope-links") {
+            LinksRowView(links = header.links, onLinkClick = actions.onLinkClick)
+        }
+    }
     header.description?.let { description ->
         fullWidthItem("scope-description") {
             ExpandableTextView(

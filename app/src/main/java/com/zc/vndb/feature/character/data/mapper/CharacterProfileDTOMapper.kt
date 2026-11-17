@@ -3,6 +3,7 @@ package com.zc.vndb.feature.character.data.mapper
 import com.zc.vndb.common.data.mapper.toCover
 import com.zc.vndb.common.data.mapper.toReleaseDate
 import com.zc.vndb.common.domain.model.CharacterRole
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.feature.character.data.dto.CharacterAppearanceDTO
 import com.zc.vndb.feature.character.data.dto.CharacterNovelVoicesPageDTO
 import com.zc.vndb.feature.character.data.dto.CharacterProfileDTO
@@ -50,14 +51,14 @@ fun CharacterProfileDTO.toDomain(): CharacterProfile {
 }
 
 /** VN id → voice actor of [characterId] in it. */
-fun CharacterNovelVoicesPageDTO.toVoiceActors(characterId: String): Map<String, String> = results
-    .mapNotNull { novel ->
-        novel.va.orEmpty().firstOrNull { it.character.id == characterId }?.let {
-            novel.id to
-                it.staff.name
+fun CharacterNovelVoicesPageDTO.toVoiceActors(characterId: String): Map<String, VoiceActor> =
+    results
+        .mapNotNull { novel ->
+            novel.va.orEmpty().firstOrNull { it.character.id == characterId }?.let {
+                novel.id to VoiceActor(id = it.staff.id, name = it.staff.name)
+            }
         }
-    }
-    .toMap()
+        .toMap()
 
 private fun CharacterProfileDTO.measurements(): Measurements? =
     Measurements(bust = bust, waist = waist, hips = hips, cup = cup)

@@ -1,7 +1,10 @@
 package com.zc.vndb.feature.browse.presentation.component.scopeheader.model
 
 import androidx.compose.runtime.Immutable
+import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.text.UiText
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 /** What a tag or producer page is about, shown above the filters. */
 @Immutable
@@ -17,4 +20,6 @@ data class ScopeHeaderUIModel(
     val aliasesLabel: UiText?,
     val aboutTitle: UiText,
     val description: UiText?,
+    /** The page on vndb.org and external sites, when the entity has them. */
+    val links: ImmutableList<LinkUIModel> = persistentListOf(),
 )

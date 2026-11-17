@@ -9,6 +9,7 @@ import com.zc.vndb.feature.detail.domain.model.DetailSamples.staff
 import com.zc.vndb.feature.detail.domain.model.NovelCast
 import com.zc.vndb.feature.detail.domain.model.StaffCreditRole
 import com.zc.vndb.feature.detail.domain.model.StaffEdition
+import com.zc.vndb.feature.detail.presentation.component.staffrole.model.StaffPersonUIModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -68,11 +69,14 @@ class DetailCastUIModelMapperTest {
             groups.map { it.title },
         )
         assertEquals(
-            listOf<UiText>(
-                UiText.StringValue("Staff s1, Staff s2 (Route B)"),
-                UiText.StringValue("Staff s3"),
+            listOf(
+                listOf(
+                    StaffPersonUIModel("s1", "Staff s1", null),
+                    StaffPersonUIModel("s2", "Staff s2", "Route B"),
+                ),
+                listOf(StaffPersonUIModel("s3", "Staff s3", null)),
             ),
-            groups.first().credits.map { it.value },
+            groups.first().credits.map { it.people },
         )
     }
 }

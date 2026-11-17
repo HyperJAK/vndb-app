@@ -44,15 +44,7 @@ private fun BrowseFilter.toFilters(): JsonElement {
                 predicate("tag", "=", JsonPrimitive(it.tagId)),
             )
         }
-        when (val scope = scope) {
-            BrowseScope.None -> Unit
-
-            is BrowseScope.Tag -> add(predicate("tag", "=", JsonPrimitive(scope.id)))
-
-            is BrowseScope.Producer -> add(
-                predicate("developer", "=", predicate("id", "=", JsonPrimitive(scope.id))),
-            )
-        }
+        scope.toPredicate()?.let(::add)
     }
     // No condition at all ("Both" ages, nothing else) is an empty list: VNDB rejects ["and"].
     return when (predicates.size) {
@@ -65,6 +57,18 @@ private fun BrowseFilter.toFilters(): JsonElement {
             predicates.forEach { add(it) }
         }
     }
+}
+
+/** The condition a tag, producer or staff page adds; null for the Browse tab. */
+private fun BrowseScope.toPredicate(): JsonArray? = when (this) {
+    BrowseScope.None -> null
+
+    is BrowseScope.Tag -> predicate("tag", "=", JsonPrimitive(id))
+
+    is BrowseScope.Producer ->
+        predicate("developer", "=", predicate("id", "=", JsonPrimitive(id)))
+
+    is BrowseScope.Staff -> predicate("staff", "=", predicate("id", "=", JsonPrimitive(id)))
 }
 
 private val BrowseSort.apiField: String
@@ -101,6 +105,18 @@ fun tagQuery(id: String) = QueryDTO(
 fun producerQuery(id: String) = QueryDTO(
     filters = predicate("id", "=", JsonPrimitive(id)),
     fields = "name, original, aliases, lang, type, description",
+    sort = null,
+    reverse = null,
+    results = 1,
+    page = null,
+    count = null,
+)
+
+/** One staff member by id, for the staff page header. */
+fun staffQuery(id: String) = QueryDTO(
+    filters = predicate("id", "=", JsonPrimitive(id)),
+    fields = "name, original, lang, gender, aliases.name, aliases.latin, description, " +
+        "extlinks.label, extlinks.url",
     sort = null,
     reverse = null,
     results = 1,

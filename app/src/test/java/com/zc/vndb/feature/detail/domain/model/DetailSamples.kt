@@ -7,6 +7,7 @@ import com.zc.vndb.common.domain.model.NovelLength
 import com.zc.vndb.common.domain.model.NovelTag
 import com.zc.vndb.common.domain.model.ReleaseDate
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.domain.model.VoiceActor
 import kotlinx.datetime.LocalDate
 
 object DetailSamples {
@@ -110,7 +111,7 @@ object DetailSamples {
     fun credits(
         staff: List<StaffCredit> = emptyList(),
         editions: List<StaffEdition> = emptyList(),
-        voiceActors: Map<String, String> = emptyMap(),
+        voiceActors: Map<String, VoiceActor> = emptyMap(),
     ) = NovelCredits(staff = staff, editions = editions, voiceActors = voiceActors)
 
     fun staff(id: String, role: StaffCreditRole, editionId: Int? = null, note: String? = null) =

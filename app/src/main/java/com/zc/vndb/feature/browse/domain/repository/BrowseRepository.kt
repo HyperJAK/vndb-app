@@ -3,6 +3,7 @@ package com.zc.vndb.feature.browse.domain.repository
 import com.zc.vndb.feature.browse.domain.model.BrowseFilter
 import com.zc.vndb.feature.browse.domain.model.BrowsePage
 import com.zc.vndb.feature.browse.domain.model.ProducerInfo
+import com.zc.vndb.feature.browse.domain.model.StaffInfo
 import com.zc.vndb.feature.browse.domain.model.TagInfo
 
 interface BrowseRepository {
@@ -10,6 +11,8 @@ interface BrowseRepository {
     suspend fun getTag(id: String): Result<TagInfo>
 
     suspend fun getProducer(id: String): Result<ProducerInfo>
+
+    suspend fun getStaff(id: String): Result<StaffInfo>
 
     /** One page (1-based) of novels matching [filter]; [withCount] also asks for the total. */
     suspend fun searchNovels(

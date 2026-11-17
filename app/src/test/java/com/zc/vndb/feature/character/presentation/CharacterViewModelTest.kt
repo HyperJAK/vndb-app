@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.zc.vndb.common.domain.model.AppSettings
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.SpoilerPreference
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.common.domain.repository.FakeSettingsRepository
 import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
@@ -42,7 +43,7 @@ class CharacterViewModelTest {
                 CharacterSamples.appearance("v5883", CharacterRole.Appears, spoiler = 1),
             ),
         )
-        voiceActors = mapOf("v2002" to "Imai Asami")
+        voiceActors = mapOf("v2002" to VoiceActor("s240", "Imai Asami"))
     }
 
     private val settings = FakeSettingsRepository()

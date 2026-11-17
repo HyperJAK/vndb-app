@@ -2,6 +2,7 @@ package com.zc.vndb.feature.character.presentation.component.appearancerow.mappe
 
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.ReleaseDate
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.character.domain.model.CharacterSamples.appearance
@@ -18,7 +19,7 @@ class AppearanceRowUIModelMapperTest {
         val row = appearance(
             "v2002",
             CharacterRole.Main,
-        ).copy(voiceActor = "Imai Asami").toRowUIModel()
+        ).copy(voiceActor = VoiceActor("s240", "Imai Asami")).toRowUIModel()
 
         assertEquals(UiText.StringResource(StringResource.character_role_main), row.roleLabel)
         assertTrue(row.isMajorRole)
@@ -28,6 +29,7 @@ class AppearanceRowUIModelMapperTest {
             UiText.StringResource(StringResource.detail_cv, listOf("Imai Asami")),
             row.voiceActorLabel,
         )
+        assertEquals("s240", row.voiceActorId)
     }
 
     @Test

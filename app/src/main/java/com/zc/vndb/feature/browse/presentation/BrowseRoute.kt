@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zc.vndb.common.ui.util.ObserveAsEvents
 import com.zc.vndb.feature.browse.domain.model.BrowseScope
@@ -22,6 +23,7 @@ fun BrowseRoute(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveAsEvents(viewModel.effect) { effect ->
@@ -29,6 +31,8 @@ fun BrowseRoute(
             is BrowseEffect.NavigateToNovel -> onOpenNovel(effect.id)
 
             BrowseEffect.NavigateBack -> onNavigateBack()
+
+            is BrowseEffect.OpenUrl -> uriHandler.openUri(effect.url)
 
             is BrowseEffect.ShowError -> snackbarHostState.showSnackbar(
                 effect.error.message.asString(context),

@@ -1,5 +1,6 @@
 package com.zc.vndb.feature.character.domain.repository
 
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.feature.character.domain.model.CharacterProfile
 
 interface CharacterRepository {
@@ -8,5 +9,5 @@ interface CharacterRepository {
     suspend fun getCharacter(id: String): Result<CharacterProfile>
 
     /** VN id → the character's voice actor in that VN. */
-    suspend fun getVoiceActors(characterId: String): Result<Map<String, String>>
+    suspend fun getVoiceActors(characterId: String): Result<Map<String, VoiceActor>>
 }

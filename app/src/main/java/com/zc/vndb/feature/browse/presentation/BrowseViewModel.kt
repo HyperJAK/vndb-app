@@ -11,6 +11,7 @@ import com.zc.vndb.feature.browse.domain.model.BrowseScope
 import com.zc.vndb.feature.browse.domain.model.BrowseSort
 import com.zc.vndb.feature.browse.domain.model.Genre
 import com.zc.vndb.feature.browse.domain.usecase.GetProducerUseCase
+import com.zc.vndb.feature.browse.domain.usecase.GetStaffUseCase
 import com.zc.vndb.feature.browse.domain.usecase.GetTagUseCase
 import com.zc.vndb.feature.browse.domain.usecase.SearchNovelsUseCase
 import com.zc.vndb.feature.browse.presentation.component.browsenovelcard.mapper.toCardUIModel
@@ -40,6 +41,7 @@ class BrowseViewModel(
     private val searchNovels: SearchNovelsUseCase,
     private val getTag: GetTagUseCase,
     private val getProducer: GetProducerUseCase,
+    private val getStaff: GetStaffUseCase,
     private val observeSettings: ObserveSettingsUseCase,
 ) : ViewModel() {
 
@@ -94,12 +96,27 @@ class BrowseViewModel(
 
             BrowseIntent.LoadMoreRetried -> loadNextPage()
 
+            is BrowseIntent.NovelClicked,
+            BrowseIntent.BackClicked,
+            is BrowseIntent.LinkClicked,
+            BrowseIntent.DescriptionToggled,
+            -> onPageIntent(intent)
+        }
+    }
+
+    /** Taps on the page itself: navigation, links and the description. */
+    private fun onPageIntent(intent: BrowseIntent) {
+        when (intent) {
             is BrowseIntent.NovelClicked -> sendEffect(BrowseEffect.NavigateToNovel(intent.id))
 
             BrowseIntent.BackClicked -> sendEffect(BrowseEffect.NavigateBack)
 
+            is BrowseIntent.LinkClicked -> sendEffect(BrowseEffect.OpenUrl(intent.url))
+
             BrowseIntent.DescriptionToggled ->
                 _state.update { it.copy(isDescriptionExpanded = !it.isDescriptionExpanded) }
+
+            else -> Unit
         }
     }
 
@@ -125,6 +142,7 @@ class BrowseViewModel(
                 BrowseScope.None -> return@launch
                 is BrowseScope.Tag -> getTag(scope.id).map { it.toHeaderUIModel() }
                 is BrowseScope.Producer -> getProducer(scope.id).map { it.toHeaderUIModel() }
+                is BrowseScope.Staff -> getStaff(scope.id).map { it.toHeaderUIModel() }
             }
             header.onSuccess { model -> _state.update { it.copy(header = model) } }
         }

@@ -20,7 +20,7 @@ private const val NOVEL_FIELDS =
         "relations.rating, titles.lang, titles.title, titles.latin, titles.official, titles.main, aliases"
 
 private const val CREDIT_FIELDS = "staff.id, staff.name, staff.role, staff.note, staff.eid, " +
-    "editions.eid, editions.lang, editions.name, editions.official, va.character.id, va.staff.name"
+    "editions.eid, editions.lang, editions.name, editions.official, va.character.id, va.staff.id, va.staff.name"
 
 private const val SCREENSHOT_FIELDS =
     "screenshots.url, screenshots.thumbnail, screenshots.sexual, " +

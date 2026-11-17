@@ -21,6 +21,7 @@ fun DetailRoute(
     onOpenCharacter: (String) -> Unit,
     onOpenTag: (String) -> Unit,
     onOpenProducer: (String) -> Unit,
+    onOpenStaff: (String) -> Unit,
     onOpenRelease: (String) -> Unit,
     onOpenListEditor: (novelId: String, title: String) -> Unit,
     modifier: Modifier = Modifier,
@@ -41,6 +42,8 @@ fun DetailRoute(
             is DetailEffect.NavigateToTag -> onOpenTag(effect.id)
 
             is DetailEffect.NavigateToProducer -> onOpenProducer(effect.id)
+
+            is DetailEffect.NavigateToStaff -> onOpenStaff(effect.id)
 
             is DetailEffect.NavigateToRelease -> onOpenRelease(effect.id)
 

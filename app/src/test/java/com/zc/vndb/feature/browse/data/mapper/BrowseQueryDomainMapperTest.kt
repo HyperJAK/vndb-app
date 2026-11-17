@@ -138,6 +138,32 @@ class BrowseQueryDomainMapperTest {
     }
 
     @Test
+    fun `a staff page filters to novels the person worked on`() {
+        val body = BrowseFilter(scope = BrowseScope.Staff("s2")).body()
+
+        assertEquals(
+            json(
+                """["and",["release","!=",["minage",">=",18]],["staff","=",["id","=","s2"]]]""",
+            ),
+            body["filters"],
+        )
+    }
+
+    @Test
+    fun `staff lookup by id`() {
+        val body = appJson.encodeToJsonElement(staffQuery("s2")).jsonObject
+
+        assertEquals(json("""["id","=","s2"]"""), body["filters"])
+        assertEquals(
+            json(
+                "\"name, original, lang, gender, aliases.name, aliases.latin, description, " +
+                    "extlinks.label, extlinks.url\"",
+            ),
+            body["fields"],
+        )
+    }
+
+    @Test
     fun `tag lookup by id`() {
         val body = appJson.encodeToJsonElement(tagQuery("g249")).jsonObject
 

@@ -1,15 +1,20 @@
 package com.zc.vndb.feature.browse.presentation.component.scopeheader.mapper
 
+import androidx.annotation.StringRes
 import com.zc.vndb.common.domain.model.TagCategory
+import com.zc.vndb.common.ui.component.linksrow.model.LinkUIModel
 import com.zc.vndb.common.ui.mapper.bbCodeToPlainText
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.feature.browse.domain.model.ProducerInfo
 import com.zc.vndb.feature.browse.domain.model.ProducerType
+import com.zc.vndb.feature.browse.domain.model.StaffGender
+import com.zc.vndb.feature.browse.domain.model.StaffInfo
 import com.zc.vndb.feature.browse.domain.model.TagInfo
 import com.zc.vndb.feature.browse.presentation.component.scopeheader.model.ScopeHeaderUIModel
 import java.util.Locale
+import kotlinx.collections.immutable.toImmutableList
 
 fun TagInfo.toHeaderUIModel(): ScopeHeaderUIModel = ScopeHeaderUIModel(
     name = UiText.StringValue(name),
@@ -46,21 +51,61 @@ fun ProducerInfo.toHeaderUIModel(locale: Locale = Locale.getDefault()): ScopeHea
         description = description.toPlainDescription(),
     )
 
+fun StaffInfo.toHeaderUIModel(locale: Locale = Locale.getDefault()): ScopeHeaderUIModel =
+    ScopeHeaderUIModel(
+        name = UiText.StringValue(name),
+        originalName = originalName?.let(UiText::StringValue),
+        typeLabel = labelWithLanguage(
+            typeRes = when (gender) {
+                StaffGender.Male -> StringResource.staff_gender_male
+                StaffGender.Female -> StringResource.staff_gender_female
+                null -> null
+            },
+            language = language,
+            locale = locale,
+        ),
+        isSexualCategory = false,
+        countLabel = null,
+        aliasesLabel = aliases.toAliasesLabel(),
+        aboutTitle = UiText.StringResource(StringResource.staff_about),
+        description = description.toPlainDescription(),
+        links = buildList {
+            add(
+                LinkUIModel(
+                    label = UiText.StringResource(StringResource.staff_vndb_link),
+                    url = "https://vndb.org/$id",
+                    isVndb = true,
+                ),
+            )
+            links.forEach { add(LinkUIModel(UiText.StringValue(it.label), it.url, isVndb = false)) }
+        }.toImmutableList(),
+    )
+
 /** "Company · Japanese", or whichever of the two VNDB has. */
-private fun ProducerInfo.toTypeLabel(locale: Locale): UiText? {
-    val typeRes = when (type) {
+private fun ProducerInfo.toTypeLabel(locale: Locale): UiText? = labelWithLanguage(
+    typeRes = when (type) {
         ProducerType.Company -> StringResource.producer_type_company
         ProducerType.Individual -> StringResource.producer_type_individual
         ProducerType.AmateurGroup -> StringResource.producer_type_amateur
         null -> null
-    }
+    },
+    language = language,
+    locale = locale,
+)
+
+/** [typeRes] and the display name of [language] joined by a dot, or whichever one exists. */
+private fun labelWithLanguage(
+    @StringRes typeRes: Int?,
+    language: String?,
+    locale: Locale,
+): UiText? {
     val languageName = language
         ?.let { Locale.forLanguageTag(it).getDisplayLanguage(locale) }
         ?.takeIf { it.isNotBlank() }
     return when {
         typeRes != null && languageName != null ->
             UiText.StringResource(
-                StringResource.producer_type_with_language,
+                StringResource.scope_type_with_language,
                 listOf(UiText.StringResource(typeRes), languageName),
             )
 

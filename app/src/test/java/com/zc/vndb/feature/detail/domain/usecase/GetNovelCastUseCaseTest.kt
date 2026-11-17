@@ -2,6 +2,7 @@ package com.zc.vndb.feature.detail.domain.usecase
 
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.character
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.credits
 import com.zc.vndb.feature.detail.domain.model.DetailSamples.staff
@@ -28,13 +29,13 @@ class GetNovelCastUseCaseTest {
         )
         repository.credits = credits(
             staff = listOf(staff("s1", StaffCreditRole.Scenario)),
-            voiceActors = mapOf("c2" to "Miyano Mamoru"),
+            voiceActors = mapOf("c2" to VoiceActor("s7", "Miyano Mamoru")),
         )
 
         val cast = useCase("v1").getOrThrow()
 
         assertEquals(listOf("c2", "c4", "c1", "c3"), cast.characters.map { it.id })
-        assertEquals("Miyano Mamoru", cast.characters.first().voiceActor)
+        assertEquals(VoiceActor("s7", "Miyano Mamoru"), cast.characters.first().voiceActor)
         assertNull(cast.characters[1].voiceActor)
         assertEquals(listOf("s1"), cast.staff.map { it.staffId })
     }

@@ -1,7 +1,6 @@
 package com.zc.vndb.feature.detail.presentation.mapper
 
 import com.zc.vndb.common.domain.model.CharacterRole
-import com.zc.vndb.common.ui.component.factline.model.FactUIModel
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.PluralResource
 import com.zc.vndb.common.ui.resource.StringResource
@@ -10,6 +9,8 @@ import com.zc.vndb.feature.detail.domain.model.NovelCast
 import com.zc.vndb.feature.detail.domain.model.StaffCredit
 import com.zc.vndb.feature.detail.domain.model.StaffCreditRole
 import com.zc.vndb.feature.detail.presentation.component.charactercard.mapper.toCardUIModel
+import com.zc.vndb.feature.detail.presentation.component.staffrole.model.StaffPersonUIModel
+import com.zc.vndb.feature.detail.presentation.component.staffrole.model.StaffRoleUIModel
 import com.zc.vndb.feature.detail.presentation.model.CastUIModel
 import com.zc.vndb.feature.detail.presentation.model.CharacterGroupUIModel
 import com.zc.vndb.feature.detail.presentation.model.StaffGroupUIModel
@@ -44,14 +45,14 @@ private fun NovelCast.staffGroups(): List<StaffGroupUIModel> {
     val original = byEdition[null]?.let {
         StaffGroupUIModel(
             UiText.StringResource(StringResource.detail_staff_original),
-            it.toFacts(),
+            it.toRoles(),
         )
     }
     val others = editions.mapNotNull { edition ->
         byEdition[edition.id]?.let {
             StaffGroupUIModel(
                 UiText.StringValue(edition.name),
-                it.toFacts(),
+                it.toRoles(),
             )
         }
     }
@@ -59,14 +60,11 @@ private fun NovelCast.staffGroups(): List<StaffGroupUIModel> {
 }
 
 /** One line per role ("Scenario: Hino Yuuki, Hayase Ryou"), in VNDB's role order. */
-private fun List<StaffCredit>.toFacts() = groupBy { it.role }.toSortedMap().map { (role, credits) ->
-    FactUIModel(
+private fun List<StaffCredit>.toRoles() = groupBy { it.role }.toSortedMap().map { (role, credits) ->
+    StaffRoleUIModel(
         label = role.toLabel(),
-        value = UiText.StringValue(
-            credits.joinToString(
-                ", ",
-            ) { credit -> credit.note?.let { "${credit.name} ($it)" } ?: credit.name },
-        ),
+        people = credits.map { StaffPersonUIModel(id = it.staffId, name = it.name, note = it.note) }
+            .toImmutableList(),
     )
 }.toImmutableList()
 

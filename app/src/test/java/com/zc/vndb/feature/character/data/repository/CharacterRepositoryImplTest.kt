@@ -3,6 +3,7 @@ package com.zc.vndb.feature.character.data.repository
 import com.zc.vndb.common.data.network.appJson
 import com.zc.vndb.common.data.network.createHttpClient
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.feature.character.data.remote.CharacterService
 import com.zc.vndb.feature.character.domain.model.Birthday
 import com.zc.vndb.feature.character.domain.model.Sex
@@ -85,7 +86,13 @@ class CharacterRepositoryImplTest {
             appJson.parseToJsonElement("""["character","=",["id","=","c6487"]]"""),
             bodies["/kana/vn"]?.jsonObject?.get("filters"),
         )
-        assertEquals(mapOf("v2002" to "Imai Asami", "v6618" to "Imai Asami"), actors)
+        assertEquals(
+            mapOf(
+                "v2002" to VoiceActor("s240", "Imai Asami"),
+                "v6618" to VoiceActor("s240", "Imai Asami"),
+            ),
+            actors,
+        )
     }
 
     @Test

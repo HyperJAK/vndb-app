@@ -3,6 +3,7 @@ package com.zc.vndb.feature.character.domain.model
 import com.zc.vndb.common.domain.model.CharacterRole
 import com.zc.vndb.common.domain.model.Cover
 import com.zc.vndb.common.domain.model.ReleaseDate
+import com.zc.vndb.common.domain.model.VoiceActor
 
 /** The character's role in one VN. */
 data class CharacterAppearance(
@@ -13,7 +14,7 @@ data class CharacterAppearance(
     val cover: Cover?,
     val role: CharacterRole,
     val spoilerLevel: Int,
-    val voiceActor: String?,
+    val voiceActor: VoiceActor?,
     /** The VN's title in the original script, when VNDB has one. */
     val novelOriginalTitle: String? = null,
 )

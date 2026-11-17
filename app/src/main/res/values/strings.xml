@@ -218,8 +218,14 @@
     <string name="producer_type_company">Company</string>
     <string name="producer_type_individual">Individual</string>
     <string name="producer_type_amateur">Amateur group</string>
-    <string name="producer_type_with_language">%1$s · %2$s</string>
+    <string name="scope_type_with_language">%1$s · %2$s</string>
     <string name="producer_about">About this producer</string>
+
+    <!-- Staff -->
+    <string name="staff_gender_male">Male</string>
+    <string name="staff_gender_female">Female</string>
+    <string name="staff_about">About this person</string>
+    <string name="staff_vndb_link">vndb.org</string>
 
     <!-- Release -->
     <string name="release_share_chooser">Share release</string>

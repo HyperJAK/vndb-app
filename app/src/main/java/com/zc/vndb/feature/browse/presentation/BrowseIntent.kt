@@ -21,4 +21,5 @@ sealed interface BrowseIntent {
     data class NovelClicked(val id: String) : BrowseIntent
     data object BackClicked : BrowseIntent
     data object DescriptionToggled : BrowseIntent
+    data class LinkClicked(val url: String) : BrowseIntent
 }

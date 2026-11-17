@@ -60,6 +60,7 @@ private class CharacterActions(
     val onSpoilerLevelSelect: (SpoilerLevel) -> Unit,
     val onDescriptionToggle: () -> Unit,
     val onNovelClick: (String) -> Unit,
+    val onStaffClick: (String) -> Unit,
 )
 
 @Composable
@@ -73,6 +74,7 @@ fun CharacterScreen(
             onSpoilerLevelSelect = { onIntent(CharacterIntent.SpoilerLevelSelected(it)) },
             onDescriptionToggle = { onIntent(CharacterIntent.DescriptionToggled) },
             onNovelClick = { onIntent(CharacterIntent.NovelClicked(it)) },
+            onStaffClick = { onIntent(CharacterIntent.StaffClicked(it)) },
         )
     }
     Scaffold(
@@ -206,6 +208,7 @@ private fun LazyListScope.appearancesSection(state: CharacterState, actions: Cha
                 AppearanceRowView(
                     model = appearance,
                     onClick = { actions.onNovelClick(appearance.novelId) },
+                    onVoiceActorClick = actions.onStaffClick,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

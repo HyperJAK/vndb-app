@@ -2,6 +2,7 @@ package com.zc.vndb.feature.character.data.repository
 
 import com.zc.vndb.common.data.util.safeApiCall
 import com.zc.vndb.common.domain.model.DomainError
+import com.zc.vndb.common.domain.model.VoiceActor
 import com.zc.vndb.feature.character.data.mapper.characterQuery
 import com.zc.vndb.feature.character.data.mapper.characterVoicesQuery
 import com.zc.vndb.feature.character.data.mapper.toDomain
@@ -21,7 +22,7 @@ class CharacterRepositoryImpl(private val service: CharacterService) : Character
         character.toDomain()
     }
 
-    override suspend fun getVoiceActors(characterId: String): Result<Map<String, String>> =
+    override suspend fun getVoiceActors(characterId: String): Result<Map<String, VoiceActor>> =
         safeApiCall {
             service.queryNovelVoices(characterVoicesQuery(characterId)).toVoiceActors(characterId)
         }
