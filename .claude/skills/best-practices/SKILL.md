@@ -595,6 +595,7 @@ class VisualNovelDTOMapperTest {
 ### 6.4 `presentation`: ViewModels and UI mappers
 
 - Test every `[Name]ViewModel` for **state transitions** (initial → loading → content/error) and **effect sequences**, using `MainDispatcherRule` and Turbine. Build ViewModels with real use cases backed by fake repositories.
+- `Navigator` and every `NavKey`'s serialization are unit tested (`NavigatorTest`, `NavKeySerializationTest`); a new `NavKey` is added to the serialization test's sample list.
 - Test every `[Name]UIModelMapper` for formatting: dates, ratings, empty/null fallbacks, BBCode → Markdown.
 
 ```kotlin
@@ -686,4 +687,4 @@ The last `grep` must print nothing for Screens and Views.
 - [ ] Network failures go through `safeApiCall` → `DomainError` → `ErrorUIModel`; DataStore reads `.catch` `IOException`.
 - [ ] User-visible text in State/UIModel/UIState/Effect is `UiText`, resolved with `asString()`; strings are referenced as `StringResource.x` / `PluralResource.x` (never `R.string` / `R.plurals`), and nothing outside `UiText` calls `stringResource()` / `getString()` or carries a raw resource id.
 - [ ] Screens and Views are stateless, with `@AdaptivePreviews`; theme tokens only; cards use `Modifier.cardBackground()`; 48.dp touch targets; meaningful `contentDescription`s.
-- [ ] Tests exist for every new use case, service, mapper and ViewModel, and they pass.
+- [ ] Tests exist for every new use case, service, mapper and ViewModel, and they pass; new `NavKey`s are in `NavKeySerializationTest`.

@@ -84,20 +84,20 @@ grep -rnE "runBlocking|GlobalScope|KoinComponent|by inject\(\)" app/src/main
 
 ## 2. Layer-mapping table
 
-✅ = allowed, — = forbidden. Columns follow the `structure` skill: `domain` includes `common/domain`, `data` includes `common/data`, `di` includes `common/di` and `app/di`, and "app" means `app/` (Activity, Application, `app/navigation/`).
+✅ = allowed, — = forbidden. Columns follow the `structure` skill: `domain` includes `common/domain`, `data` includes `common/data`, `di` includes `common/di` and `app/di`, and "app" means `app/` (Activity, Application, `app/navigation/`). `presentation` includes each feature's `presentation/navigation/`.
 
 | Library | `domain` | `data` | `presentation` | `common/ui` | `di` | app |
 |---|---|---|---|---|---|---|
 | Kotlin stdlib, `kotlinx.coroutines` core (`suspend`, `Flow`) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | kotlinx-datetime | ✅ | ✅ | ✅ (formatting in mappers) | ✅ | — | — |
 | kotlinx-collections-immutable | — (use `List`) | — | ✅ | ✅ | — | — |
-| kotlinx.serialization | — | ✅ DTOs only | — | — | ✅ `Json` config | ✅ `NavKey`s only |
+| kotlinx.serialization | — | ✅ DTOs only | ✅ `NavKey`s only (`presentation/navigation/`) | — | ✅ `Json` config | ✅ `NavKey`s only |
 | Ktor Client | — | ✅ | — | — | ✅ create `HttpClient` | — |
 | DataStore | — | ✅ | — | — | ✅ create instance | — |
 | Compose, Material 3, Adaptive | — | — | ✅ | ✅ | — | ✅ |
 | Compose RichText | — | — | ✅ | ✅ | — | — |
 | Coil | — | ✅ `common/data` only: disk/memory cache size and clear (`ImageCacheRepositoryImpl`) | ✅ | ✅ | ✅ `DiskCache` provider | ✅ `ImageLoader` setup |
-| Navigation 3 | — | — | — | — | — | ✅ `NavKey`s, `NavDisplay`, back stack |
+| Navigation 3 | — | — | ✅ `NavKey`s and entry functions (`presentation/navigation/`) only | ✅ `common/ui/navigation/` plumbing | — | ✅ `NavDisplay`, back stack, entry wiring |
 | Lifecycle / ViewModel | — | — | ✅ | — | — | ✅ |
 | Koin | ✅ annotations only (`@Factory`, `@Single`) | ✅ annotations only (`@Single`) | ✅ `@KoinViewModel` / `@Factory`, `koinViewModel()` in Routes only | — | ✅ `@Module`, providers | ✅ `startKoin<AppKoin>` |
 
@@ -255,15 +255,15 @@ fun CoverImageView(
 
 For deep detail (scenes, multiple back stacks, results, deep links) load the `navigation-3` skill.
 
-- **Destinations are `@Serializable` `NavKey`s**, one per screen, named `[Name]NavKey` (the `[Name]Route` name is reserved for the composable — see `conventions`). They are declared in `app/navigation/AppNavigation.kt` and carry only primitive/serializable arguments (ids, not objects).
-- `NavKey`s, the **back stack** (`rememberNavBackStack(startKey)`) and **`NavDisplay`** live only in `app/navigation/`. Features never see `NavKey`s or the back stack.
+- **Destinations are `@Serializable` `NavKey`s**, one per screen, named `[Name]NavKey` (the `[Name]Route` name is reserved for the composable — see `conventions`). Each is declared in its owning feature's `presentation/navigation/[Name]NavKey.kt` and carries only primitive/serializable arguments (ids, not objects).
+- A feature registers its entries in an `EntryProviderScope<NavKey>.[name]Entry(...)` extension (`presentation/navigation/[Name]Navigation.kt`). The **back stack**, `Navigator` and **`NavDisplay`** live only in `app/navigation/` and `common/ui/navigation/`; features never see the back stack or a `Navigator`.
 - `NavDisplay` installs `rememberSaveableStateHolderNavEntryDecorator()` and `rememberViewModelStoreNavEntryDecorator()` so each entry gets its own saved state and ViewModel store.
-- Arguments flow **key → Route → ViewModel**: the `entry<NovelDetailNavKey> { key -> … }` block passes `key.id` to `NovelDetailRoute(novelId = key.id, …)`, which passes it to Koin with `koinViewModel { parametersOf(novelId) }`.
+- Arguments flow **key → Route → ViewModel**: the entry block in the feature's `[name]Entry` (`entry<NovelDetailNavKey> { key -> … }`) passes `key.id` to `NovelDetailRoute(novelId = key.id, …)`, which passes it to Koin with `koinViewModel { parametersOf(novelId) }`.
 - Navigation is triggered **only** by the Route, in response to an `[Name]Effect` (or a direct callback for trivial clicks), through lambdas like `onNavigateBack: () -> Unit`, `onOpenNovel: (String) -> Unit`. Screens never navigate; they emit intents.
-- Cross-feature navigation: `AppNavigation.kt` translates one feature Route's callback into another destination's `NavKey`.
+- Cross-feature navigation: `[name]Entry` takes lambdas (or a `[Name]NavActions` past ~4), and `app/navigation/AppEntryProvider.kt` builds them from `Navigator` and the other features' `NavKey`s. Features never import each other's navigation package.
 
 ```kotlin
-// ✅ app/navigation/AppNavigation.kt (keys + graph)
+// ✅ keys: feature/[name]/presentation/navigation/[Name]NavKey.kt; the graph below is the pattern, shown in one place for brevity
 @Serializable
 data object NovelListNavKey : NavKey
 
@@ -303,7 +303,8 @@ private fun AppNavDisplay(backStack: NavBackStack<NavKey>) {
 | ❌ Don't | ✅ Do |
 |---|---|
 | `navController.navigate("novel/$id")` | `backStack.add(NovelDetailNavKey(id))` in `app/navigation/` |
-| `NavKey` declared inside a feature package | Declared in `app/navigation/AppNavigation.kt` |
+| `NavKey` declared in `app/navigation/` | Declared in the owning feature's `presentation/navigation/` |
+| A feature importing another feature's `NavKey` or taking a `Navigator` | A lambda parameter on its `[name]Entry`, wired in `AppEntryProvider.kt` |
 | `savedStateHandle.get<String>("id")` / `arguments?.getString("id")` | `entry<NovelDetailNavKey> { key -> NovelDetailRoute(novelId = key.id) }` |
 | `NovelDetailScreen(navController = …)` | `NovelDetailScreen(state, onIntent)`; Route maps `Effect.NavigateBack` → `onNavigateBack()` |
 | `data class NovelDetailNavKey(val novel: VisualNovel)` | Pass the id; the destination loads its own data |
@@ -494,7 +495,7 @@ val novelModule = module { singleOf(::VisualNovelRepositoryImpl) { bind<VisualNo
 - [ ] Async code is `suspend` / `Flow` / `StateFlow` / `Channel` — no LiveData, RxJava, callbacks, `runBlocking`, `GlobalScope`.
 - [ ] UI is Compose + Material 3; responsive layout via Material 3 Adaptive and window size classes.
 - [ ] Images via Coil `AsyncImage`; Markdown via `MarkdownView` (Compose RichText).
-- [ ] Destinations are `@Serializable` `[Name]NavKey`s; keys, back stack and `NavDisplay` only in `app/navigation/`; Routes navigate via callbacks in response to Effects.
+- [ ] Destinations are `@Serializable` `[Name]NavKey`s; keys and `[name]Entry` functions in the feature's `presentation/navigation/`, wiring in `app/navigation/AppEntryProvider.kt`, back stack and `NavDisplay` only in `app/navigation/`; Routes navigate via callbacks in response to Effects.
 - [ ] Networking via the shared Ktor `HttpClient` in `data`; DTOs use kotlinx.serialization; Ktor types never leave `data`.
 - [ ] Persistence via DataStore exposed as `Flow`; no `SharedPreferences`.
 - [ ] DI via Koin Annotations: classes carry `@Single` / `@Factory` / `@KoinViewModel` (navigation args `@InjectedParam`), each feature has one `@Module @ComponentScan` class listed in `AppModule`; no Koin DSL (`module { }`, `singleOf`, …), no `KoinComponent` / `inject()`; `koinViewModel()` only in Routes; `KoinModulesTest` passes.

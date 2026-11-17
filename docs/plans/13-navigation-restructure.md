@@ -1,6 +1,8 @@
 # Plan 13 — Navigation restructure (per-feature NavKeys & entry extension functions)
 
-Goal: stop `app/navigation/AppNavigation.kt` from being the one file that knows every screen. Each feature owns its NavKeys and an `EntryProviderScope<NavKey>` extension function that registers its entries; `app/` owns the scaffold, the tabs and the wiring between features. Pure refactor: **no user-visible behaviour change** except the two small fixes in §6.
+**Status: Done on `enhancement/navigation-migration`, except fix 3 (deferred, see §6).**
+
+Goal: stop `app/navigation/AppNavigation.kt` from being the one file that knows every screen. Each feature owns its NavKeys and an `EntryProviderScope<NavKey>` extension function that registers its entries; `app/` owns the scaffold, the tabs and the wiring between features. Pure refactor: **no user-visible behaviour change** except the small fixes in §6 (Login now hides the tab bar).
 
 Rules: `.claude/skills/*` (architecture, structure, conventions, best-practices) — load before writing code. Navigation 3 reference: the `navigation-3` skill.
 
@@ -170,7 +172,7 @@ private inline fun <reified K : NavKey> EntryProviderScope<NavKey>.scopedBrowse(
 |---|---|---|
 | 1 | Rename `NovelDetailNavKey` → `DetailNavKey` | Matches `DetailRoute` / `feature/detail`. |
 | 2 | `LoginNavKey : FullScreenNavKey` | **Behaviour change:** the tab bar now hides on the login page. Verify the page handles bottom insets (it loses the bar's padding). |
-| 3 | `ListEditorNavKey(novelId)` only; drop `novelTitle` | **Behaviour change:** the sheet must resolve the title itself. `ListEditorViewModel` currently takes it from `ListEditorArgs` (`ListEditorArgs.kt`, `ListEditorViewModel.kt:54`, `ListEditorRoute.kt`). Find what the editor already loads for the VN; if it has no title, add a small use case that returns it (in `common/domain` if a VN title lookup already exists there, else in `listeditor/domain`). Show a placeholder in the title slot until it loads. Update `ListEditorArgs`, the `onOpenListEditor` callers (Detail, Profile → now `(novelId)` only) and the route. |
+| 3 | ~~`ListEditorNavKey(novelId)` only; drop `novelTitle`~~ **Deferred.** The editor loads only the user's list entry (`GetMyListEntryUseCase` → `/ulist`), which is null when the VN is not on the list, and no VN-title lookup exists outside Detail. Dropping the title needs a new request on every sheet open or a cross-feature dependency on Detail's use case, which is a design change rather than a move. Kept as `ListEditorNavKey(novelId, novelTitle)`; decide separately. |
 | 5 | `Navigator.navigate` uses an explicit `topLevelRoutes` set | Add `val topLevelRoutes: Set<NavKey>` to `NavigationState`; replace `route in state.backStacks.keys`. |
 
 (Decision 6 — keep marker interfaces instead of entry metadata — means no change there.)

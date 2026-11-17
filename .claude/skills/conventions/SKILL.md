@@ -29,7 +29,9 @@ Rules marked **MUST** / **NEVER** are non-negotiable. Examples use the feature `
 | Intents | `presentation` | `[Screen]Intent` | `NovelDetailIntent` |
 | Effects | `presentation` | `[Screen]Effect` | `NovelDetailEffect` |
 | ViewModel | `presentation` | `[Screen]ViewModel` | `NovelDetailViewModel` |
-| Navigation 3 key | `app/navigation/AppNavigation.kt` | `[Screen]NavKey` (`@Serializable`) | `NovelDetailNavKey` |
+| Navigation 3 key | `presentation/navigation/[Screen]NavKey.kt` | `[Screen]NavKey` (`@Serializable`) | `NovelDetailNavKey` |
+| Entry registration | `presentation/navigation/[Screen]Navigation.kt` | `EntryProviderScope<NavKey>.[screen]Entry(...)` | `novelDetailEntry` |
+| Navigation actions (only when a Route has more than ~4 navigation callbacks) | `presentation/navigation/[Screen]NavActions.kt` | `[Screen]NavActions` | `NovelDetailNavActions` |
 | Nav destination composable | `presentation` | `[Screen]Route` | `NovelDetailRoute` |
 | Stateless screen | `presentation` | `[Screen]Screen` | `NovelDetailScreen` |
 | Reusable widget | `presentation/component/[name]/` or `common/ui/component/[name]/` | `[Name]View` | `component/ratingbadge/RatingBadgeView` |
@@ -524,9 +526,10 @@ class NovelDetailViewModel(...) : ViewModel() {
 ### 5.1 `[Name]Route.kt` — navigation destination (stateful)
 
 - The **only** composable that touches the ViewModel.
-- Receives the `NavKey`'s arguments as plain parameters (`novelId: String`) from the app `NavDisplay` entry.
+- Receives the `NavKey`'s arguments as plain parameters (`novelId: String`) from the feature's entry function (`presentation/navigation/[Name]Navigation.kt`).
 - Obtains the ViewModel with `koinViewModel { parametersOf(...) }`, collects `state` with `collectAsStateWithLifecycle()`, collects `effect` with `ObserveAsEvents` (`common/ui/util/`, a lifecycle-aware `LaunchedEffect`), and delegates rendering to `[Name]Screen(state, viewModel::onIntent)`.
-- Receives navigation callbacks as lambdas (`onNavigateBack: () -> Unit`) — never the back stack.
+- Receives navigation callbacks as lambdas (`onNavigateBack: () -> Unit`), or one `[Name]NavActions` when there are more than ~4 — never the back stack or a `Navigator`.
+- A `NavKey` carries ids only (never display data), is `@Serializable`, and implements `FullScreenNavKey` (hides the navigation bar) or `OverlayNavKey` (bottom sheet) when it is not a plain page or tab. Add every new key to `NavKeySerializationTest`.
 
 ```kotlin
 // ✅ presentation/NovelDetailRoute.kt
@@ -685,7 +688,7 @@ File locations follow the `structure` skill. When adding a screen `[Name]`, work
 2. `data`: the DTOs (one per file), `[Thing]DTOMapper`, `[Feature]Service` and `[Thing]RepositoryImpl`.
 3. `presentation`: `[Thing]UIModel` / `[Thing]UIState`, `[Thing]UIModelMapper`, then `[Name]State`, `[Name]Intent`, `[Name]Effect`, `[Name]ViewModel`, `[Name]Screen` (with a preview) and `[Name]Route`.
 4. `di`: register everything in the feature's `[Name]Module.kt`, and make sure `app/di/AppModule.kt` includes that module.
-5. `app/navigation/AppNavigation.kt`: add `[Name]NavKey` and its `entry<[Name]NavKey>` that calls `[Name]Route`.
+5. `presentation/navigation/`: add `[Name]NavKey.kt` and `[Name]Navigation.kt` with `[name]Entry(...)`, then call `[name]Entry(...)` from `app/navigation/AppEntryProvider.kt` with the lambdas that open other screens. Add the key to `NavKeySerializationTest`.
 
 ## 7. Conventions checklist (run before finishing any change)
 
