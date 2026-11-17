@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,6 +48,8 @@ import com.zc.vndb.feature.theme.presentation.component.themepreview.model.Theme
 private const val PREVIEW_ASPECT_RATIO = 9f / 20f
 private val SwatchSize = 18.dp
 private val NavDotSize = 8.dp
+private val ScoreBadgeWidth = 24.dp
+private val ScoreBadgeHeight = 10.dp
 
 /** The check icon's size, kept as the name row's minimum height so selecting a card never shifts the layout. */
 private val CheckIconSize = 24.dp
@@ -190,7 +193,14 @@ private fun MockCard(isTall: Boolean) {
                     .height(48.dp)
                     .clip(MaterialTheme.shapes.small)
                     .background(VndbTheme.colors.surfaceElevated.copy(alpha = alpha)),
-            )
+            ) {
+                // The score color, as the rating badge on a cover.
+                ScoreBadge(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(VndbTheme.spacing.xs),
+                )
+            }
         }
         Line(
             widthFraction = 0.7f,
@@ -200,9 +210,16 @@ private fun MockCard(isTall: Boolean) {
             widthFraction = 0.45f,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = LINE_ALPHA * alpha),
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             MockChip(VndbTheme.colors.chipNeutral.container.copy(alpha = alpha))
             MockChip(VndbTheme.colors.chipNeutral.container.copy(alpha = alpha))
+            if (!isTall) {
+                Spacer(Modifier.weight(1f))
+                ScoreBadge()
+            }
         }
         if (isTall) {
             Box(
@@ -210,10 +227,23 @@ private fun MockCard(isTall: Boolean) {
                     .fillMaxWidth()
                     .height(14.dp)
                     .clip(MaterialTheme.shapes.small)
-                    .background(VndbTheme.colors.accent.copy(alpha = alpha)),
+                    // Solid, so the accent in the preview is the accent swatch's exact color.
+                    .background(VndbTheme.colors.accent),
             )
         }
     }
+}
+
+/** A small pill in the theme's score color. Solid, so it matches the score swatch exactly. */
+@Composable
+private fun ScoreBadge(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .width(ScoreBadgeWidth)
+            .height(ScoreBadgeHeight)
+            .clip(CircleShape)
+            .background(VndbTheme.colors.score),
+    )
 }
 
 @Composable
