@@ -59,4 +59,7 @@ enum class AppTheme {
 
     /** A warm near-black and gold palette over the House in Fata Morgana wallpaper. */
     HouseInFataMorgana,
+
+    /** A midnight-blue and crimson palette over the Tsukihime wallpaper. */
+    Tsukihime,
 }

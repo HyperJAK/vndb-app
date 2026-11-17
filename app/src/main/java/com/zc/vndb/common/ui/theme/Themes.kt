@@ -6,6 +6,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.schemes.HouseInFataMorganaScheme
 import com.zc.vndb.common.ui.theme.schemes.NocturneScheme
 import com.zc.vndb.common.ui.theme.schemes.SayaNoUtaScheme
+import com.zc.vndb.common.ui.theme.schemes.TsukihimeScheme
 
 // Every theme: a name, a color scheme from `schemes/` and an optional wallpaper. To add one, see
 // docs/plans/10-themes.md ("Adding a theme").
@@ -41,4 +42,10 @@ val SayaNoUtaThemeSpec = SayaNoUtaScheme.toSpec(
 val HouseInFataMorganaThemeSpec = HouseInFataMorganaScheme.toSpec(
     name = UiText.StringResource(StringResource.theme_house_in_fata_morgana),
     wallpaper = WallpaperSpec(DrawableResource.wallpaper_house_in_fata_morgana, WALLPAPER_ALPHA),
+)
+
+/** Midnight blue and crimson over the Tsukihime wallpaper. */
+val TsukihimeThemeSpec = TsukihimeScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_tsukihime),
+    wallpaper = WallpaperSpec(DrawableResource.wallpaper_tsukihime, WALLPAPER_ALPHA),
 )

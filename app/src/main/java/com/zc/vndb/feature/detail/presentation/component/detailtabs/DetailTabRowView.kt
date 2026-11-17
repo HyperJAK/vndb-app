@@ -1,13 +1,11 @@
 package com.zc.vndb.feature.detail.presentation.component.detailtabs
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
@@ -20,7 +18,7 @@ import com.zc.vndb.feature.detail.presentation.model.DetailTabUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-/** Scrollable chip-style tabs; sits on the page background so it can stay pinned while scrolling. */
+/** Scrollable chip-style tabs on a transparent background, so the wallpaper shows through. */
 @Composable
 fun DetailTabRowView(
     tabs: ImmutableList<DetailTabUIModel>,
@@ -36,7 +34,6 @@ fun DetailTabRowView(
     LazyRow(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
             .padding(vertical = VndbTheme.spacing.sm),
         horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.sm),
         contentPadding = PaddingValues(horizontal = VndbTheme.spacing.xs),
