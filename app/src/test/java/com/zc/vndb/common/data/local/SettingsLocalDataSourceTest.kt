@@ -57,7 +57,7 @@ class SettingsLocalDataSourceTest {
         store.edit {
             it[stringPreferencesKey("title_language")] = "Klingon"
             it[stringPreferencesKey("trending_languages")] = "xx,yy"
-            it[stringPreferencesKey("theme")] = "Neon"
+            it[stringPreferencesKey("theme")] = "NotATheme"
         }
 
         val settings = SettingsLocalDataSource(store).settings.first()

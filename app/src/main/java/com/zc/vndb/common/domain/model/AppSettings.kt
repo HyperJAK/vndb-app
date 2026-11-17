@@ -51,6 +51,15 @@ enum class AppTheme {
     /** The Nocturne VN palette on a plain background. */
     Original,
 
+    /** Dark text on a cool off-white, no wallpaper. */
+    Light,
+
+    /** Neutral charcoal greys with a periwinkle accent, no wallpaper. */
+    Dark,
+
+    /** Retro-terminal neon green on black, no wallpaper. */
+    Neon,
+
     /** The Nocturne VN palette over the Angelic Serenade wallpaper. */
     AngelicSerenade,
 
@@ -62,4 +71,7 @@ enum class AppTheme {
 
     /** A midnight-blue and crimson palette over the Tsukihime wallpaper. */
     Tsukihime,
+
+    /** A violet-black, gold and rose-crimson palette over the Meikei no Lupercalia wallpaper. */
+    MeikeiNoLupercalia,
 }

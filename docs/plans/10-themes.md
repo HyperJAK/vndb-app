@@ -15,6 +15,7 @@ Rules: `.claude/skills/*`. Supersedes the "no theme picker" decision in [plan 09
 | **Saya no Uta** | Own wine-and-teal palette, taken from the wallpaper's colors | `wallpaper_saya_no_uta.webp` at 20% | no |
 | **House in Fata Morgana** | Own palette: warm near-black `#171311` / `#261F1B`, gold `#C9A66B`, wine `#8C4A4A` | `wallpaper_house_in_fata_morgana.webp` at 20% | no |
 | **Tsukihime** | Own palette: midnight blue `#0A0E1A` / `#141C33`, text `#E6ECFF`, crimson `#D92B4B` | `wallpaper_tsukihime.webp` at 20% | no |
+| **Meikei no Lupercalia** | Own palette: violet-black `#0D0B14` / `#181524`, text `#F3EFFA`, gold `#E2B86B`, rose-crimson `#D94B6A` | `wallpaper_meikei_no_lupercalia.webp` at 20% | no |
 
 - **Saved:** the choice is stored in the `settings` DataStore and read at launch. An unknown or missing value falls back to Original.
 - **Dynamic:** changing the theme recomposes the whole app (every screen, the nav bar, the Theme screen itself). Dialogs and the bottom sheet pick it up too, because they read the same theme tokens.
@@ -85,7 +86,7 @@ A theme is a name, a color scheme and an optional wallpaper. Color schemes live 
 4. **Spec:** one entry in `common/ui/theme/Themes.kt`: `val <Name>ThemeSpec = <Scheme>.toSpec(name, wallpaper)`.
 5. **Enum and mapper:** add the entry to `AppTheme` (domain) and one branch to `AppTheme.toSpec()` (`common/ui/mapper/AppThemeUIModelMapper.kt`). The `when` is exhaustive, so the build fails until this is done.
 
-Nothing else changes: the Theme screen lists `AppTheme.entries`, the Settings row, persistence (an unknown stored value falls back to Original) and the root all read from the spec. The mapper test checks every theme has a unique name and look, and a wallpaper unless it is Original.
+Nothing else changes: the Theme screen lists `AppTheme.entries`, the Settings row, persistence (an unknown stored value falls back to Original) and the root all read from the spec. The mapper test checks every theme has a unique name and look, and a wallpaper unless it is one of the plain themes (Original, Light, Dark, Neon). A light theme (background luminance > 0.5) gets dark system bar icons automatically (`AppRoute`).
 
 ## 5. Tests
 - `SettingsLocalDataSourceTest`: theme round-trip, default is Original, an unknown stored value falls back to Original.
@@ -105,7 +106,6 @@ Nothing else changes: the Theme screen lists `AppTheme.entries`, the Settings ro
 5. Tests, on-device pass, docs.
 
 ## 7. Out of scope
-- Light themes, or themes that change the system bar icon style (`enableEdgeToEdge` is dark-only today).
 - User-supplied wallpapers or per-theme opacity sliders.
 - Dynamic (Material You) color.
 - Distinct colors for Angelic Serenade (it reuses Nocturne VN for now; the spec model already allows it).

@@ -4,7 +4,11 @@ import androidx.annotation.DrawableRes
 import com.zc.vndb.common.ui.resource.DrawableResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.common.ui.theme.schemes.DarkScheme
 import com.zc.vndb.common.ui.theme.schemes.HouseInFataMorganaScheme
+import com.zc.vndb.common.ui.theme.schemes.LightScheme
+import com.zc.vndb.common.ui.theme.schemes.MeikeiNoLupercaliaScheme
+import com.zc.vndb.common.ui.theme.schemes.NeonScheme
 import com.zc.vndb.common.ui.theme.schemes.NocturneScheme
 import com.zc.vndb.common.ui.theme.schemes.SayaNoUtaScheme
 import com.zc.vndb.common.ui.theme.schemes.TsukihimeScheme
@@ -32,6 +36,21 @@ val OriginalThemeSpec = NocturneScheme.toSpec(
     name = UiText.StringResource(StringResource.theme_original),
 )
 
+/** Dark text on a cool off-white, on a plain background. */
+val LightThemeSpec = LightScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_light),
+)
+
+/** Neutral charcoal greys on a plain background. */
+val DarkThemeSpec = DarkScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_dark),
+)
+
+/** Neon green on black, on a plain background. */
+val NeonThemeSpec = NeonScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_neon),
+)
+
 /** Nocturne VN over the Angelic Serenade wallpaper. */
 val AngelicSerenadeThemeSpec = NocturneScheme.toSpec(
     name = UiText.StringResource(StringResource.theme_angelic_serenade),
@@ -54,4 +73,10 @@ val HouseInFataMorganaThemeSpec = HouseInFataMorganaScheme.toSpec(
 val TsukihimeThemeSpec = TsukihimeScheme.toSpec(
     name = UiText.StringResource(StringResource.theme_tsukihime),
     wallpaper = wallpaper(DrawableResource.wallpaper_tsukihime),
+)
+
+/** Violet-black and gold with rose-crimson over the Meikei no Lupercalia wallpaper. */
+val MeikeiNoLupercaliaThemeSpec = MeikeiNoLupercaliaScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_meikei_no_lupercalia),
+    wallpaper = wallpaper(DrawableResource.wallpaper_meikei_no_lupercalia),
 )

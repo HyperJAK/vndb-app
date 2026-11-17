@@ -71,7 +71,6 @@
         <item quantity="one">Found %1$s title</item>
         <item quantity="other">Found %1$s titles</item>
     </plurals>
-    <string name="browse_indexed_database">INDEXED DATABASE</string>
     <string name="browse_no_results">No visual novels match these filters.</string>
     <string name="browse_load_more_failed">Couldn\'t load more results.</string>
     <string name="length_very_short">&lt;2h</string>
@@ -395,11 +394,15 @@
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_body">Colors and wallpaper of the whole app</string>
     <string name="theme_title">Theme</string>
-    <string name="theme_original">Original</string>
+    <string name="theme_original">Classic</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_neon">Neon</string>
     <string name="theme_angelic_serenade">Angelic Serenade</string>
     <string name="theme_saya_no_uta">Saya no Uta</string>
     <string name="theme_house_in_fata_morgana">House in Fata Morgana</string>
     <string name="theme_tsukihime">Tsukihime</string>
+    <string name="theme_meikei_no_lupercalia">Meikei no Lupercalia</string>
     <string name="theme_selected">Selected</string>
     <string name="cd_theme_preview">Preview of the %1$s theme</string>
     <string name="settings_section_spoilers">Spoilers</string>
