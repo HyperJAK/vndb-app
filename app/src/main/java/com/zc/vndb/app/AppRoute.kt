@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zc.vndb.app.navigation.AppNavigation
+import com.zc.vndb.common.ui.component.wallpaper.WallpaperView
 import com.zc.vndb.common.ui.util.LocalShowSensitiveContent
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -14,6 +15,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun AppRoute(modifier: Modifier = Modifier, viewModel: AppViewModel = koinViewModel()) {
     val showSensitiveContent by viewModel.showSensitiveContent.collectAsStateWithLifecycle()
     CompositionLocalProvider(LocalShowSensitiveContent provides showSensitiveContent) {
-        AppNavigation(modifier = modifier)
+        WallpaperView(modifier = modifier) {
+            AppNavigation()
+        }
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
@@ -119,6 +120,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     NavigationSuiteScaffold(
         modifier = modifier,
         state = scaffoldState,
+        containerColor = Color.Transparent,
         navigationSuiteColors = NavigationSuiteDefaults.colors(
             navigationBarContainerColor = VndbTheme.colors.surfaceInset,
             navigationRailContainerColor = VndbTheme.colors.surfaceInset,
