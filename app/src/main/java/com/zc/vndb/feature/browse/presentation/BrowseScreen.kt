@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zc.vndb.common.ui.component.apptopbar.AppTopBarView
 import com.zc.vndb.common.ui.component.error.ErrorView
@@ -47,6 +48,8 @@ import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
 import com.zc.vndb.common.ui.component.linksrow.LinksRowView
 import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
 import com.zc.vndb.common.ui.component.selectablechip.SelectableChipView
+import com.zc.vndb.common.ui.component.skeleton.SkeletonRowView
+import com.zc.vndb.common.ui.component.skeleton.loadingSemantics
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
@@ -67,6 +70,8 @@ import kotlinx.collections.immutable.toImmutableList
 
 /** Start loading the next page this many items before the end. */
 private const val LOAD_MORE_THRESHOLD = 5
+private const val SKELETON_COUNT = 6
+private val SkeletonCoverWidth = 92.dp
 
 /** Callbacks built once from `onIntent`, so rows get stable lambdas. */
 @Immutable
@@ -243,7 +248,16 @@ private fun LazyGridScope.header(state: BrowseState, actions: BrowseActions) {
 
 private fun LazyGridScope.results(state: BrowseState, actions: BrowseActions) {
     when {
-        state.isLoading -> fullWidthItem("loading") { CenteredProgress() }
+        state.isLoading -> repeat(SKELETON_COUNT) { index ->
+            fullWidthItem("loading-$index") {
+                SkeletonRowView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(if (index == 0) Modifier.loadingSemantics() else Modifier),
+                    coverWidth = SkeletonCoverWidth,
+                )
+            }
+        }
 
         state.error != null -> fullWidthItem("error") {
             ErrorView(

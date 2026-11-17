@@ -2,8 +2,10 @@ package com.zc.vndb.feature.release.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zc.vndb.common.domain.model.TitleLanguage
 import com.zc.vndb.common.domain.usecase.ObserveSettingsUseCase
 import com.zc.vndb.common.ui.component.error.mapper.toErrorUIModel
+import com.zc.vndb.feature.release.domain.model.ReleaseDetail
 import com.zc.vndb.feature.release.domain.usecase.GetReleaseUseCase
 import com.zc.vndb.feature.release.presentation.component.releasehero.mapper.toHeroUIModel
 import com.zc.vndb.feature.release.presentation.component.releasenovelrow.mapper.toRowUIModel
@@ -52,6 +54,8 @@ class ReleaseViewModel(
             ReleaseIntent.Retry,
             -> load()
 
+            ReleaseIntent.Refresh -> refresh()
+
             ReleaseIntent.BackClicked -> sendEffect(ReleaseEffect.NavigateBack)
 
             ReleaseIntent.ShareClicked -> sendEffect(
@@ -80,25 +84,13 @@ class ReleaseViewModel(
 
     private fun load() {
         loadJob?.cancel()
-        _state.update { it.copy(isLoading = true, error = null) }
+        _state.update { it.copy(isLoading = true, isRefreshing = false, error = null) }
         loadJob = viewModelScope.launch {
             val titleLanguage = observeSettings.current().titleLanguage
             getRelease(releaseId)
                 .onSuccess { release ->
-                    title = release.title
                     _state.update {
-                        it.copy(
-                            isLoading = false,
-                            hero = release.toHeroUIModel(),
-                            links = release.toLinks(),
-                            novels = release.novels.map { novel ->
-                                novel.toRowUIModel(titleLanguage)
-                            }.toImmutableList(),
-                            languages = release.toLanguageUIModels(),
-                            producers = release.toProducerUIModels(),
-                            images = release.toImageUIModels(),
-                            notes = release.toNotes(),
-                        )
+                        release.toLoadedState(it, titleLanguage).copy(isLoading = false)
                     }
                 }
                 .onFailure { error ->
@@ -110,6 +102,47 @@ class ReleaseViewModel(
                     }
                 }
         }
+    }
+
+    /**
+     * Reloads the release behind the pull-to-refresh indicator. With nothing loaded yet (first
+     * load in flight or failed) it is a plain load; a failed refresh keeps what is shown.
+     */
+    private fun refresh() {
+        val current = _state.value
+        if (current.isRefreshing || current.isLoading) return
+        if (current.error != null) return load()
+        loadJob?.cancel()
+        _state.update { it.copy(isRefreshing = true) }
+        loadJob = viewModelScope.launch {
+            val titleLanguage = observeSettings.current().titleLanguage
+            getRelease(releaseId)
+                .onSuccess { release ->
+                    _state.update {
+                        release.toLoadedState(it, titleLanguage).copy(isRefreshing = false)
+                    }
+                }
+                .onFailure { error ->
+                    _state.update { it.copy(isRefreshing = false) }
+                    sendEffect(ReleaseEffect.ShowError(error.toErrorUIModel()))
+                }
+        }
+    }
+
+    private fun ReleaseDetail.toLoadedState(
+        current: ReleaseState,
+        titleLanguage: TitleLanguage,
+    ): ReleaseState {
+        this@ReleaseViewModel.title = title
+        return current.copy(
+            hero = toHeroUIModel(),
+            links = toLinks(),
+            novels = novels.map { novel -> novel.toRowUIModel(titleLanguage) }.toImmutableList(),
+            languages = toLanguageUIModels(),
+            producers = toProducerUIModels(),
+            images = toImageUIModels(),
+            notes = toNotes(),
+        )
     }
 
     private fun sendEffect(effect: ReleaseEffect) {

@@ -14,11 +14,12 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -35,7 +36,9 @@ import com.zc.vndb.common.ui.component.error.ErrorView
 import com.zc.vndb.common.ui.component.error.model.ErrorUIModel
 import com.zc.vndb.common.ui.component.expandabletext.ExpandableTextView
 import com.zc.vndb.common.ui.component.factline.model.FactUIModel
+import com.zc.vndb.common.ui.component.pulltorefresh.PullToRefreshView
 import com.zc.vndb.common.ui.component.sectioncard.SectionCardView
+import com.zc.vndb.common.ui.component.skeleton.PageSkeletonView
 import com.zc.vndb.common.ui.component.spoilerfilter.SpoilerFilterView
 import com.zc.vndb.common.ui.component.spoilerfilter.model.SpoilerLevel
 import com.zc.vndb.common.ui.resource.StringResource
@@ -68,6 +71,7 @@ fun CharacterScreen(
     state: CharacterState,
     onIntent: (CharacterIntent) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val actions = remember(onIntent) {
         CharacterActions(
@@ -80,6 +84,7 @@ fun CharacterScreen(
     Scaffold(
         modifier = modifier,
         topBar = { CharacterTopBar(onIntent) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Color.Transparent,
     ) { padding ->
         val contentModifier = Modifier
@@ -92,22 +97,29 @@ fun CharacterScreen(
                 modifier = contentModifier,
             )
 
-            state.hero == null -> Box(contentModifier, contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = VndbTheme.colors.accent)
-            }
+            state.hero == null -> PageSkeletonView(
+                modifier = contentModifier,
+                maxWidth = MaxContentWidth,
+            )
 
-            else -> Box(contentModifier, contentAlignment = Alignment.TopCenter) {
-                LazyColumn(
-                    modifier = Modifier
-                        .widthIn(max = MaxContentWidth)
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        horizontal = VndbTheme.spacing.margin,
-                        vertical = VndbTheme.spacing.sm,
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
-                ) {
-                    characterSections(state, state.hero, actions)
+            else -> PullToRefreshView(
+                isRefreshing = state.isRefreshing,
+                onRefresh = { onIntent(CharacterIntent.Refresh) },
+                modifier = contentModifier,
+            ) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .widthIn(max = MaxContentWidth)
+                            .fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            horizontal = VndbTheme.spacing.margin,
+                            vertical = VndbTheme.spacing.sm,
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(VndbTheme.spacing.md),
+                    ) {
+                        characterSections(state, state.hero, actions)
+                    }
                 }
             }
         }

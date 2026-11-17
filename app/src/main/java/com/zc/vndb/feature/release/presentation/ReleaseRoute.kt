@@ -1,8 +1,10 @@
 package com.zc.vndb.feature.release.presentation
 
 import android.content.Intent
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -23,6 +25,7 @@ fun ReleaseRoute(
     viewModel: ReleaseViewModel = koinViewModel { parametersOf(releaseId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
@@ -33,6 +36,10 @@ fun ReleaseRoute(
             is ReleaseEffect.NavigateToNovel -> onOpenNovel(effect.id)
 
             is ReleaseEffect.NavigateToProducer -> onOpenProducer(effect.id)
+
+            is ReleaseEffect.ShowError -> snackbarHostState.showSnackbar(
+                effect.error.message.asString(context),
+            )
 
             is ReleaseEffect.OpenUrl -> uriHandler.openUri(effect.url)
 
@@ -54,5 +61,10 @@ fun ReleaseRoute(
         }
     }
 
-    ReleaseScreen(state = state, onIntent = viewModel::onIntent, modifier = modifier)
+    ReleaseScreen(
+        state = state,
+        onIntent = viewModel::onIntent,
+        modifier = modifier,
+        snackbarHostState = snackbarHostState,
+    )
 }

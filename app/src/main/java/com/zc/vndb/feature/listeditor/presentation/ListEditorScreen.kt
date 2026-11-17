@@ -1,7 +1,6 @@
 package com.zc.vndb.feature.listeditor.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -47,6 +46,7 @@ import com.zc.vndb.common.ui.text.UiText
 import com.zc.vndb.common.ui.theme.VndbTheme
 import com.zc.vndb.common.ui.util.AdaptivePreviews
 import com.zc.vndb.feature.listeditor.presentation.component.ListEditorDialogs
+import com.zc.vndb.feature.listeditor.presentation.component.editorskeleton.EditorSkeletonView
 import com.zc.vndb.feature.listeditor.presentation.model.DateField
 import com.zc.vndb.feature.listeditor.presentation.model.LabelOptionUIModel
 import com.zc.vndb.feature.profile.domain.model.MyListEntry
@@ -79,12 +79,7 @@ fun ListEditorScreen(
     ) {
         Header(state)
         when {
-            state.isLoading -> Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 160.dp),
-                contentAlignment = Alignment.Center,
-            ) { CircularProgressIndicator(color = VndbTheme.colors.accent) }
+            state.isLoading -> EditorSkeletonView(modifier = Modifier.fillMaxWidth())
 
             state.error != null -> ErrorView(
                 model = state.error,
