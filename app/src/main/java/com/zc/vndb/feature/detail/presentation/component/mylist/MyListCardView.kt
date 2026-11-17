@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
@@ -18,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -34,6 +37,7 @@ import com.zc.vndb.feature.profile.domain.model.ListLabel
 import kotlinx.collections.immutable.persistentListOf
 
 private val ButtonIconSize = 18.dp
+private val VoteStarSize = 20.dp
 
 /** "My list": the user's status, labels, vote, dates and notes for this VN, with Add / Edit. */
 @Composable
@@ -111,11 +115,22 @@ private fun Entry(model: MyListCardUIModel) {
             ) { model.labels.forEach { EntryLabelChipView(it) } }
         }
         model.voteLabel?.let { vote ->
-            Text(
-                text = vote.asString(),
-                style = MaterialTheme.typography.titleMedium,
-                color = VndbTheme.colors.accent,
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = null,
+                    tint = VndbTheme.colors.score,
+                    modifier = Modifier.size(VoteStarSize),
+                )
+                Text(
+                    text = vote.asString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = VndbTheme.colors.score,
+                )
+            }
         }
         model.dates.forEach { date ->
             Text(
@@ -146,7 +161,7 @@ private class MyListCardProvider : PreviewParameterProvider<MyListCardUIModel> {
                 EntryLabelUIModel(ListLabel.WISHLIST, UiText.StringValue("Wishlist")),
                 EntryLabelUIModel(PREVIEW_OWN_LABEL_ID, UiText.StringValue("Ready to play")),
             ),
-            voteLabel = UiText.StringValue("My vote 8.5"),
+            voteLabel = UiText.StringValue("8.5"),
             dates = persistentListOf(UiText.StringValue("Started 2026-11-01")),
             notes = UiText.StringValue("Route order: Reika last."),
         ),

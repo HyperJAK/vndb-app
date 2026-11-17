@@ -323,7 +323,6 @@
     <string name="cd_sort_descending">Descending order. Tap to reverse.</string>
     <string name="profile_no_entries">Nothing here yet.</string>
     <string name="profile_session_expired">Your token is no longer valid. Log in again to see your lists.</string>
-    <string name="profile_my_vote">My vote %1$s</string>
     <string name="profile_started">Started %1$s</string>
     <string name="profile_finished">Finished %1$s</string>
     <string name="profile_updated_just_now">Updated just now</string>
