@@ -2,7 +2,10 @@ package com.zc.vndb.common.ui.mapper
 
 import com.zc.vndb.common.domain.model.AppTheme
 import com.zc.vndb.common.ui.theme.AngelicSerenadeThemeSpec
+import com.zc.vndb.common.ui.theme.DarkThemeSpec
 import com.zc.vndb.common.ui.theme.HouseInFataMorganaThemeSpec
+import com.zc.vndb.common.ui.theme.LightThemeSpec
+import com.zc.vndb.common.ui.theme.NeonThemeSpec
 import com.zc.vndb.common.ui.theme.OriginalThemeSpec
 import com.zc.vndb.common.ui.theme.SayaNoUtaThemeSpec
 import com.zc.vndb.common.ui.theme.TsukihimeThemeSpec
@@ -17,6 +20,9 @@ class AppThemeUIModelMapperTest {
     @Test
     fun `every theme maps to its own spec`() {
         assertEquals(OriginalThemeSpec, AppTheme.Original.toSpec())
+        assertEquals(LightThemeSpec, AppTheme.Light.toSpec())
+        assertEquals(DarkThemeSpec, AppTheme.Dark.toSpec())
+        assertEquals(NeonThemeSpec, AppTheme.Neon.toSpec())
         assertEquals(AngelicSerenadeThemeSpec, AppTheme.AngelicSerenade.toSpec())
         assertEquals(SayaNoUtaThemeSpec, AppTheme.SayaNoUta.toSpec())
         assertEquals(HouseInFataMorganaThemeSpec, AppTheme.HouseInFataMorgana.toSpec())
@@ -34,11 +40,20 @@ class AppThemeUIModelMapperTest {
     }
 
     @Test
-    fun `Original has no wallpaper and the other themes have one`() {
-        assertNull(AppTheme.Original.toSpec().wallpaper)
-        AppTheme.entries.filter { it != AppTheme.Original }.forEach {
+    fun `the plain themes have no wallpaper and the other themes have one`() {
+        val plain = listOf(AppTheme.Original, AppTheme.Light, AppTheme.Dark, AppTheme.Neon)
+        plain.forEach { assertNull(it.toSpec().wallpaper, "$it should have no wallpaper") }
+        (AppTheme.entries - plain.toSet()).forEach {
             assertNotNull(it.toSpec().wallpaper, "$it needs a wallpaper")
         }
+    }
+
+    @Test
+    fun `the plain themes follow Original in the list`() {
+        assertEquals(
+            listOf(AppTheme.Original, AppTheme.Light, AppTheme.Dark, AppTheme.Neon),
+            AppTheme.entries.take(4),
+        )
     }
 
     @Test

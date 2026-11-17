@@ -4,7 +4,10 @@ import androidx.annotation.DrawableRes
 import com.zc.vndb.common.ui.resource.DrawableResource
 import com.zc.vndb.common.ui.resource.StringResource
 import com.zc.vndb.common.ui.text.UiText
+import com.zc.vndb.common.ui.theme.schemes.DarkScheme
 import com.zc.vndb.common.ui.theme.schemes.HouseInFataMorganaScheme
+import com.zc.vndb.common.ui.theme.schemes.LightScheme
+import com.zc.vndb.common.ui.theme.schemes.NeonScheme
 import com.zc.vndb.common.ui.theme.schemes.NocturneScheme
 import com.zc.vndb.common.ui.theme.schemes.SayaNoUtaScheme
 import com.zc.vndb.common.ui.theme.schemes.TsukihimeScheme
@@ -30,6 +33,21 @@ private fun VndbScheme.toSpec(name: UiText, wallpaper: WallpaperSpec? = null) = 
 /** Nocturne VN on a plain background. */
 val OriginalThemeSpec = NocturneScheme.toSpec(
     name = UiText.StringResource(StringResource.theme_original),
+)
+
+/** Dark text on a cool off-white, on a plain background. */
+val LightThemeSpec = LightScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_light),
+)
+
+/** Neutral charcoal greys on a plain background. */
+val DarkThemeSpec = DarkScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_dark),
+)
+
+/** Neon green on black, on a plain background. */
+val NeonThemeSpec = NeonScheme.toSpec(
+    name = UiText.StringResource(StringResource.theme_neon),
 )
 
 /** Nocturne VN over the Angelic Serenade wallpaper. */

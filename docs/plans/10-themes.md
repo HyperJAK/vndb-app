@@ -85,7 +85,7 @@ A theme is a name, a color scheme and an optional wallpaper. Color schemes live 
 4. **Spec:** one entry in `common/ui/theme/Themes.kt`: `val <Name>ThemeSpec = <Scheme>.toSpec(name, wallpaper)`.
 5. **Enum and mapper:** add the entry to `AppTheme` (domain) and one branch to `AppTheme.toSpec()` (`common/ui/mapper/AppThemeUIModelMapper.kt`). The `when` is exhaustive, so the build fails until this is done.
 
-Nothing else changes: the Theme screen lists `AppTheme.entries`, the Settings row, persistence (an unknown stored value falls back to Original) and the root all read from the spec. The mapper test checks every theme has a unique name and look, and a wallpaper unless it is Original.
+Nothing else changes: the Theme screen lists `AppTheme.entries`, the Settings row, persistence (an unknown stored value falls back to Original) and the root all read from the spec. The mapper test checks every theme has a unique name and look, and a wallpaper unless it is one of the plain themes (Original, Light, Dark, Neon). A light theme (background luminance > 0.5) gets dark system bar icons automatically (`AppRoute`).
 
 ## 5. Tests
 - `SettingsLocalDataSourceTest`: theme round-trip, default is Original, an unknown stored value falls back to Original.
@@ -105,7 +105,6 @@ Nothing else changes: the Theme screen lists `AppTheme.entries`, the Settings ro
 5. Tests, on-device pass, docs.
 
 ## 7. Out of scope
-- Light themes, or themes that change the system bar icon style (`enableEdgeToEdge` is dark-only today).
 - User-supplied wallpapers or per-theme opacity sliders.
 - Dynamic (Material You) color.
 - Distinct colors for Angelic Serenade (it reuses Nocturne VN for now; the spec model already allows it).
