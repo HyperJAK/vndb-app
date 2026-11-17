@@ -52,6 +52,12 @@ private val NavDotSize = 8.dp
 private val CheckIconSize = 24.dp
 private const val NAV_DOT_COUNT = 3
 
+/** Opacity of the content inside a mock card over a wallpaper, so the art shows through it slightly. */
+private const val MOCK_CONTENT_ALPHA = 0.6f
+
+/** The mock text lines are softer than the real text. */
+private const val LINE_ALPHA = 0.7f
+
 /**
  * A theme as a small phone: its wallpaper and real tokens drawn under that theme, so it can never
  * drift from the theme itself. Tapping selects it. Below the phone: four swatches, then the name (which may wrap).
@@ -165,6 +171,9 @@ private fun PhoneMock(model: ThemeUIModel, modifier: Modifier = Modifier) {
 @Composable
 private fun MockCard(isTall: Boolean) {
     val shape = MaterialTheme.shapes.medium
+    // Over a wallpaper the card's content is see-through, so the small preview still shows the art.
+    // Solid on plain themes, where there is nothing behind it.
+    val alpha = if (VndbTheme.wallpaper != null) MOCK_CONTENT_ALPHA else 1f
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,14 +189,20 @@ private fun MockCard(isTall: Boolean) {
                     .fillMaxWidth()
                     .height(48.dp)
                     .clip(MaterialTheme.shapes.small)
-                    .background(VndbTheme.colors.surfaceElevated),
+                    .background(VndbTheme.colors.surfaceElevated.copy(alpha = alpha)),
             )
         }
-        Line(widthFraction = 0.7f, color = MaterialTheme.colorScheme.onSurface)
-        Line(widthFraction = 0.45f, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Line(
+            widthFraction = 0.7f,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = LINE_ALPHA * alpha),
+        )
+        Line(
+            widthFraction = 0.45f,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = LINE_ALPHA * alpha),
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(VndbTheme.spacing.xs)) {
-            MockChip(VndbTheme.colors.chipNeutral.container)
-            MockChip(VndbTheme.colors.chipNeutral.container)
+            MockChip(VndbTheme.colors.chipNeutral.container.copy(alpha = alpha))
+            MockChip(VndbTheme.colors.chipNeutral.container.copy(alpha = alpha))
         }
         if (isTall) {
             Box(
@@ -195,7 +210,7 @@ private fun MockCard(isTall: Boolean) {
                     .fillMaxWidth()
                     .height(14.dp)
                     .clip(MaterialTheme.shapes.small)
-                    .background(VndbTheme.colors.accent),
+                    .background(VndbTheme.colors.accent.copy(alpha = alpha)),
             )
         }
     }
@@ -208,7 +223,7 @@ private fun Line(widthFraction: Float, color: Color) {
             .fillMaxWidth(widthFraction)
             .height(5.dp)
             .clip(CircleShape)
-            .background(color.copy(alpha = 0.7f)),
+            .background(color),
     )
 }
 
